@@ -9,8 +9,10 @@ version = '0.0.1-SNAPSHOT'
 description = 'ticket-reserve'
 
 allprojects {
+
     repositories {
         mavenCentral()
+        maven { url "https://repo.spring.io/release" }
     }
 
     apply plugin: 'java'
@@ -38,5 +40,10 @@ allprojects {
         useJUnitPlatform()
     }
 
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0" // 버전은 Boot와 맞춰야 함
+        }
+    }
 }
 
