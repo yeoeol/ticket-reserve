@@ -1,0 +1,1 @@
+# Redis: 캐싱, 분산 락 구현 (예: Redisson)
