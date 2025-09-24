@@ -4,6 +4,9 @@ include 'common'
 include 'service'
 include 'infra'
 
+include 'common:gateway'
+include 'common:registry'
+
 include 'service:user'
 include 'service:event'
 include 'service:inventory'
