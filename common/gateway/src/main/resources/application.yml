@@ -20,13 +20,17 @@ spring:
             allowCredentials: true
       routes:
         - id: user-service
-          uri: lb://USER-SERVICE   # service-registry(Eureka)에 등록된 이름
+          uri: http://localhost:9000   # service-registry(Eureka)에 등록된 이름
           predicates:
             - Path=/users/**       # 요청 경로 패턴
         - id: event-service
-          uri: lb://EVENT-SERVICE
+          uri: http://localhost:9001
           predicates:
             - Path=/events/**
+        - id: reservation-service
+          uri: http://localhost:9003
+          predicates:
+            - Path=/reservations/**
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
