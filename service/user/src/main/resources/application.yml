@@ -7,7 +7,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/article
+    url: jdbc:mysql://127.0.0.1:3306/ticket_users
     username: hun
     password: hun1234
   jpa:
@@ -15,9 +15,13 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: 0ydHRc8EG9P/RJDjjPbE8dezJ0IXc8z61Y7hDZRJKkkrDW81g9FPKb0XdU5Knun3kIBEabqtzGnsNSqbufv79g==
+  expiration: 3600000
