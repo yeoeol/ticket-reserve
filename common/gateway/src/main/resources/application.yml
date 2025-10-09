@@ -8,6 +8,8 @@ spring:
     gateway:
       server:
         webflux:
+          default-filters:
+            - name: JwtAuthenticationFilter
           routes:
             - id: user-service
               uri: lb://USER-SERVICE   # service-registry(Eureka)에 등록된 이름
@@ -21,8 +23,6 @@ spring:
               uri: http://localhost:9003
               predicates:
                 - Path=/reservations/**
-#      default-filters:
-#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
 eureka:
   client:
@@ -31,3 +31,4 @@ eureka:
 
 jwt:
   secret: 0ydHRc8EG9P/RJDjjPbE8dezJ0IXc8z61Y7hDZRJKkkrDW81g9FPKb0XdU5Knun3kIBEabqtzGnsNSqbufv79g==
+  expiration: 3600000
