@@ -45,6 +45,7 @@ public class UserController {
 
     @GetMapping("/info/{userId}")
     public String get(@PathVariable Long userId) {
+        System.out.println("[UserController.get]");
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
