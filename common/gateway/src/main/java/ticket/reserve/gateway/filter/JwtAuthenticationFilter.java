@@ -17,20 +17,22 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
-import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
 
+    public static final List<String> permitUris = List.of(
+            // user-service
+            "/users/", "/users/register", "/users/login"
+    );
+    public static final List<String> userAccessiblePaths = List.of(
+            "/events/", "/inventory/"
+    );
+
     private final SecretKey key;
     private final long expiration;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
-
-    public static final String[] permitUris = {
-            // user-service
-            "/users/", "/users/register", "/users/login"
-
-    };
 
     public JwtAuthenticationFilter(@Value("${jwt.secret}") String secret,
                                    @Value("${jwt.expiration}") long expiration) {
@@ -45,9 +47,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             ServerHttpRequest request = exchange.getRequest();
 
             String path = request.getURI().getPath();
-            boolean isPermitted = Arrays.stream(permitUris)
+            boolean isPermitted = permitUris.stream()
                     .anyMatch(pattern -> antPathMatcher
-                            .match(pattern, path));
+                    .match(pattern, path));
 
             // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
             if (isPermitted) {
@@ -57,7 +59,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
-
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer ", "");
 
@@ -66,8 +67,23 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             }
 
             String userId = getUserIdFromJwt(jwt);
+            String roles = getRolesFromJwt(jwt);
+
+            if (antPathMatcher.match("/admin/**", path) && !roles.equals("ROLE_ADMIN")) {
+                return onError(exchange, "Access denied - admin only", HttpStatus.FORBIDDEN);
+            }
+
+            boolean isUserPath = userAccessiblePaths.stream()
+                    .anyMatch(pattern -> antPathMatcher
+                    .match(pattern, path));
+
+            if (isUserPath && !List.of("ROLE_USER", "ROLE_ADMIN").contains(roles)) {
+                return onError(exchange, "Access denied - user only", HttpStatus.FORBIDDEN);
+            }
+
             ServerHttpRequest newRequest = request.mutate()
                     .header("X-USER-ID", userId)
+                    .header("X-User-Roles", roles)
                     .build();
 
             return chain.filter(exchange.mutate().request(newRequest).build());
@@ -76,6 +92,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
 
     private String getUserIdFromJwt(String jwt) {
         return getClaims(jwt).getSubject();
+    }
+
+    private String getRolesFromJwt(String jwt) {
+        return getClaims(jwt).get("roles", String.class);
     }
 
     private boolean isJwtValid(String jwt) {
