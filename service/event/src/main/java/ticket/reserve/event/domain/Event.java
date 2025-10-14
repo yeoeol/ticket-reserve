@@ -1,8 +1,7 @@
-package ticket.reserve.event.entity;
+package ticket.reserve.event.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
 
 import java.time.LocalDateTime;

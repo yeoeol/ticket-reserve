@@ -1,7 +1,7 @@
 package ticket.reserve.event.dto;
 
 import lombok.Builder;
-import ticket.reserve.event.entity.Event;
+import ticket.reserve.event.domain.Event;
 
 import java.time.LocalDateTime;
 
