@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import ticket.reserve.gateway.config.GatewaySecurityConfig;
 
 import javax.crypto.SecretKey;
 import java.util.Arrays;
@@ -45,8 +44,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            System.out.println("0");
-
             String path = request.getURI().getPath();
             boolean isPermitted = Arrays.stream(permitUris)
                     .anyMatch(pattern -> antPathMatcher
@@ -60,7 +57,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
-            System.out.println("1");
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer ", "");
 
@@ -68,9 +64,16 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
-            System.out.println("2");
             String userId = getUserIdFromJwt(jwt);
             String roles = getRolesFromJwt(jwt);
+
+            if (path.startsWith("/admin/") && !roles.equals("ROLE_ADMIN")) {
+                return onError(exchange, "Access denied", HttpStatus.FORBIDDEN);
+            }
+
+            if (path.startsWith("/events/") && !roles.equals("ROLE_USER") && !roles.equals("ROLE_ADMIN")) {
+                return onError(exchange, "Access denied", HttpStatus.FORBIDDEN);
+            }
 
             ServerHttpRequest newRequest = request.mutate()
                     .header("X-USER-ID", userId)
@@ -87,7 +90,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     }
 
     private String getRolesFromJwt(String jwt) {
-        return (String) getClaims(jwt).get("roles");
+        return getClaims(jwt).get("roles", String.class);
     }
 
     private boolean isJwtValid(String jwt) {

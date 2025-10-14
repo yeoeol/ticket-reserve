@@ -27,5 +27,5 @@ public class User {
     private String email;
 
     @Builder.Default
-    private String role = "USER";
+    private String role = "ROLE_USER";
 }
