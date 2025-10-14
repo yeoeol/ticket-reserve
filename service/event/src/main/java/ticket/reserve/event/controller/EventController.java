@@ -11,34 +11,33 @@ import ticket.reserve.event.service.EventService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventController {
 
     private final EventService eventService;
 
-    @PostMapping
+    @PostMapping("/admin/events")
     public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
         return ResponseEntity.ok(eventService.createEvent(request));
     }
 
-    @GetMapping
+    @GetMapping("/events")
     public ResponseEntity<List<EventResponseDto>> getAll() {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/events/{id}")
     public ResponseEntity<EventResponseDto> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/events/{id}")
     public ResponseEntity<EventResponseDto> update(@PathVariable Long id,
                                        @RequestBody EventUpdateRequestDto request) {
         return ResponseEntity.ok(eventService.updateEvent(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/events/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();

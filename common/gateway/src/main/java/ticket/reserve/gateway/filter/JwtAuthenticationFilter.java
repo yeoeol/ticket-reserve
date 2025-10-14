@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import ticket.reserve.gateway.config.GatewaySecurityConfig;
 
 import javax.crypto.SecretKey;
 import java.util.Arrays;
@@ -22,15 +23,15 @@ import java.util.Arrays;
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
 
-    private final SecretKey key;
-    private final long expiration;
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
-
     public static final String[] permitUris = {
             // user-service
             "/users/", "/users/register", "/users/login"
 
     };
+
+    private final SecretKey key;
+    private final long expiration;
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public JwtAuthenticationFilter(@Value("${jwt.secret}") String secret,
                                    @Value("${jwt.expiration}") long expiration) {
@@ -43,6 +44,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+
+            System.out.println("0");
 
             String path = request.getURI().getPath();
             boolean isPermitted = Arrays.stream(permitUris)
@@ -57,7 +60,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
-
+            System.out.println("1");
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer ", "");
 
@@ -65,17 +68,26 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
+            System.out.println("2");
             String userId = getUserIdFromJwt(jwt);
+            String roles = getRolesFromJwt(jwt);
+
             ServerHttpRequest newRequest = request.mutate()
                     .header("X-USER-ID", userId)
+                    .header("X-User-Roles", roles)
                     .build();
 
+            System.out.println("3");
             return chain.filter(exchange.mutate().request(newRequest).build());
         };
     }
 
     private String getUserIdFromJwt(String jwt) {
         return getClaims(jwt).getSubject();
+    }
+
+    private String getRolesFromJwt(String jwt) {
+        return (String) getClaims(jwt).get("roles");
     }
 
     private boolean isJwtValid(String jwt) {
