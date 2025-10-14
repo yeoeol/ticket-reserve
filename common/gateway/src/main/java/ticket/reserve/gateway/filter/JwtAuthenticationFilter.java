@@ -17,16 +17,18 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
-import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
 
-    public static final String[] permitUris = {
+    public static final List<String> permitUris = List.of(
             // user-service
             "/users/", "/users/register", "/users/login"
-
-    };
+    );
+    public static final List<String> userAccessiblePaths = List.of(
+            "/events/", "/inventory/"
+    );
 
     private final SecretKey key;
     private final long expiration;
@@ -45,9 +47,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             ServerHttpRequest request = exchange.getRequest();
 
             String path = request.getURI().getPath();
-            boolean isPermitted = Arrays.stream(permitUris)
+            boolean isPermitted = permitUris.stream()
                     .anyMatch(pattern -> antPathMatcher
-                            .match(pattern, path));
+                    .match(pattern, path));
 
             // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
             if (isPermitted) {
@@ -67,12 +69,16 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             String userId = getUserIdFromJwt(jwt);
             String roles = getRolesFromJwt(jwt);
 
-            if (path.startsWith("/admin/") && !roles.equals("ROLE_ADMIN")) {
-                return onError(exchange, "Access denied", HttpStatus.FORBIDDEN);
+            if (antPathMatcher.match("/admin/**", path) && !roles.equals("ROLE_ADMIN")) {
+                return onError(exchange, "Access denied - admin only", HttpStatus.FORBIDDEN);
             }
 
-            if (path.startsWith("/events/") && !roles.equals("ROLE_USER") && !roles.equals("ROLE_ADMIN")) {
-                return onError(exchange, "Access denied", HttpStatus.FORBIDDEN);
+            boolean isUserPath = userAccessiblePaths.stream()
+                    .anyMatch(pattern -> antPathMatcher
+                    .match(pattern, path));
+
+            if (isUserPath && !List.of("ROLE_USER", "ROLE_ADMIN").contains(roles)) {
+                return onError(exchange, "Access denied - user only", HttpStatus.FORBIDDEN);
             }
 
             ServerHttpRequest newRequest = request.mutate()
@@ -80,7 +86,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
                     .header("X-User-Roles", roles)
                     .build();
 
-            System.out.println("3");
             return chain.filter(exchange.mutate().request(newRequest).build());
         };
     }
