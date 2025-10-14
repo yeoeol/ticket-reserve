@@ -18,7 +18,7 @@ spring:
             - id: event-service
               uri: lb://EVENT-SERVICE
               predicates:
-                - Path=/events/**
+                - Path=/events/**, /admin/events/**
             - id: inventory-service
               uri: lb://INVENTORY-SERVICE
               predicates:

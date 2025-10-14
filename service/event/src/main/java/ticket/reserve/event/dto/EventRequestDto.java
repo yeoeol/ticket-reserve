@@ -13,8 +13,7 @@ public record EventRequestDto(
         LocalDateTime startTime,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime endTime,
-        int totalSeats,             // 총 좌석 수
-        int availableSeats          // 남은 좌석 수
+        int totalSeats             // 총 좌석 수
 ) {
     public Event toEntity() {
         return Event.builder()
@@ -24,7 +23,7 @@ public record EventRequestDto(
                 .startTime(this.startTime)
                 .endTime(this.endTime)
                 .totalSeats(this.totalSeats)
-                .availableSeats(this.availableSeats)
+                .availableSeats(this.totalSeats)
                 .build();
     }
 }
