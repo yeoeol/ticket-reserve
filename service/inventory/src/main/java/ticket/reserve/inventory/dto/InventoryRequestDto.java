@@ -10,6 +10,7 @@ public record InventoryRequestDto(
         return Inventory.builder()
                 .eventId(this.eventId)
                 .totalSeats(this.totalSeats)
+                .availableSeats(this.totalSeats)
                 .build();
     }
 }
