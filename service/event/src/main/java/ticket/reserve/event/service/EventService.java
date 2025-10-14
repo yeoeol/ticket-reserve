@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
-import ticket.reserve.event.entity.Event;
+import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.repository.EventRepository;
 
 import java.util.List;
