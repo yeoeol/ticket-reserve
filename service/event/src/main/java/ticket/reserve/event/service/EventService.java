@@ -1,6 +1,7 @@
 package ticket.reserve.event.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.event.dto.EventRequestDto;
@@ -17,6 +18,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public EventResponseDto createEvent(EventRequestDto request) {
         Event event = request.toEntity();
@@ -37,6 +39,7 @@ public class EventService {
                 .orElseThrow(() -> new RuntimeException("Event not found"));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public EventResponseDto updateEvent(Long id, EventUpdateRequestDto request) {
         Event event = eventRepository.findById(id)
@@ -47,6 +50,7 @@ public class EventService {
         return EventResponseDto.from(event);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteEvent(Long id) {
         eventRepository.deleteById(id);

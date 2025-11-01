@@ -20,6 +20,7 @@ public class UserController {
 
     @GetMapping("/")
     public String home() {
+        System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
         return "user-service";
     }
 
@@ -46,6 +47,7 @@ public class UserController {
     @GetMapping("/info/{userId}")
     public String get(@PathVariable Long userId) {
         System.out.println("[UserController.get]");
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
+        return "test";
     }
 }
