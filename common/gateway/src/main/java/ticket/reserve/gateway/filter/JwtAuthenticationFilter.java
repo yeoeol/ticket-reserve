@@ -6,7 +6,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -17,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -37,7 +37,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     public JwtAuthenticationFilter(@Value("${jwt.secret}") String secret,
                                    @Value("${jwt.expiration}") long expiration) {
         super(Object.class);
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
         this.expiration = expiration;
     }
 
@@ -47,9 +48,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             ServerHttpRequest request = exchange.getRequest();
 
             String path = request.getURI().getPath();
-            boolean isPermitted = permitUris.stream()
-                    .anyMatch(pattern -> antPathMatcher
-                    .match(pattern, path));
+            boolean isPermitted = isPermitted(path);
 
             // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
             if (isPermitted) {
@@ -69,7 +68,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             String userId = getUserIdFromJwt(jwt);
             String roles = getRolesFromJwt(jwt);
 
-            if (antPathMatcher.match("/admin/**", path) && !roles.equals("ROLE_ADMIN")) {
+/*            if (antPathMatcher.match("/admin/**", path) && !roles.equals("ROLE_ADMIN")) {
                 return onError(exchange, "Access denied - admin only", HttpStatus.FORBIDDEN);
             }
 
@@ -79,7 +78,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
 
             if (isUserPath && !List.of("ROLE_USER", "ROLE_ADMIN").contains(roles)) {
                 return onError(exchange, "Access denied - user only", HttpStatus.FORBIDDEN);
-            }
+            }*/
 
             ServerHttpRequest newRequest = request.mutate()
                     .header("X-USER-ID", userId)
@@ -88,6 +87,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
 
             return chain.filter(exchange.mutate().request(newRequest).build());
         };
+    }
+
+    private boolean isPermitted(String path) {
+        return permitUris.stream()
+                .anyMatch(pattern -> antPathMatcher
+                        .match(pattern, path));
     }
 
     private String getUserIdFromJwt(String jwt) {
