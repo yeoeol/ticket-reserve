@@ -31,15 +31,4 @@ public class GatewaySecurityConfig {
 
         return http.build();
     }
-
-    @Bean
-    public ReactiveUserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("1234"))
-                .roles("ADMIN")
-                .build();
-
-        return new MapReactiveUserDetailsService(user);
-    }
 }
