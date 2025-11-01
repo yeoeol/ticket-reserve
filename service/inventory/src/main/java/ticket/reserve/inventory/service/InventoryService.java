@@ -1,6 +1,7 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.inventory.domain.Inventory;
@@ -14,6 +15,7 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public InventoryResponseDto createInventory(InventoryRequestDto request) {
         Inventory inventory = request.toEntity();
