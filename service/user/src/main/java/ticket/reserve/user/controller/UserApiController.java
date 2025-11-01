@@ -1,13 +1,8 @@
 package ticket.reserve.user.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.dto.UserLoginRequestDto;
 import ticket.reserve.user.dto.UserRegisterRequestDto;
@@ -16,42 +11,43 @@ import ticket.reserve.user.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/users/api")
+public class UserApiController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/")
     public String home() {
         System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "home";
-    }
-
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
+        return "user-service";
     }
 
     @PostMapping("/register")
-    public String register(UserRegisterRequestDto requestDto) {
-        userService.register(requestDto);
-        return "redirect:/users/register";
+    public ResponseEntity<Map<String, Long>> register(@RequestBody UserRegisterRequestDto requestDto) {
+        Long userId = userService.register(requestDto);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("userId", userId);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto.username(), requestDto.password());
 
-        response.addHeader(HttpHeaders.AUTHORIZATION, token);
-        return "redirect:/users";
+        Map<String, String> response = new HashMap<>();
+        response.put("accessToken", token);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/info/{userId}")
     public String get(@PathVariable Long userId) {
         System.out.println("[UserController.get]");
         System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "redirect:/users";
+        return "test";
     }
 }
