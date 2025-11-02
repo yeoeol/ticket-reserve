@@ -13,18 +13,11 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/api")
 public class UserApiController {
 
     private final UserService userService;
 
-    @GetMapping("/")
-    public String home() {
-        System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "user-service";
-    }
-
-    @PostMapping("/register")
+    @PostMapping("/api/users/register")
     public ResponseEntity<Map<String, Long>> register(@RequestBody UserRegisterRequestDto requestDto) {
         Long userId = userService.register(requestDto);
 
@@ -34,7 +27,7 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/users/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto.username(), requestDto.password());
 
@@ -44,7 +37,7 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/info/{userId}")
+    @GetMapping("/api/users/{userId}")
     public String get(@PathVariable Long userId) {
         System.out.println("[UserController.get]");
         System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());

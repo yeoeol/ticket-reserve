@@ -15,15 +15,15 @@ spring:
             - id: user-service
               uri: lb://USER-SERVICE   # service-registry(Eureka)에 등록된 이름
               predicates:
-                - Path=/users/**       # 요청 경로 패턴
+                - Path=/users/**, /api/users/**       # 요청 경로 패턴
             - id: event-service
               uri: lb://EVENT-SERVICE
               predicates:
-                - Path=/events/**, /admin/events/**
+                - Path=/events/**, /admin/events/**, /api/events/**, /admin/api/events/**
             - id: inventory-service
               uri: lb://INVENTORY-SERVICE
               predicates:
-                - Path=/inventory/**, /api/admin/inventory/**
+                - Path=/inventory/**, /admin/inventory/**, /api/inventory/**, /admin/api/inventory/**
             - id: reservation-service
               uri: lb://RESERVATION-SERVICE
               predicates:

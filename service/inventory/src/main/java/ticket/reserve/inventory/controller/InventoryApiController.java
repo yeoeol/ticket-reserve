@@ -10,22 +10,11 @@ import ticket.reserve.inventory.service.InventoryService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/admin/inventory")
-    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
-        return ResponseEntity.ok(inventoryService.createInventory(request));
-    }
-
-/*    @GetMapping("/inventory/{eventId}")
-    public ResponseEntity<InventoryResponseDto> getOne(@PathVariable Long eventId) {
-        return ResponseEntity.ok(inventoryService.getInventory(eventId));
-    }*/
-
-    @PostMapping("/inventory/{eventId}/reserve")
+    @PostMapping("/api/inventory/{eventId}/reserve")
     public ResponseEntity<InventoryResponseDto> reserve(
             @PathVariable Long eventId,
             @RequestParam Long inventoryId
@@ -33,12 +22,17 @@ public class InventoryApiController {
         return ResponseEntity.ok(inventoryService.reserveSeats(eventId, inventoryId));
     }
 
-    @PostMapping("/inventory/{eventId}/release")
+    @PostMapping("/api/inventory/{eventId}/release")
     public ResponseEntity<Void> release(
             @PathVariable Long eventId,
             @RequestParam Long inventoryId
     ) {
         inventoryService.releaseSeats(eventId, inventoryId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/admin/api/inventory")
+    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
+        return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 }

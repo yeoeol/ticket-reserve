@@ -187,7 +187,7 @@
             </div>
         </section>
 
-        <form method="post">
+        <form th:action="@{/payments}" method="post">
             <input type="hidden" name="eventId" th:value="*{event.id}" />
 
             <div class="booking-layout">
