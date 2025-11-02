@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public record EventResponseDto(
         Long id,
         String eventTitle,          // 공연 제목
+        String description,
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
@@ -18,6 +19,7 @@ public record EventResponseDto(
         return EventResponseDto.builder()
                 .id(event.getId())
                 .eventTitle(event.getEventTitle())
+                .description(event.getDescription())
                 .location(event.getLocation())
                 .startTime(event.getStartTime())
                 .endTime(event.getEndTime())
