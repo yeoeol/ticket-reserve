@@ -9,6 +9,7 @@ spring:
       server:
         webflux:
           default-filters:
+            - PreserveHostHeader
             - name: JwtAuthenticationFilter
           routes:
             - id: user-service
