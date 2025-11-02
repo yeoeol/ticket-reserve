@@ -8,6 +8,6 @@ import ticket.reserve.inventory.dto.EventResponseDto;
 @FeignClient(name = "EVENT-SERVICE")
 public interface EventServiceClient {
 
-    @GetMapping("/events/api/{eventId}")
+    @GetMapping("/api/events/{eventId}")
     EventResponseDto getOne(@PathVariable("eventId") Long eventId);
 }

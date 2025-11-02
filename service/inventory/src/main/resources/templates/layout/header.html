@@ -3,10 +3,13 @@
 <header th:fragment="header">
     <div class="logo">localhost</div>
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Stays</a>
-        <a href="#">Become a host</a>
+        <a href="#" th:href="@{/events}">Home</a>
     </nav>
     <div class="user-controls">
-        <span>🌍</span> <span>👤</span> </div>
+        <span>
+            <a th:href="@{/users/register}">
+                👤
+            </a>
+        </span>
+    </div>
 </header>

@@ -18,11 +18,6 @@ public class EventController {
 
     private final EventService eventService;
 
-    @PostMapping("/admin/events")
-    public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
-    }
-
     @GetMapping("/events")
     public String getAll(Model model) {
         List<EventResponseDto> eventList = eventService.getAllEvents();
@@ -37,6 +32,11 @@ public class EventController {
         model.addAttribute("event", event);
 
         return "event-detail";
+    }
+
+    @PostMapping("/admin/events")
+    public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
+        return ResponseEntity.ok(eventService.createEvent(request));
     }
 
     @PutMapping("/admin/events/{id}")
