@@ -1,12 +1,13 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.inventory.client.EventServiceClient;
 import ticket.reserve.inventory.domain.Inventory;
-import ticket.reserve.inventory.dto.InventoryRequestDto;
-import ticket.reserve.inventory.dto.InventoryResponseDto;
+import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.repository.InventoryRepository;
 
 import java.util.List;
@@ -16,12 +17,16 @@ import java.util.List;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final EventServiceClient eventServiceClient;
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public InventoryResponseDto createInventory(InventoryRequestDto request) {
+    public InventoryCreateResponseDto createInventory(InventoryRequestDto request) {
         Inventory inventory = request.toEntity();
-        return InventoryResponseDto.from(inventoryRepository.save(inventory));
+        EventResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
+
+        Inventory savedInventory = inventoryRepository.save(inventory);
+        return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
     }
 
     @Transactional
@@ -40,10 +45,14 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<InventoryResponseDto> getInventoryList(Long eventId) {
-        return inventoryRepository.findAllByEventId(eventId)
-                .stream()
+    public InventoryListResponseDto getInventoryList(Long eventId) {
+        EventResponseDto responseDto = eventServiceClient.getOne(eventId);
+        List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
+
+        List<InventoryResponseDto> responseDtoList = inventoryList.stream()
                 .map(InventoryResponseDto::from)
                 .toList();
+
+        return InventoryListResponseDto.of(responseDto, responseDtoList);
     }
 }
