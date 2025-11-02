@@ -2,6 +2,8 @@ package ticket.reserve.event.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
@@ -10,7 +12,7 @@ import ticket.reserve.event.service.EventService;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class EventController {
 
@@ -22,13 +24,19 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventResponseDto>> getAll() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+    public String getAll(Model model) {
+        List<EventResponseDto> eventList = eventService.getAllEvents();
+        model.addAttribute("eventList", eventList);
+
+        return "event-list";
     }
 
     @GetMapping("/events/{id}")
-    public ResponseEntity<EventResponseDto> getOne(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.getEvent(id));
+    public String getOne(@PathVariable Long id, Model model) {
+        EventResponseDto event = eventService.getEvent(id);
+        model.addAttribute("event", event);
+
+        return "event-detail";
     }
 
     @PutMapping("/admin/events/{id}")

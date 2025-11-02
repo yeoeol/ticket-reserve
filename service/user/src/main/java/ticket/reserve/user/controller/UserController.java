@@ -1,20 +1,14 @@
 package ticket.reserve.user.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.dto.UserLoginRequestDto;
 import ticket.reserve.user.dto.UserRegisterRequestDto;
 import ticket.reserve.user.service.UserService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,7 +20,7 @@ public class UserController {
     @GetMapping
     public String home() {
         System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "home";
+        return "redirect:/events";
     }
 
     @GetMapping("/register")
@@ -52,6 +46,6 @@ public class UserController {
     public String get(@PathVariable Long userId) {
         System.out.println("[UserController.get]");
         System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "redirect:/users";
+        return "redirect:/events";
     }
 }
