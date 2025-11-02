@@ -5,11 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.inventory.dto.InventoryCreateResponseDto;
+import ticket.reserve.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.inventory.dto.InventoryRequestDto;
 import ticket.reserve.inventory.dto.InventoryResponseDto;
 import ticket.reserve.inventory.service.InventoryService;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,13 +18,13 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @PostMapping("/admin/inventory")
-    public ResponseEntity<InventoryResponseDto> create(@RequestBody InventoryRequestDto request) {
+    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
         return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
     @GetMapping("/inventory/{eventId}")
     public String getAll(@PathVariable Long eventId, Model model) {
-        List<InventoryResponseDto> inventoryList = inventoryService.getInventoryList(eventId);
+        InventoryListResponseDto inventoryList = inventoryService.getInventoryList(eventId);
         model.addAttribute("inventoryList", inventoryList);
 
         return "inventory-list";

@@ -17,7 +17,7 @@ public class EventApiController {
 
     private final EventService eventService;
 
-    @PostMapping("/admin/events")
+    @PostMapping("/admin")
     public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
         return ResponseEntity.ok(eventService.createEvent(request));
     }
@@ -27,18 +27,18 @@ public class EventApiController {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
-    @GetMapping("/events/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EventResponseDto> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @PutMapping("/admin/events/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<EventResponseDto> update(@PathVariable Long id,
                                        @RequestBody EventUpdateRequestDto request) {
         return ResponseEntity.ok(eventService.updateEvent(id, request));
     }
 
-    @DeleteMapping("/admin/events/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
