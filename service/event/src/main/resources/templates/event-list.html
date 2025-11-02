@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localhost - Find a host</title>
+    <style>
+        /* --- 기본 스타일 초기화 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+            Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            color: #222;
+            background-color: #f7f7f7;
+        }
+
+        /* --- 1. 헤더 (로고, 네비게이션) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+            border-bottom: 1px solid #ebebeb;
+            background-color: #fff;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff385c; /* Airbnb 로고와 비슷한 색상 */
+        }
+
+        nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-controls span {
+            margin-left: 16px;
+            font-size: 20px; /* 아이콘 대신 이모지 사용 */
+        }
+
+        /* --- 2. 히어로 & 검색창 --- */
+        .hero {
+            padding: 40px;
+            background: #f0f0f0 url('https://images.unsplash.com/photo-1506934120284-c57f191f69a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDE4fHxsYW5kc2NhcGV8ZW58MHx8fHwxNzMwNDk3OTMxfDA&ixlib=rb-4.0.3&q=80&w=1080') no-repeat center center;
+            background-size: cover;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin-top: 0;
+        }
+
+        .search-bar {
+            display: flex;
+            background-color: #fff;
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin-top: 24px;
+        }
+
+        .search-bar .input-group {
+            flex: 1;
+            padding: 8px 16px;
+            border-right: 1px solid #ddd;
+        }
+        .search-bar .input-group:last-child {
+            border-right: none;
+        }
+
+        .search-bar label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            padding-top: 4px;
+        }
+
+        .search-button {
+            background-color: #ff385c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        /* --- 3. 숙소 목록 --- */
+        .listings-section {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .listings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .listings-grid {
+            display: grid;
+            /* 4열 그리드, 최소 250px 너비 보장 */
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .listing-card {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+
+            text-decoration: none; /* 밑줄 제거 */
+            color: inherit;       /* 부모 요소의 글자색 상속 (기존 검은색) */
+            display: block;       /* a 태그를 div처럼 블록 요소로 취급 */
+        }
+
+        .listing-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* 이미지가 비율을 유지하며 꽉 차게 */
+        }
+
+        .like-button {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 24px;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+
+        .card-details {
+            padding: 16px;
+        }
+
+        .card-details .title-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .card-details .location {
+            font-size: 14px;
+            color: #717171;
+            margin-top: 4px;
+        }
+
+        .card-details .price {
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .card-details .price-chart {
+            font-size: 14px;
+            color: #717171;
+            text-decoration: underline;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/header::header}"></div>
+<main>
+    <section class="hero">
+        <h1>공연 정보를 검색하세요</h1>
+
+        <form class="search-bar">
+            <div class="input-group">
+                <label for="eventTitle">공연명</label>
+                <input type="text" id="eventTitle" name="eventTitle"  placeholder="Search destinations">
+            </div>
+            <div class="input-group">
+                <label for="startTime">시작 시간</label>
+                <input type="text" id="startTime" name="startTime" placeholder="Add times" onfocus="(this.type='date')">
+            </div>
+            <div class="input-group">
+                <label for="endTime">종료 시간</label>
+                <input type="text" id="endTime" name="endTime" placeholder="Add times" onfocus="(this.type='date')">
+            </div>
+            <div class="input-group">
+                <label for="guest">Guest</label>
+                <input type="text" id="guest" placeholder="Add guests">
+            </div>
+            <button type="submit" class="search-button">🔍 Search</button>
+        </form>
+    </section>
+
+    <section class="listings-section">
+        <!--<div class="listings-header">
+            <h2>Stays nearby: Toronto Ontario</h2>
+            <div>
+                <span>🔲</span> <span>🗺️</span> </div>
+        </div>-->
+        <div class="listings-grid">
+            <div class="listing-card" th:each="event : ${eventList}">
+                <a class="listing-card" th:href="@{/events/{id}(id=${event.id})}">
+                <img src="https://images.unsplash.com/photo-1588880331179-bDCb7f1856f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDE0fHxjYWJpbnxlbnwwfHx8fDE3MzA0OTgwMjN8MA&ixlib=rb-4.0.3&q=80&w=400" alt="Brightwoods Cabin">
+                <span class="like-button">♡</span>
+                <div class="card-details">
+                    <div class="title-rating">
+                        <span th:text="'공연 이름 : ' + ${event.eventTitle}">eventTitle</span>
+                        <span>⭐ 4.8</span>
+                    </div>
+                    <div class="location" th:text="'위치 : ' + ${event.location}">Bridlepath, Ontario, Canada</div>
+                    <div class="startTime" th:text="'시작 시간 : ' + ${event.startTime}">startTime</div>
+                    <div class="endTime" th:text="'종료 시간 : ' + ${event.endTime}">endTime</div>
+                    <div class="totalSeats" th:text="'남은 좌석 수 : ' + ${event.availableSeats}">availableSeats</div>
+                </div>
+                </a>
+            </div>
+
+           <!-- <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1588880331179-bDCb7f1856f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDE0fHxjYWJpbnxlbnwwfHx8fDE3MzA0OTgwMjN8MA&ixlib=rb-4.0.3&q=80&w=400" alt="Brightwoods Cabin">
+                <span class="like-button">♡</span>
+                <div class="card-details">
+                    <div class="title-rating">
+                        <span>Brightwoods Cabin</span>
+                        <span>⭐ 4.8</span>
+                    </div>
+                    <div class="location">Bridlepath, Ontario, Canada</div>
+                    <div class="price">
+                        <span>$658</span> / night
+                        <span classs="price-chart">Price chart</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1560200353-7d13b1fffa68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDZ8fG1vZGVybiUyMGxvZnR8ZW58MHx8fHwxNzMwNDk4MDUyfDA&ixlib=rb-4.0.3&q=80&w=400" alt="Urban Loft">
+                <span class="like-button">♡</span>
+                <div class="card-details">
+                    <div class="title-rating">
+                        <span>Urban Loft</span>
+                        <span>⭐ 4.5</span>
+                    </div>
+                    <div class="location">Georgina Bay, Ontario, Canada</div>
+                    <div class="price">
+                        <span>$410</span> / night
+                    </div>
+                </div>
+            </div>
+
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1501813179279-37de0992011f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDEyfHxmb3Jlc3QlMjBjYWJpbnxlbnwwfHx8fDE3MzA0OTgwMjN8MA&ixlib=rb-4.0.3&q=80&w=400" alt="Forestville Cottages">
+                <span class="like-button">♡</span>
+                <div class="card-details">
+                    <div class="title-rating">
+                        <span>Forestville Cottages</span>
+                        <span>⭐ 5.0</span>
+                    </div>
+                    <div class="location">Simcoe, Ontario, Canada</div>
+                    <div class="price">
+                        <span>$325</span> / night
+                    </div>
+                </div>
+            </div>
+
+            <div class="listing-card">
+                <img src="https://images.unsplash.com/photo-1616047001799-c9ddb321876a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDN8fGNvenklMjBjYWJpbnxlbnwwfHx8fDE3MzA0OTgwMjN8MA&ixlib=rb-4.0.3&q=80&w=400" alt="Unionville Logde">
+                <span class="like-button">♡</span>
+                <div class="card-details">
+                    <div class="title-rating">
+                        <span>Unionville Logde</span>
+                        <span>⭐ 4.6</span>
+                    </div>
+                    <div class="location">Markham, Ontario, Canada</div>
+                    <div class="price">
+                        <span>$485</span> / night
+                        <span classs="price-chart">Price chart</span>
+                    </div>
+                </div>
+            </div>
+-->
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
