@@ -2,18 +2,15 @@ package ticket.reserve.inventory.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.inventory.dto.InventoryRequestDto;
 import ticket.reserve.inventory.dto.InventoryResponseDto;
 import ticket.reserve.inventory.service.InventoryService;
 
-import java.util.List;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
-public class InventoryController {
+@RequestMapping("/api")
+public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
@@ -22,33 +19,25 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
-    @GetMapping("/inventory/{eventId}")
-    public String getAll(@PathVariable Long eventId, Model model) {
-        List<InventoryResponseDto> inventoryList = inventoryService.getInventoryList(eventId);
-        model.addAttribute("inventoryList", inventoryList);
-
-        return "inventory-list";
-    }
+/*    @GetMapping("/inventory/{eventId}")
+    public ResponseEntity<InventoryResponseDto> getOne(@PathVariable Long eventId) {
+        return ResponseEntity.ok(inventoryService.getInventory(eventId));
+    }*/
 
     @PostMapping("/inventory/{eventId}/reserve")
-    public String reserve(
+    public ResponseEntity<InventoryResponseDto> reserve(
             @PathVariable Long eventId,
-            @RequestParam Long inventoryId,
-            Model model
+            @RequestParam Long inventoryId
     ) {
-        InventoryResponseDto inventory = inventoryService.reserveSeats(eventId, inventoryId);
-        model.addAttribute("inventory", inventory);
-
-        return "redirect:/payments";
+        return ResponseEntity.ok(inventoryService.reserveSeats(eventId, inventoryId));
     }
 
     @PostMapping("/inventory/{eventId}/release")
-    public String release(
+    public ResponseEntity<Void> release(
             @PathVariable Long eventId,
             @RequestParam Long inventoryId
     ) {
         inventoryService.releaseSeats(eventId, inventoryId);
-
-        return "redirect:/inventory/" + eventId;
+        return ResponseEntity.noContent().build();
     }
 }

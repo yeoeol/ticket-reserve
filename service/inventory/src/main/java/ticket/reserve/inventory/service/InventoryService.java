@@ -9,6 +9,8 @@ import ticket.reserve.inventory.dto.InventoryRequestDto;
 import ticket.reserve.inventory.dto.InventoryResponseDto;
 import ticket.reserve.inventory.repository.InventoryRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
@@ -23,24 +25,25 @@ public class InventoryService {
     }
 
     @Transactional
-    public InventoryResponseDto reserveSeats(Long eventId, int count) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId)
+    public InventoryResponseDto reserveSeats(Long eventId, Long inventoryId) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId, inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
-        inventory.reserve(count);
+        inventory.reserve(1);
         return InventoryResponseDto.from(inventory);
     }
 
     @Transactional
-    public void releaseSeats(Long eventId, int count) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId)
+    public void releaseSeats(Long eventId, Long inventoryId) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId, inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
-        inventory.release(count);
+        inventory.release(1);
     }
 
     @Transactional(readOnly = true)
-    public InventoryResponseDto getInventory(Long eventId) {
-        return inventoryRepository.findByEventId(eventId)
+    public List<InventoryResponseDto> getInventoryList(Long eventId) {
+        return inventoryRepository.findAllByEventId(eventId)
+                .stream()
                 .map(InventoryResponseDto::from)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .toList();
     }
 }
