@@ -3,9 +3,9 @@ package ticket.reserve.reservation.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import ticket.reserve.reservation.dto.InventoryConfirmRequestDto;
-import ticket.reserve.reservation.dto.InventoryHoldRequestDto;
-import ticket.reserve.reservation.dto.InventoryReleaseRequestDto;
+import ticket.reserve.reservation.client.dto.InventoryConfirmRequestDto;
+import ticket.reserve.reservation.client.dto.InventoryHoldRequestDto;
+import ticket.reserve.reservation.client.dto.InventoryReleaseRequestDto;
 
 @FeignClient(name = "INVENTORY-SERVICE")
 public interface InventoryServiceClient {

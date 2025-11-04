@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.dto;
+package ticket.reserve.reservation.client.dto;
 
 public record InventoryReleaseRequestDto(
         Long eventId,
