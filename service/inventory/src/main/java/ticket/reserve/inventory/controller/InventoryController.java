@@ -2,41 +2,53 @@ package ticket.reserve.inventory.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.inventory.dto.InventoryCreateResponseDto;
+import ticket.reserve.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.inventory.dto.InventoryRequestDto;
 import ticket.reserve.inventory.dto.InventoryResponseDto;
 import ticket.reserve.inventory.service.InventoryService;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class InventoryController {
 
     private final InventoryService inventoryService;
 
     @PostMapping("/admin/inventory")
-    public ResponseEntity<InventoryResponseDto> create(@RequestBody InventoryRequestDto request) {
+    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
         return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
     @GetMapping("/inventory/{eventId}")
-    public ResponseEntity<InventoryResponseDto> getOne(@PathVariable Long eventId) {
-        return ResponseEntity.ok(inventoryService.getInventory(eventId));
+    public String getAll(@PathVariable Long eventId, Model model) {
+        InventoryListResponseDto inventoryList = inventoryService.getInventoryList(eventId);
+        model.addAttribute("inventoryList", inventoryList);
+
+        return "inventory-list";
     }
 
     @PostMapping("/inventory/{eventId}/reserve")
-    public ResponseEntity<InventoryResponseDto> reserve(
+    public String reserve(
             @PathVariable Long eventId,
-            @RequestParam int count
+            @RequestParam Long inventoryId,
+            Model model
     ) {
-        return ResponseEntity.ok(inventoryService.reserveSeats(eventId, count));
+        InventoryResponseDto inventory = inventoryService.reserveSeats(eventId, inventoryId);
+        model.addAttribute("inventory", inventory);
+
+        return "redirect:/payments";
     }
 
     @PostMapping("/inventory/{eventId}/release")
-    public ResponseEntity<Void> release(
+    public String release(
             @PathVariable Long eventId,
-            @RequestParam int count
+            @RequestParam Long inventoryId
     ) {
-        inventoryService.releaseSeats(eventId, count);
-        return ResponseEntity.noContent().build();
+        inventoryService.releaseSeats(eventId, inventoryId);
+
+        return "redirect:/inventory/" + eventId;
     }
 }

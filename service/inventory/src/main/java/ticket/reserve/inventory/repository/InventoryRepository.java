@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import ticket.reserve.inventory.domain.Inventory;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT i FROM Inventory i WHERE i.eventId = :eventId")
-    Optional<Inventory> findByEventIdForUpdate(Long eventId);
+    @Query("SELECT i FROM Inventory i WHERE i.eventId = :eventId AND i.id = :inventoryId")
+    Optional<Inventory> findByEventIdForUpdate(Long eventId, Long inventoryId);
 
-    Optional<Inventory> findByEventId(Long eventId);
+    List<Inventory> findAllByEventId(Long eventId);
 }

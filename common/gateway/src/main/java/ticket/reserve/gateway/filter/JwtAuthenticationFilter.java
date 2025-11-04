@@ -25,7 +25,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     public static final List<String> permitUris = List.of(
             // user-service
             "/users", "/users/register", "/users/login",
-            "/events/**", "/inventory/"
+            // event-service
+            "/events/**",
+            // 임시 허용 - payment-service
+            "/payments/**"
     );
 
     private final SecretKey key;

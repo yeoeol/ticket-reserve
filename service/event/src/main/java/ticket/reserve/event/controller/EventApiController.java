@@ -12,33 +12,32 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class EventApiController {
 
     private final EventService eventService;
 
-    @PostMapping("/admin/events")
-    public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
-    }
-
-    @GetMapping("/events")
+    @GetMapping("/api/events")
     public ResponseEntity<List<EventResponseDto>> getAll() {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
-    @GetMapping("/events/{id}")
+    @GetMapping("/api/events/{id}")
     public ResponseEntity<EventResponseDto> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @PutMapping("/admin/events/{id}")
+    @PostMapping("/admin/api/events")
+    public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
+        return ResponseEntity.ok(eventService.createEvent(request));
+    }
+
+    @PutMapping("/admin/api/events/{id}")
     public ResponseEntity<EventResponseDto> update(@PathVariable Long id,
                                        @RequestBody EventUpdateRequestDto request) {
         return ResponseEntity.ok(eventService.updateEvent(id, request));
     }
 
-    @DeleteMapping("/admin/events/{id}")
+    @DeleteMapping("/admin/api/events/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
