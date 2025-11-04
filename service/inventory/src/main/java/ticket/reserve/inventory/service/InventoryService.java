@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.inventory.client.EventServiceClient;
 import ticket.reserve.inventory.domain.Inventory;
+import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.repository.InventoryRepository;
 
