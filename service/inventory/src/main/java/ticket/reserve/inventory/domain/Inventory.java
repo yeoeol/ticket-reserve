@@ -2,6 +2,7 @@ package ticket.reserve.inventory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ticket.reserve.inventory.domain.enums.InventoryStatus;
 
 @Entity
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,6 +18,12 @@ public class Inventory {
     private Long id;
 
     private Long eventId;
+
+    private int price;
+
+    @Enumerated(EnumType.STRING)
+    private InventoryStatus status;
+
     private int totalSeats;
     private int availableSeats;
 
@@ -38,5 +45,17 @@ public class Inventory {
         if (availableSeats > totalSeats) {
             availableSeats = totalSeats;
         }
+    }
+
+    public void release() {
+        this.status = InventoryStatus.AVAILABLE;
+    }
+
+    public void hold() {
+        this.status = InventoryStatus.PENDING;
+    }
+
+    public void confirm() {
+        this.status = InventoryStatus.OCCUPIED;
     }
 }

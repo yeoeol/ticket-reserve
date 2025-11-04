@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localhost - Select Seats</title>
+    <style>
+        /* --- (1-1) 기본 스타일 (event-detail.html과 동일) --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+            Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            color: #222;
+            background-color: #f7f7f7;
+        }
+
+        /* --- (1-2) 헤더 (event-detail.html과 동일) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+            border-bottom: 1px solid #ebebeb;
+            background-color: #fff;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: #ff385c; }
+        nav a { margin-left: 20px; text-decoration: none; color: #222; font-weight: 500; }
+        .user-controls { display: flex; align-items: center; }
+        .user-controls span { margin-left: 16px; font-size: 20px; }
+
+        /* --- (2) 상세 페이지 스타일 (event-detail.html과 동일) --- */
+        .detail-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 24px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+        .event-title-header h1 { font-size: 32px; margin-top: 0; margin-bottom: 8px; }
+        .event-meta {
+            font-size: 16px; color: #555; margin-bottom: 24px;
+            border-bottom: 1px solid #eee; padding-bottom: 24px;
+        }
+        .event-meta span { margin-right: 16px; }
+        .event-content { display: flex; gap: 32px; }
+        .event-image { flex: 2; }
+        .event-image img { width: 100%; border-radius: 12px; object-fit: cover; height: 450px; }
+        .event-info { flex: 1; display: flex; flex-direction: column; }
+        .info-box {
+            border: 1px solid #ddd; border-radius: 12px;
+            padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .info-box h3 {
+            margin-top: 0; font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 16px;
+        }
+        .info-item { font-size: 16px; margin-bottom: 16px; }
+        .info-item strong {
+            display: block; color: #717171; font-weight: 500;
+            font-size: 14px; margin-bottom: 4px;
+        }
+
+        /* --- (3) <<< 여기부터 이 페이지 전용 새 스타일 추가 >>> --- */
+
+        /* 좌석 선택 + 예약 확인을 2단으로 나누기 */
+        .booking-layout {
+            display: flex;
+            gap: 32px;
+        }
+
+        /* 왼쪽: 좌석 선택 영역 */
+        .seat-selection-area {
+            flex: 2; /* 2의 비율 */
+        }
+
+        /* 오른쪽: 예약 확인 영역 */
+        .booking-summary-area {
+            flex: 1; /* 1의 비율 */
+        }
+
+        .stage {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .seat-grid {
+            display: grid;
+            /* 10열 그리드, 각 좌석은 동일한 비율(1fr) */
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px; /* 좌석 사이 간격 */
+        }
+
+        .seat {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* 정사각형 좌석 */
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #fff;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* 선택 가능한 좌석 (기본) */
+        .seat.available:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 사용자가 선택한 좌석 */
+        .seat.selected {
+            background-color: #ff385c;
+            color: white;
+            border-color: #ff385c;
+        }
+
+        /* 이미 예약된 좌석 */
+        .seat.occupied {
+            background-color: #aaa;
+            border-color: #aaa;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* 예약 확정 버튼 (기존 .reserve-button 스타일 재사용) */
+        .confirm-button {
+            background-color: #ff385c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+        }
+        .confirm-button:hover {
+            background-color: #e00034;
+        }
+        .confirm-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/header::header}"></div>
+
+<main>
+    <div class="detail-container" th:object="${inventoryList}">
+
+        <section class="event-title-header">
+            <h1 th:text="*{event.eventTitle}">공연 이름 예시 (예: 락 페스티벌)</h1>
+            <div class="event-meta">
+                <span th:text="*{event.startTime}">2025-12-01 18:00</span>
+                <span th:text="'· ' + *{event.location}">· 위치: 서울시 강남구</span>
+            </div>
+        </section>
+
+        <form th:action="@{/payments}" method="post">
+            <input type="hidden" name="eventId" th:value="*{event.id}" />
+
+            <div class="booking-layout">
+
+                <section class="seat-selection-area">
+                    <div class="stage">STAGE</div>
+
+                    <div class="seat-grid">
+                        <div class="seat selected"
+                             th:each="inventory : ${inventoryList.inventoryList}"
+                             th:text="${inventory.inventoryId}"
+                             th:class="'seat ' + (${inventory.status.name} == 'AVAILABLE' ? 'available' : 'occupied')"
+                             th:data-seat-number="${inventory.inventoryId}"
+                             th:data-seat-price="${inventory.price}"
+                             th:data-status="${inventory.status}">
+                        </div>
+                    </div>
+<!--                        <div class="seat available">A1</div>
+                        <div class="seat available">A2</div>
+                        <div class="seat occupied">A3</div>
+                        <div class="seat occupied">A4</div>
+                        <div class="seat available">A5</div>
+                        <div class="seat available">A6</div>
+                        <div class="seat available">A7</div>
+                        <div class="seat available">A8</div>
+                        <div class="seat available">A9</div>
+                        <div class="seat available">A10</div>
+
+                        <div class="seat available">B1</div>
+                        <div class="seat available">B2</div>
+                        <div class="seat available">B3</div>
+                        <div class="seat selected">B4</div>
+                        <div class="seat selected">B5</div>
+                        <div class="seat available">B6</div>
+                        <div class="seat available">B7</div>
+                        <div class="seat occupied">B8</div>
+                        <div class="seat available">B9</div>
+                        <div class="seat available">B10</div>-->
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-box" style="background-color: #fff;"></div>
+                            <span>선택 가능</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box" style="background-color: #ff385c;"></div>
+                            <span>선택한 좌석</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box" style="background-color: #aaa;"></div>
+                            <span>예약 완료</span>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="booking-summary-area">
+                    <div class="info-box">
+                        <h3>예약 정보</h3>
+
+                        <div class="info-item">
+                            <strong>선택한 좌석</strong>
+                            <span id="selected-seats-list">4</span>
+                        </div>
+
+                        <div class="info-item">
+                            <strong>총 티켓 수</strong>
+                            <span id="ticket-count">1 장</span>
+                        </div>
+
+                        <div class="info-item">
+                            <strong>총 결제 금액</strong>
+                            <span id="total-price">₩0</span>
+                        </div>
+
+                        <button type="submit" class="confirm-button">
+                            결제하기
+                        </button>
+                    </div>
+                </aside>
+
+            </div>
+        </form>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    // ✅ 1. Thymeleaf 모델에서 이벤트 가격과 같은 데이터를 JS 변수로 가져옵니다.
+    const pricePerTicket = 100; // '100'은 JS 오류 방지용 기본값
+
+    const seatGrid = document.querySelector('.seat-grid');
+    const selectedSeatsListEl = document.getElementById('selected-seats-list');
+    const ticketCountEl = document.getElementById('ticket-count');
+    const totalPriceEl = document.getElementById('total-price');
+    const confirmButton = document.querySelector('.confirm-button');
+    const form = document.querySelector('form');
+
+    const hiddenInputContainer = document.createElement('div');
+    hiddenInputContainer.id = 'selected-seat-inputs';
+    form.appendChild(hiddenInputContainer);
+
+    // ✅ 1. 좌석 클릭 이벤트 로직 수정
+    seatGrid.addEventListener('click', (e) => {
+        const clickedSeat = e.target;
+
+        // 좌석이 아니거나, 이미 예약된 좌석이면 무시
+        if (!clickedSeat.classList.contains('seat') || clickedSeat.dataset.status === 'OCCUPIED') {
+            return;
+        }
+
+        // 현재 선택된 좌석을 찾음
+        const currentSelected = document.querySelector('.seat.selected');
+
+        // 만약 이미 선택된 좌석이 있다면, 먼저 선택 해제
+        if (currentSelected) {
+            currentSelected.classList.remove('selected');
+        }
+
+        // 방금 클릭한 좌석이 이전에 선택했던 좌석이 아니라면, 새로 선택
+        // (만약 동일한 좌석을 다시 클릭하면, 위에서 선택 해제만 되고 끝나므로 '선택 취소' 효과가 남)
+        if (currentSelected !== clickedSeat) {
+            clickedSeat.classList.add('selected');
+        }
+
+        // 요약 정보 업데이트
+        updateBookingSummary();
+    });
+
+    // ✅ 2. 단일 선택에 맞게 요약 함수 수정
+    function updateBookingSummary() {
+        // 'selected' 클래스를 가진 좌석 '하나'를 찾음 (없으면 null)
+        const selectedSeat = document.querySelector('.seat.selected');
+
+        let count = 0;
+        let seatNumber = '선택된 좌석 없음';
+
+        // 선택된 좌석이 있을 경우에만 정보 업데이트
+        if (selectedSeat) {
+            count = 1;
+            // Thymeleaf에서 설정한 data-seat-number 속성 값을 가져옴
+            seatNumber = selectedSeat.dataset.seatNumber;
+        }
+
+        const totalPrice = count * selectedSeat.dataset.seatPrice;
+
+        // 화면에 업데이트
+        selectedSeatsListEl.textContent = seatNumber;
+        ticketCountEl.textContent = `${count} 장`;
+        totalPriceEl.textContent = `₩${totalPrice.toLocaleString()}`;
+
+        // 버튼 활성화/비활성화
+        confirmButton.disabled = count === 0;
+
+        // 폼 제출을 위한 숨겨진 <input> 필드 업데이트
+        updateHiddenFormInputs(selectedSeat);
+    }
+
+    // ✅ 3. 단일 선택에 맞게 숨겨진 입력 필드 업데이트 함수 수정
+    function updateHiddenFormInputs(selectedSeat) {
+        // 기존 입력 필드 모두 삭제
+        hiddenInputContainer.innerHTML = '';
+
+        // 선택된 좌석이 있을 경우에만 input 태그 생성
+        if (selectedSeat) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'selectedSeat'; // 이름도 단수로 변경 (e.g., selectedSeat)
+            input.value = selectedSeat.dataset.seatNumber;
+            hiddenInputContainer.appendChild(input);
+        }
+    }
+
+    // 페이지 로드 시 초기 상태
+    updateBookingSummary();
+
+</script>
+
+</body>
+</html>
