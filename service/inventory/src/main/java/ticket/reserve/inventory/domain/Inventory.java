@@ -46,4 +46,16 @@ public class Inventory {
             availableSeats = totalSeats;
         }
     }
+
+    public void release() {
+        this.status = InventoryStatus.AVAILABLE;
+    }
+
+    public void hold() {
+        this.status = InventoryStatus.PENDING;
+    }
+
+    public void confirm() {
+        this.status = InventoryStatus.OCCUPIED;
+    }
 }

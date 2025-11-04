@@ -56,4 +56,25 @@ public class InventoryService {
 
         return InventoryListResponseDto.of(responseDto, responseDtoList);
     }
+
+    @Transactional
+    public void holdInventory(InventoryHoldRequestDto request) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.hold();
+    }
+
+    @Transactional
+    public void confirmInventory(InventoryConfirmRequestDto request) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.confirm();
+    }
+
+    @Transactional
+    public void releaseInventory(InventoryReleaseRequestDto request) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.release();
+    }
 }

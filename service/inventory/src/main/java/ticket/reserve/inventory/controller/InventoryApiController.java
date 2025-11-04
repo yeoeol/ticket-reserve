@@ -3,9 +3,7 @@ package ticket.reserve.inventory.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.inventory.dto.InventoryCreateResponseDto;
-import ticket.reserve.inventory.dto.InventoryRequestDto;
-import ticket.reserve.inventory.dto.InventoryResponseDto;
+import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.service.InventoryService;
 
 @RestController
@@ -34,5 +32,23 @@ public class InventoryApiController {
     @PostMapping("/admin/api/inventory")
     public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
         return ResponseEntity.ok(inventoryService.createInventory(request));
+    }
+
+    @PostMapping("/api/inventory/hold")
+    public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
+        inventoryService.holdInventory(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/inventory/confirm")
+    public ResponseEntity<Void> confirmInventory(@RequestBody InventoryConfirmRequestDto request) {
+        inventoryService.confirmInventory(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/inventory/release")
+    public ResponseEntity<Void> releaseInventory(@RequestBody InventoryReleaseRequestDto request) {
+        inventoryService.releaseInventory(request);
+        return ResponseEntity.ok().build();
     }
 }
