@@ -24,4 +24,8 @@ public class Reservation {
     private Long inventoryId;
     private int price;
     private ReservationStatus status;
+
+    public void confirm() {
+        this.status = ReservationStatus.CONFIRMED;
+    }
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReservationStatus {
     PENDING("임시 선점"),
-    OCCUPIED("선택 불가"),
+    CONFIRMED("예매 확정"),
     SELECTED("선택됨")
     ;
 
