@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.reservation.client.InventoryServiceClient;
+import ticket.reserve.reservation.client.dto.InventoryConfirmRequestDto;
 import ticket.reserve.reservation.client.dto.InventoryHoldRequestDto;
+import ticket.reserve.reservation.client.dto.InventoryReleaseRequestDto;
 import ticket.reserve.reservation.domain.Reservation;
+import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.dto.ReservationRequestDto;
 import ticket.reserve.reservation.dto.ReservationResponseDto;
 import ticket.reserve.reservation.repository.ReservationRepository;
@@ -30,5 +33,27 @@ public class ReservationService {
         Reservation savedReservation = reservationRepository.save(reservation);
 
         return ReservationResponseDto.of(savedReservation.getId(), savedReservation.getPrice());
+    }
+
+    @Transactional
+    public void confirmReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("예매 Not Found"));
+        reservation.confirm();
+
+        InventoryConfirmRequestDto inventoryConfirmRequestDto =
+                new InventoryConfirmRequestDto(reservation.getEventId(), reservation.getInventoryId());
+        inventoryServiceClient.confirmInventory(inventoryConfirmRequestDto);
+    }
+
+    @Transactional
+    public void releaseReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("예매 Not Found"));
+        reservation.confirm();
+
+        InventoryReleaseRequestDto inventoryReleaseRequestDto =
+                new InventoryReleaseRequestDto(reservation.getEventId(), reservation.getInventoryId());
+        inventoryServiceClient.releaseInventory(inventoryReleaseRequestDto);
     }
 }
