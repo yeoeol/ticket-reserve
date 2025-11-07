@@ -187,7 +187,7 @@
             </div>
         </section>
 
-        <form th:action="@{/payments}" method="post">
+        <form th:action="@{/reservations}" method="post">
             <input type="hidden" name="eventId" th:value="*{event.id}" />
 
             <div class="booking-layout">
@@ -205,7 +205,7 @@
                              th:data-status="${inventory.status}">
                         </div>
                     </div>
-<!--                        <div class="seat available">A1</div>
+                    <!--<div class="seat available">A1</div>
                         <div class="seat available">A2</div>
                         <div class="seat occupied">A3</div>
                         <div class="seat occupied">A4</div>
@@ -213,8 +213,6 @@
                         <div class="seat available">A6</div>
                         <div class="seat available">A7</div>
                         <div class="seat available">A8</div>
-                        <div class="seat available">A9</div>
-                        <div class="seat available">A10</div>
 
                         <div class="seat available">B1</div>
                         <div class="seat available">B2</div>
@@ -223,9 +221,7 @@
                         <div class="seat selected">B5</div>
                         <div class="seat available">B6</div>
                         <div class="seat available">B7</div>
-                        <div class="seat occupied">B8</div>
-                        <div class="seat available">B9</div>
-                        <div class="seat available">B10</div>-->
+                        <div class="seat occupied">B8</div>-->
 
                     <div class="legend">
                         <div class="legend-item">
@@ -267,16 +263,15 @@
                         </button>
                     </div>
                 </aside>
-
             </div>
         </form>
     </div>
 </main>
 
 <script th:inline="javascript">
-    // ✅ 1. Thymeleaf 모델에서 이벤트 가격과 같은 데이터를 JS 변수로 가져옵니다.
-    const pricePerTicket = 100; // '100'은 JS 오류 방지용 기본값
+    // Thymeleaf 모델에서 이벤트 가격과 같은 데이터를 JS 변수로 가져오기
 
+    const pricePerTicket = 100; // '100'은 JS 오류 방지용 기본값
     const seatGrid = document.querySelector('.seat-grid');
     const selectedSeatsListEl = document.getElementById('selected-seats-list');
     const ticketCountEl = document.getElementById('ticket-count');
@@ -288,7 +283,7 @@
     hiddenInputContainer.id = 'selected-seat-inputs';
     form.appendChild(hiddenInputContainer);
 
-    // ✅ 1. 좌석 클릭 이벤트 로직 수정
+    // 좌석 클릭 이벤트 로직
     seatGrid.addEventListener('click', (e) => {
         const clickedSeat = e.target;
 
@@ -297,7 +292,7 @@
             return;
         }
 
-        // 현재 선택된 좌석을 찾음
+        // 현재 선택된 좌석을 찾기
         const currentSelected = document.querySelector('.seat.selected');
 
         // 만약 이미 선택된 좌석이 있다면, 먼저 선택 해제
@@ -306,7 +301,7 @@
         }
 
         // 방금 클릭한 좌석이 이전에 선택했던 좌석이 아니라면, 새로 선택
-        // (만약 동일한 좌석을 다시 클릭하면, 위에서 선택 해제만 되고 끝나므로 '선택 취소' 효과가 남)
+        // 만약 동일한 좌석을 다시 클릭하면, 위에서 선택 해제만 되고 끝나므로 '선택 취소' 효과
         if (currentSelected !== clickedSeat) {
             clickedSeat.classList.add('selected');
         }
@@ -315,22 +310,22 @@
         updateBookingSummary();
     });
 
-    // ✅ 2. 단일 선택에 맞게 요약 함수 수정
+    // 요약 함수
     function updateBookingSummary() {
         // 'selected' 클래스를 가진 좌석 '하나'를 찾음 (없으면 null)
         const selectedSeat = document.querySelector('.seat.selected');
 
         let count = 0;
         let seatNumber = '선택된 좌석 없음';
+        let totalPrice = 0; // 기본값을 0으로 설정
 
         // 선택된 좌석이 있을 경우에만 정보 업데이트
         if (selectedSeat) {
             count = 1;
             // Thymeleaf에서 설정한 data-seat-number 속성 값을 가져옴
             seatNumber = selectedSeat.dataset.seatNumber;
+            totalPrice = count * parseFloat(selectedSeat.dataset.seatPrice);
         }
-
-        const totalPrice = count * selectedSeat.dataset.seatPrice;
 
         // 화면에 업데이트
         selectedSeatsListEl.textContent = seatNumber;
@@ -344,18 +339,26 @@
         updateHiddenFormInputs(selectedSeat);
     }
 
-    // ✅ 3. 단일 선택에 맞게 숨겨진 입력 필드 업데이트 함수 수정
+    // 숨겨진 입력 필드 업데이트 함수
     function updateHiddenFormInputs(selectedSeat) {
         // 기존 입력 필드 모두 삭제
         hiddenInputContainer.innerHTML = '';
 
         // 선택된 좌석이 있을 경우에만 input 태그 생성
         if (selectedSeat) {
+            // 좌석 id (inventoryId) 전송
             const input = document.createElement('input');
             input.type = 'hidden';
-            input.name = 'selectedSeat'; // 이름도 단수로 변경 (e.g., selectedSeat)
+            input.name = 'inventoryId';
             input.value = selectedSeat.dataset.seatNumber;
             hiddenInputContainer.appendChild(input);
+
+            // 좌석 가격 (price) 전송
+            const priceInput = document.createElement('input');
+            priceInput.type = 'hidden';
+            priceInput.name = 'price';
+            priceInput.value = selectedSeat.dataset.seatPrice;
+            hiddenInputContainer.appendChild(priceInput);
         }
     }
 
