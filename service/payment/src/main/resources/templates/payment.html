@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>결제하기</title>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+</head>
+<body>
+
+<h1>결제 페이지</h1>
+<p>주문 내용: <span th:text="${orderName}">티켓 예약</span></p>
+<p>결제 금액: <span th:text="${amount}">10000</span>원</p>
+
+<button id="payment-button">결제하기</button>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // 컨트롤러(Model)에서 전달받은 값들을 JS 변수로 변환
+    const amount = [[${amount}]]
+    const reservationId = [[${reservationId}]]
+    const orderName = [[${orderName}]]
+    const clientKey = [[${clientKey}]];
+
+
+    const tossPayments = TossPayments(clientKey);
+    const paymentButton = document.getElementById('payment-button');
+
+    paymentButton.addEventListener('click', () => {
+        // ✅ 4. 결제하기 버튼 클릭 시 SDK 실행
+        tossPayments.requestPayment('카드', {
+            amount: amount,
+            // (orderId는 PG사가 요구하는 고유한 문자열이어야 함)
+            orderId: 'reservation-' + reservationId + '-' + new Date().getTime(),
+            orderName: orderName,
+            customerName: '홍길동', // (실제로는 SecurityContext에서 가져와야 함)
+
+            // ✅ 5. 결제 성공 시 이동할 '승인' URL (가장 중요!)
+            // 이 URL은 payment-service가 처리할 서버 API 엔드포인트입니다.
+            successUrl: 'http://localhost:9090/payments/confirm',
+
+            failUrl: 'http://localhost:9090/payments/fail'
+        });
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>
