@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ticket.reserve.payment.config.PaymentProperties;
 import ticket.reserve.payment.service.PaymentService;
 
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentProperties paymentProperties;
 
     @GetMapping("/payments")
     public String paymentPage(@RequestParam Long userId,
@@ -28,8 +30,9 @@ public class PaymentController {
         model.addAttribute("amount", amount);
         model.addAttribute("orderId", orderId);
         model.addAttribute("orderName", "티켓 예매");
+        model.addAttribute("clientKey", paymentProperties.getClientKey());
 
-        paymentService.createPayment(orderId, userId, reservationId, amount);
+        paymentService.createPayment(orderId, userId, reservationId);
         return "payment";
     }
 }
