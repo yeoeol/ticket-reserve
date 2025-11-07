@@ -20,12 +20,11 @@ public class ReservationController {
     @PostMapping("/reservations")
     public String create(
             @ModelAttribute ReservationRequestDto request,
-            @AuthenticationPrincipal Authentication authentication
+            @AuthenticationPrincipal String userId
     ) {
-        Long userId = Long.parseLong(authentication.getName());
-        ReservationResponseDto response = reservationService.createReservation(request, userId);
+        ReservationResponseDto response = reservationService.createReservation(request, Long.parseLong(userId));
 
-        return "redirect:/payments?userId=%d&reservationId=%d&amount=%d".formatted(
+        return "redirect:/payments?userId=%s&reservationId=%d&amount=%d".formatted(
                 userId, response.reservationId(), response.price()
         );
     }
