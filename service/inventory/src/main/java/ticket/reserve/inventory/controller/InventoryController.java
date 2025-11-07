@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.inventory.dto.InventoryCreateResponseDto;
 import ticket.reserve.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.inventory.dto.InventoryRequestDto;
-import ticket.reserve.inventory.dto.InventoryResponseDto;
 import ticket.reserve.inventory.service.InventoryService;
 
 @Controller
@@ -28,27 +27,5 @@ public class InventoryController {
         model.addAttribute("inventoryList", inventoryList);
 
         return "inventory-list";
-    }
-
-    @PostMapping("/inventory/{eventId}/reserve")
-    public String reserve(
-            @PathVariable Long eventId,
-            @RequestParam Long inventoryId,
-            Model model
-    ) {
-        InventoryResponseDto inventory = inventoryService.reserveSeats(eventId, inventoryId);
-        model.addAttribute("inventory", inventory);
-
-        return "redirect:/payments";
-    }
-
-    @PostMapping("/inventory/{eventId}/release")
-    public String release(
-            @PathVariable Long eventId,
-            @RequestParam Long inventoryId
-    ) {
-        inventoryService.releaseSeats(eventId, inventoryId);
-
-        return "redirect:/inventory/" + eventId;
     }
 }

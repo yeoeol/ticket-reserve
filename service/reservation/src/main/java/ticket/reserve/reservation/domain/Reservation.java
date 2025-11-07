@@ -28,4 +28,8 @@ public class Reservation {
     public void confirm() {
         this.status = ReservationStatus.CONFIRMED;
     }
+
+    public void release() {
+        this.status = ReservationStatus.CANCELLED;
+    }
 }

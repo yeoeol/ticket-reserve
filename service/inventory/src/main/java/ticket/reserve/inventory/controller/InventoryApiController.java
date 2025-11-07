@@ -12,28 +12,12 @@ public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/api/inventory/{eventId}/reserve")
-    public ResponseEntity<InventoryResponseDto> reserve(
-            @PathVariable Long eventId,
-            @RequestParam Long inventoryId
-    ) {
-        return ResponseEntity.ok(inventoryService.reserveSeats(eventId, inventoryId));
-    }
-
-    @PostMapping("/api/inventory/{eventId}/release")
-    public ResponseEntity<Void> release(
-            @PathVariable Long eventId,
-            @RequestParam Long inventoryId
-    ) {
-        inventoryService.releaseSeats(eventId, inventoryId);
-        return ResponseEntity.noContent().build();
-    }
-
     @PostMapping("/admin/api/inventory")
     public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
         return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
+    // 좌석 선점 로직
     @PostMapping("/api/inventory/hold")
     public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
         inventoryService.holdInventory(request);
