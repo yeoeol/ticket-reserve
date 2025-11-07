@@ -24,6 +24,7 @@ public class ReservationService {
     public ReservationResponseDto createReservation(ReservationRequestDto request, Long userId) {
         try {
             InventoryHoldRequestDto holdRequest = new InventoryHoldRequestDto(request.eventId(), request.inventoryId());
+            // 좌석 선점 로직
             inventoryServiceClient.holdInventory(holdRequest);
         } catch (Exception e) {
             throw new RuntimeException("좌석 선점에 실패했습니다.");
@@ -50,7 +51,7 @@ public class ReservationService {
     public void releaseReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예매 Not Found"));
-        reservation.confirm();
+        reservation.release();
 
         InventoryReleaseRequestDto inventoryReleaseRequestDto =
                 new InventoryReleaseRequestDto(reservation.getEventId(), reservation.getInventoryId());
