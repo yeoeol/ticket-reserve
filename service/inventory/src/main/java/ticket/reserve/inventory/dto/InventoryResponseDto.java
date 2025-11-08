@@ -19,8 +19,6 @@ public record InventoryResponseDto(
                 .eventId(inventory.getEventId())
                 .price(inventory.getPrice())
                 .status(inventory.getStatus())
-                .totalSeats(inventory.getTotalSeats())
-                .availableSeats(inventory.getAvailableSeats())
                 .build();
     }
 }

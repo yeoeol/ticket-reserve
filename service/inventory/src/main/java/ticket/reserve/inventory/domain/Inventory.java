@@ -22,20 +22,29 @@ public class Inventory {
     private int price;
 
     @Enumerated(EnumType.STRING)
-    private InventoryStatus status;
-
-    private int totalSeats;
-    private int availableSeats;
-
-    public void release() {
-        this.status = InventoryStatus.AVAILABLE;
-    }
+    @Builder.Default
+    private InventoryStatus status = InventoryStatus.AVAILABLE;
 
     public void hold() {
+        if (this.status != InventoryStatus.AVAILABLE) {
+            throw new RuntimeException("좌석 ID : " + this.id + " - 이미 선택된 좌석입니다.");
+        }
         this.status = InventoryStatus.PENDING;
     }
 
     public void confirm() {
+        if (this.status != InventoryStatus.PENDING) {
+            System.out.println("비정상적인 확정 시도");
+            return;
+        }
         this.status = InventoryStatus.OCCUPIED;
+    }
+
+    public void release() {
+        if (this.status != InventoryStatus.PENDING) {
+            System.out.println("선점 상태가 아닌 좌석의 릴리즈 시도");
+            return;
+        }
+        this.status = InventoryStatus.AVAILABLE;
     }
 }
