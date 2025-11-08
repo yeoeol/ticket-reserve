@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.inventory.client.EventServiceClient;
-import ticket.reserve.inventory.client.dto.EventResponseDto;
+import ticket.reserve.inventory.client.dto.EventDetailResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.repository.InventoryRepository;
@@ -23,7 +23,7 @@ public class InventoryService {
     @Transactional
     public InventoryCreateResponseDto createInventory(InventoryRequestDto request) {
         Inventory inventory = request.toEntity();
-        EventResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
+        EventDetailResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
 
         Inventory savedInventory = inventoryRepository.save(inventory);
         return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
@@ -31,7 +31,7 @@ public class InventoryService {
 
     @Transactional(readOnly = true)
     public InventoryListResponseDto getInventoryList(Long eventId) {
-        EventResponseDto responseDto = eventServiceClient.getOne(eventId);
+        EventDetailResponseDto responseDto = eventServiceClient.getOne(eventId);
         List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
 
         List<InventoryResponseDto> responseDtoList = inventoryList.stream()

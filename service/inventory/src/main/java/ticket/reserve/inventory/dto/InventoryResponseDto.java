@@ -9,9 +9,7 @@ public record InventoryResponseDto(
         Long inventoryId,
         Long eventId,
         int price,
-        InventoryStatus status,
-        int totalSeats,
-        int availableSeats
+        InventoryStatus status
 ) {
     public static InventoryResponseDto from(Inventory inventory) {
         return InventoryResponseDto.builder()

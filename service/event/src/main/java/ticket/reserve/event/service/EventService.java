@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.event.client.InventoryServiceClient;
+import ticket.reserve.event.dto.EventDetailResponseDto;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
@@ -17,6 +19,7 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final InventoryServiceClient inventoryServiceClient;
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -33,9 +36,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public EventResponseDto getEvent(Long id) {
-        return eventRepository.findById(id)
-                .map(EventResponseDto::from)
+    public EventDetailResponseDto getEvent(Long eventId) {
+        Integer availableInventoryCount = inventoryServiceClient.countsInventory(eventId);
+
+        return eventRepository.findById(eventId)
+                .map(e -> EventDetailResponseDto.from(e, availableInventoryCount))
                 .orElseThrow(() -> new RuntimeException("Event not found"));
     }
 
