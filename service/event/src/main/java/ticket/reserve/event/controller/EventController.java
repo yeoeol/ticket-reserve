@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.event.dto.EventDetailResponseDto;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
@@ -28,7 +29,7 @@ public class EventController {
 
     @GetMapping("/events/{id}")
     public String getOne(@PathVariable Long id, Model model) {
-        EventResponseDto event = eventService.getEvent(id);
+        EventDetailResponseDto event = eventService.getEvent(id);
         model.addAttribute("event", event);
 
         return "event-detail";

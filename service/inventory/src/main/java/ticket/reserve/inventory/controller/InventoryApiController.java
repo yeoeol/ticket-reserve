@@ -37,7 +37,7 @@ public class InventoryApiController {
     }
 
     @GetMapping("/api/inventory/counts")
-    public ResponseEntity<Integer> countsInventory(@RequestBody InventoryCountsRequestDto request) {
-        return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(request.eventId()));
+    public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
+        return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(eventId));
     }
 }

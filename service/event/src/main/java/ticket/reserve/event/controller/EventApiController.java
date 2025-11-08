@@ -3,6 +3,7 @@ package ticket.reserve.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.event.dto.EventDetailResponseDto;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
@@ -22,7 +23,7 @@ public class EventApiController {
     }
 
     @GetMapping("/api/events/{id}")
-    public ResponseEntity<EventResponseDto> getOne(@PathVariable Long id) {
+    public ResponseEntity<EventDetailResponseDto> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 

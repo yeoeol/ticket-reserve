@@ -6,6 +6,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
