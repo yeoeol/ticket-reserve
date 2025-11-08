@@ -1,9 +1,6 @@
 package ticket.reserve.reservation.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
 
@@ -23,6 +20,8 @@ public class Reservation {
     private Long eventId;
     private Long inventoryId;
     private int price;
+
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
     public void confirm() {
