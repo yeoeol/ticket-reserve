@@ -1,4 +1,4 @@
-package ticket.reserve.inventory.dto;
+package ticket.reserve.inventory.client.dto;
 
 import java.time.LocalDateTime;
 

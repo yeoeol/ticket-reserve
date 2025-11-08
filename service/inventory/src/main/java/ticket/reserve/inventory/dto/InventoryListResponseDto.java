@@ -1,6 +1,7 @@
 package ticket.reserve.inventory.dto;
 
 import lombok.Builder;
+import ticket.reserve.inventory.client.dto.EventResponseDto;
 
 import java.util.List;
 

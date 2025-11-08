@@ -27,26 +27,6 @@ public class Inventory {
     private int totalSeats;
     private int availableSeats;
 
-    /**
-     * 좌석 잠금 (예약 시도)
-     */
-    public void reserve(int count) {
-        if (availableSeats < count) {
-            throw new RuntimeException("좌석이 부족합니다.");
-        }
-        this.availableSeats -= count;
-    }
-
-    /**
-     * 좌석 해제 (결제 실패 등)
-     */
-    public void release(int count) {
-        this.availableSeats += count;
-        if (availableSeats > totalSeats) {
-            availableSeats = totalSeats;
-        }
-    }
-
     public void release() {
         this.status = InventoryStatus.AVAILABLE;
     }

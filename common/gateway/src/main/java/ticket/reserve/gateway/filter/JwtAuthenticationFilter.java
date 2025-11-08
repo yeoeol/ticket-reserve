@@ -26,9 +26,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             // user-service
             "/users", "/users/register", "/users/login",
             // event-service
-            "/events/**",
-            // 임시 허용 - payment-service
-            "/payments/**"
+            "/events/**"
     );
 
     private final SecretKey key;
