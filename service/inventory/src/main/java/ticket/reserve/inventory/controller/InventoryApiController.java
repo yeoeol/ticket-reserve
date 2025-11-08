@@ -35,4 +35,9 @@ public class InventoryApiController {
         inventoryService.releaseInventory(request);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/api/inventory/counts")
+    public ResponseEntity<Integer> countsInventory(@RequestBody InventoryCountsRequestDto request) {
+        return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(request.eventId()));
+    }
 }

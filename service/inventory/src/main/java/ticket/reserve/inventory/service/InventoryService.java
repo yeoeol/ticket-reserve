@@ -62,4 +62,9 @@ public class InventoryService {
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.release();
     }
+
+    @Transactional(readOnly = true)
+    public Integer getAvailableInventoryCounts(Long eventId) {
+        return inventoryRepository.countAvailableInventoryByEventId(eventId);
+    }
 }

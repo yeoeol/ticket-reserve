@@ -27,7 +27,6 @@ public class Event {
     private LocalDateTime endTime;
 
     private int totalSeats;             // 총 좌석 수
-    private int availableSeats;         // 남은 좌석 수
 
     public void update(EventUpdateRequestDto request) {
         this.eventTitle = request.eventTitle();
@@ -36,6 +35,5 @@ public class Event {
         this.startTime = request.startTime();
         this.endTime = request.endTime();
         this.totalSeats = request.totalSeats();
-        this.availableSeats = request.availableSeats();
     }
 }
