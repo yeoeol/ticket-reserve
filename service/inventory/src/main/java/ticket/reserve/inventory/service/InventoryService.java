@@ -1,13 +1,12 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.inventory.client.EventServiceClient;
+import ticket.reserve.inventory.client.dto.EventResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
-import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.repository.InventoryRepository;
 
@@ -30,21 +29,6 @@ public class InventoryService {
         return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
     }
 
-    @Transactional
-    public InventoryResponseDto reserveSeats(Long eventId, Long inventoryId) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId, inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
-        inventory.reserve(1);
-        return InventoryResponseDto.from(inventory);
-    }
-
-    @Transactional
-    public void releaseSeats(Long eventId, Long inventoryId) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(eventId, inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
-        inventory.release(1);
-    }
-
     @Transactional(readOnly = true)
     public InventoryListResponseDto getInventoryList(Long eventId) {
         EventResponseDto responseDto = eventServiceClient.getOne(eventId);
@@ -57,6 +41,7 @@ public class InventoryService {
         return InventoryListResponseDto.of(responseDto, responseDtoList);
     }
 
+    // 좌석 선점 로직
     @Transactional
     public void holdInventory(InventoryHoldRequestDto request) {
         Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())

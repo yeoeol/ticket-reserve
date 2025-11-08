@@ -1,6 +1,8 @@
 package ticket.reserve.payment.dto;
 
 public record PaymentConfirmRequestDto(
-        Long reservationId
+        String orderId,
+        String paymentKey,
+        int amount
 ) {
 }

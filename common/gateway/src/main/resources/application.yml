@@ -27,7 +27,11 @@ spring:
             - id: reservation-service
               uri: lb://RESERVATION-SERVICE
               predicates:
-                - Path=/reservations/**
+                - Path=/reservations/**, /api/reservations/**
+            - id: payment-service
+              uri: lb://PAYMENT-SERVICE
+              predicates:
+                - Path=/payments/**, /api/payments/**
 
 eureka:
   client:
