@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import ticket.reserve.payment.config.PaymentProperties;
+import ticket.reserve.payment.dto.PaymentConfirmRequestDto;
 import ticket.reserve.payment.service.PaymentService;
 
 import java.util.UUID;
@@ -34,5 +36,11 @@ public class PaymentController {
 
         paymentService.createPayment(orderId, userId, reservationId);
         return "payment";
+    }
+
+    @GetMapping("/payments/success")
+    public String paymentSuccess(@ModelAttribute PaymentConfirmRequestDto request, Model model) {
+        paymentService.confirmPayment(request);
+        return "redirect:/";
     }
 }
