@@ -18,4 +18,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.eventId = :eventId AND i.status = 'AVAILABLE'")
     Integer countAvailableInventoryByEventId(Long eventId);
+
+    @Query("SELECT count(*) FROM Inventory i WHERE i.eventId = :eventId")
+    Integer countInventoryByEventId(Long eventId);
 }

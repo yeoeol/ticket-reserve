@@ -12,6 +12,7 @@ public record EventDetailResponseDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        int availableInventory
+        int availableInventory,
+        int totalSeats
 ) {
 }
