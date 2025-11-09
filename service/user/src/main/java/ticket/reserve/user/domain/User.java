@@ -28,4 +28,9 @@ public class User {
 
     @Builder.Default
     private String role = "ROLE_USER";
+
+    public void update(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
 }

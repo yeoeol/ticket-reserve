@@ -1,9 +1,9 @@
 package ticket.reserve.admin.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import ticket.reserve.admin.client.dto.UserResponseDto;
+import ticket.reserve.admin.client.dto.UserUpdateRequestDto;
 
 import java.util.List;
 
@@ -15,4 +15,7 @@ public interface UserServiceClient {
 
     @GetMapping("/api/users/{id}")
     UserResponseDto getUser(@PathVariable("id") Long userId);
+
+    @PostMapping("/api/users")
+    UserResponseDto updateUser(@RequestBody UserUpdateRequestDto request);
 }

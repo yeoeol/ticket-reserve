@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.user.domain.User;
 import ticket.reserve.user.dto.UserRegisterRequestDto;
 import ticket.reserve.user.dto.UserResponseDto;
+import ticket.reserve.user.dto.UserUpdateRequestDto;
 import ticket.reserve.user.repository.UserRepository;
 import ticket.reserve.user.util.JwtUtil;
 
@@ -56,5 +57,18 @@ public class UserService {
         return userRepository.findById(userId)
                 .map(UserResponseDto::from)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public UserResponseDto updateUser(UserUpdateRequestDto request) {
+        User user = userRepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new RuntimeException("비밀번호가 틀립니다.");
+        }
+        user.update(request.username(), request.email());
+
+        return UserResponseDto.from(user);
     }
 }
