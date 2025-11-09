@@ -8,7 +8,6 @@ public record EventUpdateRequestDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        int totalSeats,             // 총 좌석 수
-        int availableSeats          // 남은 좌석 수
+        int totalSeats             // 총 좌석 수
 ) {
 }

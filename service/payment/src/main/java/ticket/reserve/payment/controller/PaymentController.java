@@ -39,7 +39,7 @@ public class PaymentController {
     }
 
     @GetMapping("/payments/success")
-    public String paymentSuccess(@ModelAttribute PaymentConfirmRequestDto request, Model model) {
+    public String paymentSuccess(@ModelAttribute PaymentConfirmRequestDto request) {
         paymentService.confirmPayment(request);
         return "redirect:/";
     }
