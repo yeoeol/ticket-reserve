@@ -6,9 +6,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.dto.UserLoginRequestDto;
 import ticket.reserve.user.dto.UserRegisterRequestDto;
+import ticket.reserve.user.dto.UserResponseDto;
 import ticket.reserve.user.service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,10 +39,13 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/users/{userId}")
-    public String get(@PathVariable Long userId) {
-        System.out.println("[UserController.get]");
-        System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "test";
+    @GetMapping("/api/users")
+    public ResponseEntity<List<UserResponseDto>> getUsers() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") Long userId) {
+        return ResponseEntity.ok(userService.getUser(userId));
     }
 }
