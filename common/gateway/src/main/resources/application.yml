@@ -32,6 +32,10 @@ spring:
               uri: lb://PAYMENT-SERVICE
               predicates:
                 - Path=/payments/**, /api/payments/**
+            - id: admin-service
+              uri: lb://ADMIN-SERVICE
+              predicates:
+                - Path=/admin/**
 
 eureka:
   client:

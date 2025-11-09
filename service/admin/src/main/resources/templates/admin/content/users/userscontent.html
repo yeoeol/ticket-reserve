@@ -29,7 +29,7 @@
         <thead>
         <tr class="table-info">
             <th scope="col">이름</th>
-            <th scope="col">나이</th>
+            <th scope="col">이메일</th>
             <th scope="col">권한</th>
         </tr>
         </thead>
@@ -41,12 +41,13 @@
                 </a>
             </td>
             <td style="text-align: left;">
-                <h6 style="color:#ffffff" th:text="${user.age}">나이</h6>
+                <h6 style="color:#ffffff" th:text="${user.email}">이메일</h6>
             </td>
             <td style="text-align: left;">
-                        <span th:each="role,iter:${user.userRoles}">
-                            <h6 style="color:#ffffff" th:text="${role.roleName}"></h6>
-                        </span>
+                <span style="color:#ffffff" th:text="${user.role}">권한</span>
+<!--                        <span th:each="role,iter:${user.userRoles}">-->
+<!--                            <h6 style="color:#ffffff" th:text="${role.roleName}"></h6>-->
+<!--                        </span>-->
             </td>
         </tr>
         </tbody>
