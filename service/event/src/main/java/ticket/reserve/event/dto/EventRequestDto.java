@@ -23,7 +23,6 @@ public record EventRequestDto(
                 .startTime(this.startTime)
                 .endTime(this.endTime)
                 .totalSeats(this.totalSeats)
-                .availableSeats(this.totalSeats)
                 .build();
     }
 }

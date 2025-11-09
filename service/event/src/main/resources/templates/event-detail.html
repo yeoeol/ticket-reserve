@@ -201,7 +201,7 @@
 
                     <div class="info-item">
                         <strong>남은 좌석</strong>
-                        <span th:text="*{availableSeats} + ' 석'">100 석</span>
+                        <span th:text="*{availableInventory} + ' 석'">100 석</span>
                     </div>
 
                     <a class="reserve-button" th:href="@{/inventory/{eventId}(eventId=*{id})}">예약하기</a>

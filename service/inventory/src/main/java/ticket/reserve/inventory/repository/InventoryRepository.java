@@ -15,4 +15,10 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByEventIdForUpdate(Long eventId, Long inventoryId);
 
     List<Inventory> findAllByEventId(Long eventId);
+
+    @Query("SELECT count(*) FROM Inventory i WHERE i.eventId = :eventId AND i.status = 'AVAILABLE'")
+    Integer countAvailableInventoryByEventId(Long eventId);
+
+    @Query("SELECT count(*) FROM Inventory i WHERE i.eventId = :eventId")
+    Integer countInventoryByEventId(Long eventId);
 }
