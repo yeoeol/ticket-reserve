@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ticket.reserve.admin.client.UserServiceClient;
 import ticket.reserve.admin.client.dto.UserResponseDto;
+import ticket.reserve.admin.client.dto.UserUpdateRequestDto;
 
 import java.util.List;
 
@@ -19,5 +20,9 @@ public class AdminService {
 
     public UserResponseDto getUser(Long userId) {
         return userServiceClient.getUser(userId);
+    }
+
+    public void updateUser(UserUpdateRequestDto request) {
+        userServiceClient.updateUser(request);
     }
 }

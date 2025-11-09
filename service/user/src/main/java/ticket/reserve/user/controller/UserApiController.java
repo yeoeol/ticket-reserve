@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.dto.UserLoginRequestDto;
 import ticket.reserve.user.dto.UserRegisterRequestDto;
 import ticket.reserve.user.dto.UserResponseDto;
+import ticket.reserve.user.dto.UserUpdateRequestDto;
 import ticket.reserve.user.service.UserService;
 
 import java.util.HashMap;
@@ -47,5 +48,10 @@ public class UserApiController {
     @GetMapping("/api/users/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
+    }
+
+    @PostMapping("/api/users")
+    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateRequestDto request) {
+        return ResponseEntity.ok(userService.updateUser(request));
     }
 }
