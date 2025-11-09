@@ -22,9 +22,13 @@ public class InventoryService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public InventoryCreateResponseDto createInventory(InventoryRequestDto request) {
-        Inventory inventory = request.toEntity();
         EventDetailResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
+        Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.eventId());
+        if (eventResponseDto.totalSeats() == eventInventoryCount) {
+            throw new RuntimeException("해당 이벤트에 더이상 좌석을 생성할 수 없습니다.");
+        }
 
+        Inventory inventory = request.toEntity();
         Inventory savedInventory = inventoryRepository.save(inventory);
         return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
     }

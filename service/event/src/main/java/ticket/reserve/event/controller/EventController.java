@@ -35,20 +35,4 @@ public class EventController {
         return "event-detail";
     }
 
-    @PostMapping("/admin/events")
-    public ResponseEntity<EventResponseDto> create(@RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
-    }
-
-    @PutMapping("/admin/events/{id}")
-    public ResponseEntity<EventResponseDto> update(@PathVariable Long id,
-                                       @RequestBody EventUpdateRequestDto request) {
-        return ResponseEntity.ok(eventService.updateEvent(id, request));
-    }
-
-    @DeleteMapping("/admin/events/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        eventService.deleteEvent(id);
-        return ResponseEntity.noContent().build();
-    }
 }
