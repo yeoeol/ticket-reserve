@@ -43,13 +43,11 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponseDto updateEvent(Long id, EventUpdateRequestDto request) {
+    public void updateEvent(Long id, EventUpdateRequestDto request) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         event.update(request);
-
-        return EventResponseDto.from(event);
     }
 
     @Transactional

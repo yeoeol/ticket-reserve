@@ -15,4 +15,7 @@ public record EventDetailResponseDto(
         int availableInventory,
         int totalSeats
 ) {
+    public EventDetailResponseDto() {
+        this(null, "", "", "", null, null, 0, 0);
+    }
 }
