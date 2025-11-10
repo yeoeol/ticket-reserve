@@ -1,4 +1,4 @@
-package ticket.reserve.admin.client.dto;
+package ticket.reserve.admin.client.user.dto;
 
 public record UserUpdateRequestDto(
         Long id,

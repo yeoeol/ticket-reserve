@@ -1,9 +1,9 @@
-package ticket.reserve.admin.client;
+package ticket.reserve.admin.client.user;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.admin.client.dto.UserResponseDto;
-import ticket.reserve.admin.client.dto.UserUpdateRequestDto;
+import ticket.reserve.admin.client.user.dto.UserResponseDto;
+import ticket.reserve.admin.client.user.dto.UserUpdateRequestDto;
 
 import java.util.List;
 

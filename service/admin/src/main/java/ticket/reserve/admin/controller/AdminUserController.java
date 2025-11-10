@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import ticket.reserve.admin.client.dto.UserResponseDto;
-import ticket.reserve.admin.client.dto.UserUpdateRequestDto;
+import ticket.reserve.admin.client.user.dto.UserResponseDto;
+import ticket.reserve.admin.client.user.dto.UserUpdateRequestDto;
 import ticket.reserve.admin.service.AdminService;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class AdminUserController {
     }
 
     @PostMapping("/admin/users")
-    public String modifyUser(@ModelAttribute UserUpdateRequestDto request) {
+    public String updateUser(@ModelAttribute UserUpdateRequestDto request) {
         adminService.updateUser(request);
         return "redirect:/admin/users";
     }
