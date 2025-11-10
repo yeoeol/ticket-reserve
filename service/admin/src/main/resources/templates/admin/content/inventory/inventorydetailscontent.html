@@ -1,0 +1,55 @@
+<div class="tbl_wrp">
+    <form class="form-horizontal form-custom"
+          id="inventory-form"
+          th:action="${inventory.inventoryId == null} ? @{/admin/{eventId}/inventory(eventId=${eventId})} : @{/admin/{eventId}/inventory(eventId=${eventId}}"
+          th:method="${inventory.inventoryId == null} ? 'POST' : 'POST'"
+          th:object="${inventory}">
+        <div class="form-group">
+            <label for="inventoryId" class="col-sm-2 control-label">좌석ID</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input-large" th:field="*{inventoryId}" placeholder="좌석ID">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eventTitle" class="col-sm-2 control-label">이벤트명</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input-large" th:field="*{eventTitle}" placeholder="이벤트명">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="price" class="col-sm-2 control-label">좌석 가격</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input-large" th:field="*{price}" placeholder="좌석 가격">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="status" class="col-sm-2 control-label">좌석 상태</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control input-large" th:field="*{status}" placeholder="좌석 상태">
+            </div>
+        </div>
+    </form>
+
+    <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-10">
+            <button type="Submit" class="btn btn-dark btn-lg"
+                    form="inventory-form"
+                    th:text="${inventory.inventoryId == null} ? '등록' : '수정'">
+                등록
+            </button>
+            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=${eventId})}">목록</a>
+<!--            <form th:if="${event.id != null}"-->
+<!--                  th:action="@{/admin/events/{id}(id=*{id})}"-->
+<!--                  th:method="DELETE"-->
+<!--                  style="display: inline-block;"-->
+<!--                  onsubmit="return confirm('이 이벤트를 정말 삭제하시겠습니까?');">-->
+
+<!--                <button type="submit" class="btn btn-dark btn-lg" style="margin:10px;">삭제</button>-->
+<!--            </form>-->
+        </div>
+    </div>
+</div>
+

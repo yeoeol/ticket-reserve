@@ -1,0 +1,50 @@
+<style>
+    .rounded-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px; /* 전체 테이블의 모서리 */
+        overflow: hidden; /* 둥근 모서리를 위해 필요 */
+        background-color: #060C1C;
+    }
+
+    .rounded-table thead tr:first-child th:first-child {
+        border-top-left-radius: 10px; /* 첫 번째 셀의 왼쪽 상단 모서리 */
+    }
+
+    .rounded-table thead tr:first-child th:last-child {
+        border-top-right-radius: 10px; /* 마지막 셀의 오른쪽 상단 모서리 */
+    }
+
+    .rounded-table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 10px; /* 첫 번째 셀의 왼쪽 하단 모서리 */
+    }
+
+    .rounded-table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 10px; /* 마지막 셀의 오른쪽 하단 모서리 */
+    }
+</style><div class="tbl_wrp form-custom">
+    <table class="table rounded-table">
+        <thead>
+        <tr class="table-info">
+            <th scope="col">좌석ID</th>
+            <th scope="col">이벤트명</th>
+            <th scope="col">좌석 가격</th>
+            <th scope="col">좌석 상태</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr class="link_btn hover" th:each="inventory:${inventories.inventoryList}">
+            <td style="text-align: left;">
+                <a th:href="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${inventory.eventId}, inventoryId=${inventory.inventoryId})}" class="text-white" th:text="${inventory.inventoryId}">좌석ID</a>
+            </td>
+            <td style="color:#ffffff" th:text="${inventories.event.eventTitle}">이벤트명</td>
+            <td style="color:#ffffff" th:text="${inventory.price}">좌석 가격</td>
+            <td style="color:#ffffff" th:text="${inventory.status}">좌석 상태</td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="text-align:right;">
+        <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}(eventId=${inventories.event.id})/inventory/create}">좌석 등록</a>
+    </div>
+</div>
