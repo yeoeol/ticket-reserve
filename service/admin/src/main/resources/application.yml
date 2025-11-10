@@ -5,6 +5,11 @@ spring:
   application:
     name: admin-service
 
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true
+
 eureka:
   client:
     service-url:

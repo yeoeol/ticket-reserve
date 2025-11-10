@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.admin.client.event.dto.EventDetailResponseDto;
 import ticket.reserve.admin.client.event.dto.EventRequestDto;
 import ticket.reserve.admin.client.event.dto.EventResponseDto;
+import ticket.reserve.admin.client.event.dto.EventUpdateRequestDto;
 import ticket.reserve.admin.service.AdminService;
 
 import java.util.List;
@@ -34,14 +35,22 @@ public class AdminEventController {
     }
 
     @GetMapping("/admin/events/create")
-    public String createEventPage() {
+    public String createEventPage(Model model) {
+        model.addAttribute("event", new EventDetailResponseDto());
         return "admin/eventdetails";
     }
 
     @PostMapping("/admin/events")
-    public String createEvent(@RequestBody EventRequestDto request) {
-        EventDetailResponseDto response = adminService.createEvent(request);
-        return "redirect:/admin/events/" + response.id();
+    public String createEvent(@ModelAttribute EventRequestDto request) {
+        adminService.createEvent(request);
+        return "redirect:/admin/events";
+    }
+
+    @PutMapping("/admin/events/{id}")
+    public String updateEvent(@PathVariable("id") Long eventId,
+                              @ModelAttribute EventUpdateRequestDto request) {
+        adminService.updateEvent(eventId, request);
+        return "redirect:/admin/events";
     }
 
     @DeleteMapping("/admin/events/{id}")

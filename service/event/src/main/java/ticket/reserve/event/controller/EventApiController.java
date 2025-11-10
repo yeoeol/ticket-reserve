@@ -32,10 +32,11 @@ public class EventApiController {
         return ResponseEntity.ok(eventService.createEvent(request));
     }
 
-    @PutMapping("/admin/api/events/{id}")
-    public ResponseEntity<EventResponseDto> update(@PathVariable Long id,
-                                       @RequestBody EventUpdateRequestDto request) {
-        return ResponseEntity.ok(eventService.updateEvent(id, request));
+    @PutMapping("/api/events/{id}")
+    public ResponseEntity<Void> updateEvent(@PathVariable("id") Long eventId,
+                                            @RequestBody EventUpdateRequestDto request) {
+        eventService.updateEvent(eventId, request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/api/events/{id}")
