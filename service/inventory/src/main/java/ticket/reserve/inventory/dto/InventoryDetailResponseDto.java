@@ -2,19 +2,18 @@ package ticket.reserve.inventory.dto;
 
 import lombok.Builder;
 import ticket.reserve.inventory.domain.Inventory;
-import ticket.reserve.inventory.domain.enums.InventoryStatus;
 
 @Builder
-public record InventoryResponseDto(
+public record InventoryDetailResponseDto(
         Long inventoryId,
-        Long eventId,
+        String eventTitle,
         int price,
         String status
 ) {
-    public static InventoryResponseDto from(Inventory inventory) {
-        return InventoryResponseDto.builder()
+    public static InventoryDetailResponseDto of(String eventTitle, Inventory inventory) {
+        return InventoryDetailResponseDto.builder()
                 .inventoryId(inventory.getId())
-                .eventId(inventory.getEventId())
+                .eventTitle(eventTitle)
                 .price(inventory.getPrice())
                 .status(inventory.getStatus().name())
                 .build();

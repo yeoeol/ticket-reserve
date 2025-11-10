@@ -12,9 +12,10 @@ public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/admin/api/inventory")
-    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
-        return ResponseEntity.ok(inventoryService.createInventory(request));
+    @PostMapping("/api/inventory")
+    public ResponseEntity<Void> create(@RequestBody InventoryRequestDto request) {
+        inventoryService.createInventory(request);
+        return ResponseEntity.ok().build();
     }
 
     // 좌석 선점 로직
@@ -39,5 +40,16 @@ public class InventoryApiController {
     @GetMapping("/api/inventory/counts")
     public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
         return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(eventId));
+    }
+
+    @GetMapping("/api/inventory/{eventId}")
+    public ResponseEntity<InventoryListResponseDto> getInventories(@PathVariable Long eventId) {
+        return ResponseEntity.ok(inventoryService.getInventories(eventId));
+    }
+
+    @GetMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<InventoryDetailResponseDto> getInventories(@PathVariable("eventId") Long eventId,
+                                                                     @PathVariable("inventoryId") Long inventoryId) {
+        return ResponseEntity.ok(inventoryService.getInventory(eventId, inventoryId));
     }
 }
