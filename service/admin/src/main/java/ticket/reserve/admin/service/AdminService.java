@@ -2,9 +2,9 @@ package ticket.reserve.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ticket.reserve.admin.client.UserServiceClient;
-import ticket.reserve.admin.client.dto.UserResponseDto;
-import ticket.reserve.admin.client.dto.UserUpdateRequestDto;
+import ticket.reserve.admin.client.user.UserServiceClient;
+import ticket.reserve.admin.client.user.dto.UserResponseDto;
+import ticket.reserve.admin.client.user.dto.UserUpdateRequestDto;
 
 import java.util.List;
 
@@ -25,4 +25,6 @@ public class AdminService {
     public void updateUser(UserUpdateRequestDto request) {
         userServiceClient.updateUser(request);
     }
+
+
 }
