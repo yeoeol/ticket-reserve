@@ -59,4 +59,11 @@ public class AdminInventoryController {
         adminService.updateInventory(eventId, inventoryId, request);
         return "redirect:/admin/%d/inventory".formatted(eventId);
     }
+
+    @DeleteMapping("/admin/{eventId}/inventory/{inventoryId}")
+    public String deleteInventory(@PathVariable("eventId") Long eventId,
+                                  @PathVariable("inventoryId") Long inventoryId) {
+        adminService.deleteInventory(eventId, inventoryId);
+        return "redirect:/admin/%d/inventory".formatted(eventId);
+    }
 }

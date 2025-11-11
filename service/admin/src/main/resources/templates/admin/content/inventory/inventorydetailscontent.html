@@ -30,14 +30,14 @@
                 등록
             </button>
             <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=${eventId})}">목록</a>
-<!--            <form th:if="${event.id != null}"-->
-<!--                  th:action="@{/admin/events/{id}(id=*{id})}"-->
-<!--                  th:method="DELETE"-->
-<!--                  style="display: inline-block;"-->
-<!--                  onsubmit="return confirm('이 이벤트를 정말 삭제하시겠습니까?');">-->
+            <form th:if="${inventory.inventoryId != null}"
+                  th:action="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
+                  th:method="DELETE"
+                  style="display: inline-block;"
+                  onsubmit="return confirm('이 좌석을 정말 삭제하시겠습니까?');">
 
-<!--                <button type="submit" class="btn btn-dark btn-lg" style="margin:10px;">삭제</button>-->
-<!--            </form>-->
+                <button type="submit" class="btn btn-dark btn-lg" style="margin:10px;">삭제</button>
+            </form>
         </div>
     </div>
 </div>

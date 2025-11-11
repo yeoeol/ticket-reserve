@@ -85,4 +85,9 @@ public class InventoryService {
     public Integer getAvailableInventoryCounts(Long eventId) {
         return inventoryRepository.countAvailableInventoryByEventId(eventId);
     }
+
+    @Transactional
+    public void deleteInventory(Long inventoryId) {
+        inventoryRepository.deleteById(inventoryId);
+    }
 }

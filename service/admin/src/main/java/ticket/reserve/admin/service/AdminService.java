@@ -82,4 +82,8 @@ public class AdminService {
     public void updateInventory(Long eventId, Long inventoryId, InventoryUpdateRequestDto request) {
         inventoryServiceClient.updateInventory(eventId, inventoryId, request);
     }
+
+    public void deleteInventory(Long eventId, Long inventoryId) {
+        inventoryServiceClient.deleteInventory(eventId, inventoryId);
+    }
 }
