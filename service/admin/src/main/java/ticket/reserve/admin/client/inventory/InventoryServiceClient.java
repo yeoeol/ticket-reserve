@@ -24,4 +24,8 @@ public interface InventoryServiceClient {
     void updateInventory(@PathVariable("eventId") Long eventId,
                          @PathVariable("inventoryId") Long inventoryId,
                          @RequestBody InventoryUpdateRequestDto request);
+
+    @DeleteMapping("/api/inventory/{eventId}/{inventoryId}")
+    void deleteInventory(@PathVariable("eventId") Long eventId,
+                         @PathVariable("inventoryId") Long inventoryId);
 }

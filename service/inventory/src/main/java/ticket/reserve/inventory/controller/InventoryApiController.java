@@ -60,4 +60,11 @@ public class InventoryApiController {
         inventoryService.updateInventory(inventoryId, request);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<Void> deleteInventory(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("inventoryId") Long inventoryId) {
+        inventoryService.deleteInventory(inventoryId);
+        return ResponseEntity.ok().build();
+    }
 }
