@@ -1,8 +1,7 @@
 package ticket.reserve.admin.client.inventory.dto;
 
-public record InventoryRequestDto(
+public record InventoryUpdateRequestDto(
         String inventoryName,
-        Long eventId,
         int price
 ) {
 }

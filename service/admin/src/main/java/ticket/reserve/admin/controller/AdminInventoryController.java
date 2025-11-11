@@ -9,7 +9,10 @@ import ticket.reserve.admin.client.event.dto.EventUpdateRequestDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryDetailResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryRequestDto;
+import ticket.reserve.admin.client.inventory.dto.InventoryUpdateRequestDto;
 import ticket.reserve.admin.service.AdminService;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -46,6 +49,14 @@ public class AdminInventoryController {
     public String createInventory(@PathVariable Long eventId,
                                   @ModelAttribute InventoryRequestDto request) {
         adminService.createInventory(request);
+        return "redirect:/admin/%d/inventory".formatted(eventId);
+    }
+
+    @PutMapping("/admin/{eventId}/inventory/{inventoryId}")
+    public String updateInventory(@PathVariable("eventId") Long eventId,
+                                  @PathVariable("inventoryId") Long inventoryId,
+                                  @ModelAttribute InventoryUpdateRequestDto request) {
+        adminService.updateInventory(eventId, inventoryId, request);
         return "redirect:/admin/%d/inventory".formatted(eventId);
     }
 }

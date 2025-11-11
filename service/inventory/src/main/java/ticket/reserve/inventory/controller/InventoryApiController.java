@@ -13,7 +13,7 @@ public class InventoryApiController {
     private final InventoryService inventoryService;
 
     @PostMapping("/api/inventory")
-    public ResponseEntity<Void> create(@RequestBody InventoryRequestDto request) {
+    public ResponseEntity<Void> createInventory(@RequestBody InventoryRequestDto request) {
         inventoryService.createInventory(request);
         return ResponseEntity.ok().build();
     }
@@ -48,8 +48,16 @@ public class InventoryApiController {
     }
 
     @GetMapping("/api/inventory/{eventId}/{inventoryId}")
-    public ResponseEntity<InventoryDetailResponseDto> getInventories(@PathVariable("eventId") Long eventId,
-                                                                     @PathVariable("inventoryId") Long inventoryId) {
+    public ResponseEntity<InventoryDetailResponseDto> getInventory(@PathVariable("eventId") Long eventId,
+                                                                   @PathVariable("inventoryId") Long inventoryId) {
         return ResponseEntity.ok(inventoryService.getInventory(eventId, inventoryId));
+    }
+
+    @PutMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<Void> updateInventory(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("inventoryId") Long inventoryId,
+                                                @RequestBody InventoryUpdateRequestDto request) {
+        inventoryService.updateInventory(inventoryId, request);
+        return ResponseEntity.ok().build();
     }
 }

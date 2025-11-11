@@ -1,13 +1,11 @@
 package ticket.reserve.admin.client.inventory;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import ticket.reserve.admin.client.inventory.dto.InventoryDetailResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryRequestDto;
+import ticket.reserve.admin.client.inventory.dto.InventoryUpdateRequestDto;
 
 @FeignClient(name = "INVENTORY-SERVICE")
 public interface InventoryServiceClient {
@@ -21,4 +19,9 @@ public interface InventoryServiceClient {
 
     @PostMapping("/api/inventory")
     void createInventory(@RequestBody InventoryRequestDto request);
+
+    @PutMapping("/api/inventory/{eventId}/{inventoryId}")
+    void updateInventory(@PathVariable("eventId") Long eventId,
+                         @PathVariable("inventoryId") Long inventoryId,
+                         @RequestBody InventoryUpdateRequestDto request);
 }
