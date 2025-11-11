@@ -3,7 +3,6 @@ package ticket.reserve.user.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.dto.UserLoginRequestDto;
@@ -33,12 +32,5 @@ public class UserController {
 
         response.addHeader(HttpHeaders.AUTHORIZATION, token);
         return "redirect:/";
-    }
-
-    @GetMapping("/users/{userId}")
-    public String get(@PathVariable Long userId) {
-        System.out.println("[UserController.get]");
-        System.out.println(SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
-        return "redirect:/events";
     }
 }
