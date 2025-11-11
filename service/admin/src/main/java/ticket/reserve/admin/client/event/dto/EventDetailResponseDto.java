@@ -1,0 +1,21 @@
+package ticket.reserve.admin.client.event.dto;
+
+import lombok.Builder;
+
+import java.time.LocalDateTime;
+
+@Builder
+public record EventDetailResponseDto(
+        Long id,
+        String eventTitle,          // 공연 제목
+        String description,
+        String location,            // 장소
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        int availableInventory,
+        int totalSeats
+) {
+    public EventDetailResponseDto() {
+        this(null, "", "", "", null, null, 0, 0);
+    }
+}

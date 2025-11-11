@@ -12,9 +12,10 @@ public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/admin/api/inventory")
-    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
-        return ResponseEntity.ok(inventoryService.createInventory(request));
+    @PostMapping("/api/inventory")
+    public ResponseEntity<Void> createInventory(@RequestBody InventoryRequestDto request) {
+        inventoryService.createInventory(request);
+        return ResponseEntity.ok().build();
     }
 
     // 좌석 선점 로직
@@ -39,5 +40,31 @@ public class InventoryApiController {
     @GetMapping("/api/inventory/counts")
     public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
         return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(eventId));
+    }
+
+    @GetMapping("/api/inventory/{eventId}")
+    public ResponseEntity<InventoryListResponseDto> getInventories(@PathVariable Long eventId) {
+        return ResponseEntity.ok(inventoryService.getInventories(eventId));
+    }
+
+    @GetMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<InventoryDetailResponseDto> getInventory(@PathVariable("eventId") Long eventId,
+                                                                   @PathVariable("inventoryId") Long inventoryId) {
+        return ResponseEntity.ok(inventoryService.getInventory(eventId, inventoryId));
+    }
+
+    @PutMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<Void> updateInventory(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("inventoryId") Long inventoryId,
+                                                @RequestBody InventoryUpdateRequestDto request) {
+        inventoryService.updateInventory(inventoryId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/inventory/{eventId}/{inventoryId}")
+    public ResponseEntity<Void> deleteInventory(@PathVariable("eventId") Long eventId,
+                                                @PathVariable("inventoryId") Long inventoryId) {
+        inventoryService.deleteInventory(inventoryId);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,0 +1,49 @@
+<style>
+    .rounded-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px; /* 전체 테이블의 모서리 */
+        overflow: hidden; /* 둥근 모서리를 위해 필요 */
+        background-color: #060C1C;
+    }
+
+    .rounded-table thead tr:first-child th:first-child {
+        border-top-left-radius: 10px; /* 첫 번째 셀의 왼쪽 상단 모서리 */
+    }
+
+    .rounded-table thead tr:first-child th:last-child {
+        border-top-right-radius: 10px; /* 마지막 셀의 오른쪽 상단 모서리 */
+    }
+
+    .rounded-table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 10px; /* 첫 번째 셀의 왼쪽 하단 모서리 */
+    }
+
+    .rounded-table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 10px; /* 마지막 셀의 오른쪽 하단 모서리 */
+    }
+</style><div class="tbl_wrp form-custom">
+    <table class="table rounded-table">
+        <thead>
+        <tr class="table-info">
+            <th scope="col">이벤트명</th>
+            <th scope="col">이벤트 장소</th>
+            <th scope="col">시작 시간</th>
+            <th scope="col">종료 시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="link_btn hover" th:each="event:${events}">
+            <td style="text-align: left;">
+                <a th:href="@{'/admin/events/' + ${event.id}}" class="text-white" th:text="${event.eventTitle}">이벤트명</a>
+            </td>
+            <td style="color:#ffffff" th:text="${event.location}">이벤트 장소</td>
+            <td style="color:#ffffff" th:text="${event.startTime}">시작 시간</td>
+            <td style="color:#ffffff" th:text="${event.endTime}">종료 시간</td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="text-align:right;">
+        <a class="btn btn-dark btn-lg" th:href="@{/admin/events/create}">이벤트 등록</a>
+    </div>
+</div>

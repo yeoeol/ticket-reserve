@@ -16,14 +16,9 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/admin/inventory")
-    public ResponseEntity<InventoryCreateResponseDto> create(@RequestBody InventoryRequestDto request) {
-        return ResponseEntity.ok(inventoryService.createInventory(request));
-    }
-
     @GetMapping("/inventory/{eventId}")
     public String getAll(@PathVariable Long eventId, Model model) {
-        InventoryListResponseDto inventoryList = inventoryService.getInventoryList(eventId);
+        InventoryListResponseDto inventoryList = inventoryService.getInventories(eventId);
         model.addAttribute("inventoryList", inventoryList);
 
         return "inventory-list";

@@ -1,7 +1,6 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.inventory.client.EventServiceClient;
@@ -19,7 +18,6 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final EventServiceClient eventServiceClient;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public InventoryCreateResponseDto createInventory(InventoryRequestDto request) {
         EventDetailResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
@@ -33,8 +31,15 @@ public class InventoryService {
         return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
     }
 
+    @Transactional
+    public void updateInventory(Long inventoryId, InventoryUpdateRequestDto request) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
+        inventory.update(request.inventoryName(), request.price());
+    }
+
     @Transactional(readOnly = true)
-    public InventoryListResponseDto getInventoryList(Long eventId) {
+    public InventoryListResponseDto getInventories(Long eventId) {
         EventDetailResponseDto responseDto = eventServiceClient.getOne(eventId);
         List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
 
@@ -43,6 +48,15 @@ public class InventoryService {
                 .toList();
 
         return InventoryListResponseDto.of(responseDto, responseDtoList);
+    }
+
+    @Transactional(readOnly = true)
+    public InventoryDetailResponseDto getInventory(Long eventId, Long inventoryId) {
+        EventDetailResponseDto eventDetailResponseDto = eventServiceClient.getOne(eventId);
+        Inventory inventory = inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
+
+        return InventoryDetailResponseDto.of(eventDetailResponseDto.eventTitle(), inventory);
     }
 
     // 좌석 선점 로직
@@ -70,5 +84,10 @@ public class InventoryService {
     @Transactional(readOnly = true)
     public Integer getAvailableInventoryCounts(Long eventId) {
         return inventoryRepository.countAvailableInventoryByEventId(eventId);
+    }
+
+    @Transactional
+    public void deleteInventory(Long inventoryId) {
+        inventoryRepository.deleteById(inventoryId);
     }
 }
