@@ -6,6 +6,7 @@ import lombok.Builder;
 public record InventoryResponseDto(
         Long inventoryId,
         Long eventId,
+        String inventoryName,
         int price,
         String status
 ) {

@@ -31,6 +31,13 @@ public class InventoryService {
         return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
     }
 
+    @Transactional
+    public void updateInventory(Long inventoryId, InventoryUpdateRequestDto request) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
+        inventory.update(request.inventoryName(), request.price());
+    }
+
     @Transactional(readOnly = true)
     public InventoryListResponseDto getInventories(Long eventId) {
         EventDetailResponseDto responseDto = eventServiceClient.getOne(eventId);

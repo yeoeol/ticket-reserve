@@ -11,6 +11,7 @@ import ticket.reserve.admin.client.inventory.InventoryServiceClient;
 import ticket.reserve.admin.client.inventory.dto.InventoryDetailResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryListResponseDto;
 import ticket.reserve.admin.client.inventory.dto.InventoryRequestDto;
+import ticket.reserve.admin.client.inventory.dto.InventoryUpdateRequestDto;
 import ticket.reserve.admin.client.user.UserServiceClient;
 import ticket.reserve.admin.client.user.dto.UserResponseDto;
 import ticket.reserve.admin.client.user.dto.UserUpdateRequestDto;
@@ -76,5 +77,9 @@ public class AdminService {
 
     public void createInventory(InventoryRequestDto request) {
         inventoryServiceClient.createInventory(request);
+    }
+
+    public void updateInventory(Long eventId, Long inventoryId, InventoryUpdateRequestDto request) {
+        inventoryServiceClient.updateInventory(eventId, inventoryId, request);
     }
 }

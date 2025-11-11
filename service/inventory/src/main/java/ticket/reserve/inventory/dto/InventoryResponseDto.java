@@ -8,6 +8,7 @@ import ticket.reserve.inventory.domain.enums.InventoryStatus;
 public record InventoryResponseDto(
         Long inventoryId,
         Long eventId,
+        String inventoryName,
         int price,
         String status
 ) {
@@ -15,6 +16,7 @@ public record InventoryResponseDto(
         return InventoryResponseDto.builder()
                 .inventoryId(inventory.getId())
                 .eventId(inventory.getEventId())
+                .inventoryName(inventory.getInventoryName())
                 .price(inventory.getPrice())
                 .status(inventory.getStatus().name())
                 .build();

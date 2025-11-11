@@ -22,11 +22,12 @@
     .rounded-table tbody tr:last-child td:last-child {
         border-bottom-right-radius: 10px; /* 마지막 셀의 오른쪽 하단 모서리 */
     }
-</style><div class="tbl_wrp form-custom">
+</style>
+<div class="tbl_wrp form-custom">
     <table class="table rounded-table">
         <thead>
         <tr class="table-info">
-            <th scope="col">좌석ID</th>
+            <th scope="col">좌석명</th>
             <th scope="col">이벤트명</th>
             <th scope="col">좌석 가격</th>
             <th scope="col">좌석 상태</th>
@@ -36,7 +37,7 @@
 
         <tr class="link_btn hover" th:each="inventory:${inventories.inventoryList}">
             <td style="text-align: left;">
-                <a th:href="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${inventory.eventId}, inventoryId=${inventory.inventoryId})}" class="text-white" th:text="${inventory.inventoryId}">좌석ID</a>
+                <a th:href="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${inventory.eventId}, inventoryId=${inventory.inventoryId})}" class="text-white" th:text="${inventory.inventoryName}">좌석명</a>
             </td>
             <td style="color:#ffffff" th:text="${inventories.event.eventTitle}">이벤트명</td>
             <td style="color:#ffffff" th:text="${inventory.price}">좌석 가격</td>
@@ -45,6 +46,6 @@
         </tbody>
     </table>
     <div style="text-align:right;">
-        <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}(eventId=${inventories.event.id})/inventory/create}">좌석 등록</a>
+        <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}/inventory/create(eventId=${inventories.event.id})}">좌석 등록</a>
     </div>
 </div>
