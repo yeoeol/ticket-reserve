@@ -19,11 +19,11 @@ spring:
             - id: event-service
               uri: lb://EVENT-SERVICE
               predicates:
-                - Path=/events/**, /admin/events/**, /api/events/**, /admin/api/events/**
+                - Path=/events/**, /api/events/**
             - id: inventory-service
               uri: lb://INVENTORY-SERVICE
               predicates:
-                - Path=/inventory/**, /admin/inventory/**, /api/inventory/**, /admin/api/inventory/**
+                - Path=/inventory/**, /api/inventory/**
             - id: reservation-service
               uri: lb://RESERVATION-SERVICE
               predicates:
@@ -32,6 +32,10 @@ spring:
               uri: lb://PAYMENT-SERVICE
               predicates:
                 - Path=/payments/**, /api/payments/**
+            - id: admin-service
+              uri: lb://ADMIN-SERVICE
+              predicates:
+                - Path=/admin/**
 
 eureka:
   client:

@@ -19,6 +19,8 @@ public class Inventory {
 
     private Long eventId;
 
+    private String inventoryName;
+
     private int price;
 
     @Enumerated(EnumType.STRING)
@@ -46,5 +48,10 @@ public class Inventory {
             return;
         }
         this.status = InventoryStatus.AVAILABLE;
+    }
+
+    public void update(String inventoryName, int price) {
+        this.inventoryName = inventoryName;
+        this.price = price;
     }
 }
