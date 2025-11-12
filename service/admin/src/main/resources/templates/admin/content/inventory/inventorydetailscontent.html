@@ -29,7 +29,7 @@
                     th:text="${inventory.inventoryId == null} ? '등록' : '수정'">
                 등록
             </button>
-            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=${eventId})}">목록</a>
+            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=${eventId})}">좌석 목록</a>
             <form th:if="${inventory.inventoryId != null}"
                   th:action="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
                   th:method="DELETE"

@@ -8,15 +8,14 @@ import ticket.reserve.admin.client.event.dto.EventRequestDto;
 import ticket.reserve.admin.client.event.dto.EventResponseDto;
 import ticket.reserve.admin.client.event.dto.EventUpdateRequestDto;
 import ticket.reserve.admin.client.inventory.InventoryServiceClient;
-import ticket.reserve.admin.client.inventory.dto.InventoryDetailResponseDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryListResponseDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryRequestDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryUpdateRequestDto;
+import ticket.reserve.admin.client.inventory.dto.*;
 import ticket.reserve.admin.client.user.UserServiceClient;
 import ticket.reserve.admin.client.user.dto.UserResponseDto;
 import ticket.reserve.admin.client.user.dto.UserUpdateRequestDto;
+import ticket.reserve.admin.dto.InventoryListPageDto;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -67,11 +66,7 @@ public class AdminService {
     /**
      * INVENTORY-SERVICE
      */
-    public InventoryListResponseDto getInventories(Long eventId) {
-        return inventoryServiceClient.getInventories(eventId);
-    }
-
-    public InventoryDetailResponseDto getInventory(Long eventId, Long inventoryId) {
+    public InventoryResponseDto getInventory(Long eventId, Long inventoryId) {
         return inventoryServiceClient.getInventory(eventId, inventoryId);
     }
 
@@ -85,5 +80,12 @@ public class AdminService {
 
     public void deleteInventory(Long eventId, Long inventoryId) {
         inventoryServiceClient.deleteInventory(eventId, inventoryId);
+    }
+
+    public InventoryListPageDto getInventoryListPageData(Long eventId) {
+        return InventoryListPageDto.of(
+                eventServiceClient.getEvent(eventId),
+                inventoryServiceClient.getInventories(eventId)
+        );
     }
 }

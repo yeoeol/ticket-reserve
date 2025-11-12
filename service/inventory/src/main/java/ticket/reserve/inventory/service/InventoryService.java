@@ -19,7 +19,7 @@ public class InventoryService {
     private final EventServiceClient eventServiceClient;
 
     @Transactional
-    public InventoryCreateResponseDto createInventory(InventoryRequestDto request) {
+    public void createInventory(InventoryRequestDto request) {
         EventDetailResponseDto eventResponseDto = eventServiceClient.getOne(request.eventId());
         Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.eventId());
         if (eventResponseDto.totalSeats() == eventInventoryCount) {
@@ -27,8 +27,7 @@ public class InventoryService {
         }
 
         Inventory inventory = request.toEntity();
-        Inventory savedInventory = inventoryRepository.save(inventory);
-        return InventoryCreateResponseDto.of(eventResponseDto, InventoryResponseDto.from(savedInventory));
+        inventoryRepository.save(inventory);
     }
 
     @Transactional
@@ -51,12 +50,19 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public InventoryDetailResponseDto getInventory(Long eventId, Long inventoryId) {
-        EventDetailResponseDto eventDetailResponseDto = eventServiceClient.getOne(eventId);
+    public List<InventoryResponseDto> getInventoryList(Long eventId) {
+        List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
+        return inventoryList.stream()
+                .map(InventoryResponseDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public InventoryResponseDto getInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
 
-        return InventoryDetailResponseDto.of(eventDetailResponseDto.eventTitle(), inventory);
+        return InventoryResponseDto.from(inventory);
     }
 
     // 좌석 선점 로직
