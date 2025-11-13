@@ -12,4 +12,6 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    implementation project(':common:event')
 }

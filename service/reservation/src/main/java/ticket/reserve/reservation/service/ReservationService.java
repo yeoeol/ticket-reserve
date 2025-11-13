@@ -42,9 +42,9 @@ public class ReservationService {
                 .orElseThrow(() -> new RuntimeException("예매 Not Found"));
         reservation.confirm();
 
-        InventoryConfirmRequestDto inventoryConfirmRequestDto =
+/*        InventoryConfirmRequestDto inventoryConfirmRequestDto =
                 new InventoryConfirmRequestDto(reservation.getEventId(), reservation.getInventoryId());
-        inventoryServiceClient.confirmInventory(inventoryConfirmRequestDto);
+        inventoryServiceClient.confirmInventory(inventoryConfirmRequestDto);*/
     }
 
     @Transactional
