@@ -22,6 +22,7 @@ public class PaymentController {
     @GetMapping("/payments")
     public String paymentPage(@RequestParam Long userId,
                               @RequestParam Long reservationId,
+                              @RequestParam Long inventoryId,
                               @RequestParam int amount,
                               Model model
     ) {
@@ -34,7 +35,7 @@ public class PaymentController {
         model.addAttribute("orderName", "티켓 예매");
         model.addAttribute("clientKey", paymentProperties.getClientKey());
 
-        paymentService.createPayment(orderId, userId, reservationId);
+        paymentService.createPayment(orderId, userId, reservationId, inventoryId);
         return "payment";
     }
 

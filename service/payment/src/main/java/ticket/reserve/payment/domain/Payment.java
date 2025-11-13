@@ -21,6 +21,7 @@ public class Payment {
 
     private Long userId;
     private Long reservationId;
+    private Long inventoryId;
 
     private String paymentKey;
     private String orderId;
