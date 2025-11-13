@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.inventory.dto.*;
 import ticket.reserve.inventory.service.InventoryService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class InventoryApiController {
@@ -43,14 +45,14 @@ public class InventoryApiController {
     }
 
     @GetMapping("/api/inventory/{eventId}")
-    public ResponseEntity<InventoryListResponseDto> getInventories(@PathVariable Long eventId) {
-        return ResponseEntity.ok(inventoryService.getInventories(eventId));
+    public ResponseEntity<List<InventoryResponseDto>> getInventories(@PathVariable Long eventId) {
+        return ResponseEntity.ok(inventoryService.getInventoryList(eventId));
     }
 
     @GetMapping("/api/inventory/{eventId}/{inventoryId}")
-    public ResponseEntity<InventoryDetailResponseDto> getInventory(@PathVariable("eventId") Long eventId,
-                                                                   @PathVariable("inventoryId") Long inventoryId) {
-        return ResponseEntity.ok(inventoryService.getInventory(eventId, inventoryId));
+    public ResponseEntity<InventoryResponseDto> getInventory(@PathVariable("eventId") Long eventId,
+                                                             @PathVariable("inventoryId") Long inventoryId) {
+        return ResponseEntity.ok(inventoryService.getInventory(inventoryId));
     }
 
     @PutMapping("/api/inventory/{eventId}/{inventoryId}")

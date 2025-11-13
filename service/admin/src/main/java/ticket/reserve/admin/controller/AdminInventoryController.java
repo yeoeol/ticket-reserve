@@ -4,15 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.admin.client.event.dto.EventRequestDto;
-import ticket.reserve.admin.client.event.dto.EventUpdateRequestDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryDetailResponseDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryListResponseDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryRequestDto;
-import ticket.reserve.admin.client.inventory.dto.InventoryUpdateRequestDto;
+import ticket.reserve.admin.client.inventory.dto.*;
+import ticket.reserve.admin.dto.InventoryListPageDto;
 import ticket.reserve.admin.service.AdminService;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,10 +15,11 @@ public class AdminInventoryController {
     private final AdminService adminService;
 
     @GetMapping("/admin/{eventId}/inventory")
-    public String getInventories(@PathVariable("eventId") Long eventId, Model model) {
-        InventoryListResponseDto inventories = adminService.getInventories(eventId);
+    public String getInventoryListPage(@PathVariable("eventId") Long eventId, Model model) {
+        InventoryListPageDto inventoryListPageDto = adminService.getInventoryListPageData(eventId);
 
-        model.addAttribute("inventories", inventories);
+        model.addAttribute("event", inventoryListPageDto.event());
+        model.addAttribute("inventoryList", inventoryListPageDto.inventoryList());
         return "admin/inventory";
     }
 
@@ -32,7 +27,7 @@ public class AdminInventoryController {
     public String getInventory(@PathVariable("eventId") Long eventId,
                                @PathVariable("inventoryId") Long inventoryId,
                                Model model) {
-        InventoryDetailResponseDto inventory = adminService.getInventory(eventId, inventoryId);
+        InventoryResponseDto inventory = adminService.getInventory(eventId, inventoryId);
 
         model.addAttribute("eventId", eventId);
         model.addAttribute("inventory", inventory);
@@ -41,7 +36,7 @@ public class AdminInventoryController {
 
     @GetMapping("/admin/{eventId}/inventory/create")
     public String createInventoryPage(@PathVariable Long eventId, Model model) {
-        model.addAttribute("inventory", new InventoryDetailResponseDto());
+        model.addAttribute("inventory", new InventoryResponseDto(eventId));
         return "admin/inventorydetails";
     }
 

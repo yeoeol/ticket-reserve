@@ -35,17 +35,18 @@
         </thead>
         <tbody>
 
-        <tr class="link_btn hover" th:each="inventory:${inventories.inventoryList}">
+        <tr class="link_btn hover" th:each="inventory:${inventoryList}">
             <td style="text-align: left;">
                 <a th:href="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${inventory.eventId}, inventoryId=${inventory.inventoryId})}" class="text-white" th:text="${inventory.inventoryName}">좌석명</a>
             </td>
-            <td style="color:#ffffff" th:text="${inventories.event.eventTitle}">이벤트명</td>
+            <td style="color:#ffffff" th:text="${event.eventTitle}">이벤트명</td>
             <td style="color:#ffffff" th:text="${inventory.price}">좌석 가격</td>
             <td style="color:#ffffff" th:text="${inventory.status}">좌석 상태</td>
         </tr>
         </tbody>
     </table>
     <div style="text-align:right;">
-        <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}/inventory/create(eventId=${inventories.event.id})}">좌석 등록</a>
+        <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/events}">이벤트 목록</a>
+        <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}/inventory/create(eventId=${event.id})}">좌석 등록</a>
     </div>
 </div>
