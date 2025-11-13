@@ -10,4 +10,7 @@ public record InventoryResponseDto(
         int price,
         String status
 ) {
+    public InventoryResponseDto(Long eventId) {
+        this(null, eventId, "", 0, "");
+    }
 }
