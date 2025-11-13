@@ -33,7 +33,7 @@ public class ReservationService {
         Reservation reservation = request.toEntity(userId);
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        return ReservationResponseDto.of(savedReservation.getId(), savedReservation.getPrice());
+        return ReservationResponseDto.of(savedReservation.getId(), savedReservation.getInventoryId(), savedReservation.getPrice());
     }
 
     @Transactional

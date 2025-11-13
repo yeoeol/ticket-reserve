@@ -24,8 +24,8 @@ public class ReservationController {
     ) {
         ReservationResponseDto response = reservationService.createReservation(request, Long.parseLong(userId));
 
-        return "redirect:/payments?userId=%s&reservationId=%d&amount=%d".formatted(
-                userId, response.reservationId(), response.price()
+        return "redirect:/payments?userId=%s&reservationId=%d&inventoryId=%d&amount=%d".formatted(
+                userId, response.reservationId(), response.inventoryId(), response.price()
         );
     }
 }
