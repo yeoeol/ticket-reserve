@@ -1,14 +1,9 @@
 package ticket.reserve.payment.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.payment.client.ReservationServiceClient;
 import ticket.reserve.payment.client.TossPaymentsClient;
-import ticket.reserve.payment.client.dto.PaymentConfirmedEvent;
 import ticket.reserve.payment.client.dto.TossResponseDto;
 import ticket.reserve.payment.domain.Payment;
 import ticket.reserve.payment.dto.PaymentConfirmRequestDto;
@@ -21,7 +16,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final TossPaymentsClient tossPaymentsClient;
-    private final ReservationServiceClient reservationServiceClient;
     private final PaymentConfirmedProducer paymentConfirmedProducer;
 
     @Transactional
