@@ -23,19 +23,19 @@ public class InventoryApiController {
     // 좌석 선점 로직
     @PostMapping("/api/inventory/hold")
     public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
-        inventoryService.holdInventory(request);
+        inventoryService.holdInventory(request.inventoryId());
         return ResponseEntity.ok().build();
-    }
+    }   // 여기부터
 
-    @PostMapping("/api/inventory/confirm")
+/*    @PostMapping("/api/inventory/confirm")
     public ResponseEntity<Void> confirmInventory(@RequestBody InventoryConfirmRequestDto request) {
         inventoryService.confirmInventory(request);
         return ResponseEntity.ok().build();
-    }
+    }*/
 
     @PostMapping("/api/inventory/release")
     public ResponseEntity<Void> releaseInventory(@RequestBody InventoryReleaseRequestDto request) {
-        inventoryService.releaseInventory(request);
+        inventoryService.releaseInventory(request.inventoryId());
         return ResponseEntity.ok().build();
     }
 

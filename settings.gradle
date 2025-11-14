@@ -6,6 +6,7 @@ include 'infra'
 
 include 'common:gateway'
 include 'common:registry'
+include 'common:event'
 
 include 'service:user'
 include 'service:admin'

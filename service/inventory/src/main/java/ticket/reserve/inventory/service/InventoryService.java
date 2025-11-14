@@ -67,22 +67,22 @@ public class InventoryService {
 
     // 좌석 선점 로직
     @Transactional
-    public void holdInventory(InventoryHoldRequestDto request) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+    public void holdInventory(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.hold();
     }
 
     @Transactional
-    public void confirmInventory(InventoryConfirmRequestDto request) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+    public void confirmInventory(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.confirm();
     }
 
     @Transactional
-    public void releaseInventory(InventoryReleaseRequestDto request) {
-        Inventory inventory = inventoryRepository.findByEventIdForUpdate(request.eventId(), request.inventoryId())
+    public void releaseInventory(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findByEventIdForUpdate(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.release();
     }
