@@ -2,14 +2,17 @@ package ticket.reserve.common.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.common.event.payload.ReservationExpiredPayload;
 
 @Getter
 @RequiredArgsConstructor
 public enum EventType {
 
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
-
+    EVENT_CREATED(EventCreatedEventPayload.class, Topic.TICKET_RESERVE_EVENT),
+    RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION)
     ;
 
 

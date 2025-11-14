@@ -3,6 +3,7 @@ package ticket.reserve.payment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
 import ticket.reserve.payment.client.TossPaymentsClient;
 import ticket.reserve.payment.client.dto.TossResponseDto;
 import ticket.reserve.payment.domain.Payment;
@@ -42,19 +43,13 @@ public class PaymentService {
 //        reservationServiceClient.confirmReservation(payment.getReservationId());
 
         // Kafka - 비동기 결제 완료 이벤트 발행
-        paymentConfirmedProducer.paymentConfirmEvent(payment);
+        PaymentConfirmedEventPayload payload = PaymentConfirmedEventPayload.builder()
+                .reservationId(payment.getReservationId())
+                .inventoryId(payment.getInventoryId())
+                .userId(payment.getUserId())
+                .orderId(payment.getOrderId())
+                .totalAmount(payment.getTotalAmount())
+                .build();
+        paymentConfirmedProducer.paymentConfirmEvent(payload);
     }
-
-/*    @Component
-    class PaymentTestListener {
-
-        private static final String TEST_GROUP_ID = "payment-test-group";
-
-        @KafkaListener(topics = "ticket-reserve-payment", groupId = TEST_GROUP_ID)
-        public void handlePaymentConfirmed(PaymentConfirmedEvent event) {
-            System.out.println("========== KAFKA TEST LISTENER ==========");
-            System.out.println("이벤트 수신 성공: " + event.getReservationId() + " | " + event.getInventoryId());
-            System.out.println("=======================================");
-        }
-    }*/
 }

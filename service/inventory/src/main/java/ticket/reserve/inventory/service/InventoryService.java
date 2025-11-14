@@ -96,4 +96,26 @@ public class InventoryService {
     public void deleteInventory(Long inventoryId) {
         inventoryRepository.deleteById(inventoryId);
     }
+
+    @Transactional
+    public void createInventoryAsTotalSeats(Long eventId, int totalSeats) {
+        char prefix = 'A';
+        int seatNumber = 1;
+
+        for (int i = 1; i <= totalSeats; i++) {
+            String inventoryName = prefix + String.valueOf(seatNumber);
+            Inventory inventory = Inventory.builder()
+                    .eventId(eventId)
+                    .inventoryName(inventoryName)
+                    .price(1000*i)
+                    .build();
+            inventoryRepository.save(inventory);
+            seatNumber++;
+
+            if (seatNumber > 10) {
+                prefix++;
+                seatNumber = 1;
+            }
+        }
+    }
 }
