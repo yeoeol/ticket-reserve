@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.reservation.client.InventoryServiceClient;
 import ticket.reserve.reservation.client.dto.InventoryHoldRequestDto;
-import ticket.reserve.reservation.client.dto.InventoryReleaseRequestDto;
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.dto.ReservationRequestDto;
 import ticket.reserve.reservation.dto.ReservationResponseDto;
@@ -50,9 +49,8 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예매 Not Found"));
         reservation.release();
-
-        InventoryReleaseRequestDto inventoryReleaseRequestDto =
+/*        InventoryReleaseRequestDto inventoryReleaseRequestDto =
                 new InventoryReleaseRequestDto(reservation.getEventId(), reservation.getInventoryId());
-        inventoryServiceClient.releaseInventory(inventoryReleaseRequestDto);
+        inventoryServiceClient.releaseInventory(inventoryReleaseRequestDto);*/
     }
 }
