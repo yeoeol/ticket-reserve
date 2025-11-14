@@ -13,22 +13,22 @@ import ticket.reserve.reservation.service.ReservationService;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PaymentConfirmedEventConsumer {
+public class ReservationExpiredEventConsumer {
 
     private final ReservationService reservationService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = EventType.Topic.TICKET_RESERVE_PAYMENT)
+    @KafkaListener(topics = EventType.Topic.TICKET_RESERVE_RESERVATION)
     public void listen(String message) {
-        log.info("[PaymentConfirmedEventConsumer.listen] 결제 완료 이벤트 수신: message = {}", message);
+        log.info("[ReservationExpiredEventConsumer.listen] 예매 만료 이벤트 수신: message = {}", message);
         try {
             PaymentConfirmedEventPayload payload = objectMapper.readValue(message, PaymentConfirmedEventPayload.class);
-            reservationService.confirmReservation(payload.getReservationId());
-            log.info("[PaymentConfirmedEventConsumer.listen] 예약 확정 처리 완료 - reservationId = {}", payload.getReservationId());
+            reservationService.releaseReservation(payload.getReservationId());
+            log.info("[ReservationExpiredEventConsumer.listen] 예매 취소 처리 완료 - reservationId = {}", payload.getReservationId());
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("[PaymentConfirmedEventConsumer.listen] JSON 파싱 중 오류 발생", e);
+            throw new RuntimeException("[ReservationExpiredEventConsumer.listen] JSON 파싱 중 오류 발생", e);
         } catch (Exception e) {
-            throw new RuntimeException("[PaymentConfirmedEventConsumer.listen] 오류 발생", e);
+            throw new RuntimeException("[ReservationExpiredEventConsumer.listen] 오류 발생", e);
         }
     }
 }

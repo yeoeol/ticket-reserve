@@ -52,17 +52,4 @@ public class PaymentService {
                 .build();
         paymentConfirmedProducer.paymentConfirmEvent(payload);
     }
-
-/*    @Component
-    class PaymentTestListener {
-
-        private static final String TEST_GROUP_ID = "payment-test-group";
-
-        @KafkaListener(topics = "ticket-reserve-payment", groupId = TEST_GROUP_ID)
-        public void handlePaymentConfirmed(PaymentConfirmedEvent event) {
-            System.out.println("========== KAFKA TEST LISTENER ==========");
-            System.out.println("이벤트 수신 성공: " + event.getReservationId() + " | " + event.getInventoryId());
-            System.out.println("=======================================");
-        }
-    }*/
 }
