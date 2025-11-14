@@ -8,7 +8,7 @@ import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
 @RequiredArgsConstructor
 public enum EventType {
 
-    PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_ADMIN),
+    PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
 
     ;
 
