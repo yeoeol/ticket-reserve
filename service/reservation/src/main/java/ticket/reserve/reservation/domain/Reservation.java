@@ -10,7 +10,7 @@ import ticket.reserve.reservation.domain.enums.ReservationStatus;
 @Getter
 @Builder
 @Table(name = "reservations")
-public class Reservation {
+public class Reservation extends BaseTimeEntity {
 
     @Id
     @GeneratedValue

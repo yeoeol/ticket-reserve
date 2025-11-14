@@ -10,7 +10,7 @@ import ticket.reserve.inventory.domain.enums.InventoryStatus;
 @Getter
 @Builder
 @Table(name = "inventories")
-public class Inventory {
+public class Inventory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
