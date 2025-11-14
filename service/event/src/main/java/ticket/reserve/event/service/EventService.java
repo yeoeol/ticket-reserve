@@ -3,12 +3,14 @@ package ticket.reserve.event.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.event.client.InventoryServiceClient;
 import ticket.reserve.event.dto.EventDetailResponseDto;
 import ticket.reserve.event.dto.EventRequestDto;
 import ticket.reserve.event.dto.EventResponseDto;
 import ticket.reserve.event.dto.EventUpdateRequestDto;
 import ticket.reserve.event.domain.Event;
+import ticket.reserve.event.producer.EventCreatedProducer;
 import ticket.reserve.event.repository.EventRepository;
 
 import java.util.List;
@@ -19,11 +21,25 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final InventoryServiceClient inventoryServiceClient;
+    private final EventCreatedProducer eventCreatedProducer;
 
     @Transactional
     public EventDetailResponseDto createEvent(EventRequestDto request) {
         Event event = request.toEntity();
-        return EventDetailResponseDto.from(eventRepository.save(event), event.getTotalSeats());
+        Event savedEvent = eventRepository.save(event);
+
+        EventCreatedEventPayload payload = EventCreatedEventPayload.builder()
+                .eventId(event.getId())
+                .eventTitle(event.getEventTitle())
+                .description(event.getDescription())
+                .location(event.getLocation())
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
+                .totalSeats(event.getTotalSeats())
+                .build();
+        eventCreatedProducer.createEvent(payload);
+
+        return EventDetailResponseDto.from(savedEvent, savedEvent.getTotalSeats());
     }
 
     @Transactional(readOnly = true)
