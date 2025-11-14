@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT i FROM Inventory i WHERE i.eventId = :eventId AND i.id = :inventoryId")
-    Optional<Inventory> findByEventIdForUpdate(Long eventId, Long inventoryId);
+    @Query("SELECT i FROM Inventory i WHERE i.id = :inventoryId")
+    Optional<Inventory> findByEventIdForUpdate(Long inventoryId);
 
     List<Inventory> findAllByEventId(Long eventId);
 
