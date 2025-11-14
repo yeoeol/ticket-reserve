@@ -2,10 +2,8 @@ package ticket.reserve.common.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
 
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public enum EventType {

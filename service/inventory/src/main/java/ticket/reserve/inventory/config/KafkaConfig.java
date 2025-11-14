@@ -1,6 +1,7 @@
-package ticket.reserve.reservation.config;
+package ticket.reserve.inventory.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     private static final String BOOTSTRAP_SERVERS = "localhost:9092";
-    private static final String GROUP_ID = "reservation-service-group";
+    private static final String GROUP_ID = "inventory-service-group";
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {

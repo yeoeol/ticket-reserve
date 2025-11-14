@@ -198,7 +198,7 @@
                     <div class="seat-grid">
                         <div class="seat selected"
                              th:each="inventory : ${inventoryList.inventoryList}"
-                             th:text="${inventory.inventoryId}"
+                             th:text="${inventory.inventoryName}"
                              th:class="'seat ' + (${inventory.status} == 'AVAILABLE' ? 'available' : 'occupied')"
                              th:data-seat-number="${inventory.inventoryId}"
                              th:data-seat-price="${inventory.price}"
