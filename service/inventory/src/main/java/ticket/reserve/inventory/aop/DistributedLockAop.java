@@ -17,10 +17,10 @@ import java.lang.reflect.Method;
 /**
  * @DistributedLock 선언 시 수행되는 Aop
  */
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class DistributedLockAop {
 
     private static final String REDISSON_LOCK_PREFIX = "LOCK:";
@@ -45,14 +45,16 @@ public class DistributedLockAop {
                     distributedLock.timeUnit()
             );
             if (!available) {
+                log.warn("락 획득 실패. (Lock Name: {})", key);
                 return false;
             }
-
+            log.info("락 획득 성공. (Lock Name: {})", key);
             return aopForTransaction.proceed(joinPoint);
         } catch (InterruptedException e) {
             throw new InterruptedException();
         } finally {
             try {
+                log.info("락 해제. (Lock Name: {})", key);
                 rLock.unlock();
             } catch (IllegalMonitorStateException e) {
                 log.info("Redisson Lock Already UnLock");

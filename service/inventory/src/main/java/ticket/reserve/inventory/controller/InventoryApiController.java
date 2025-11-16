@@ -25,7 +25,7 @@ public class InventoryApiController {
     public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
         inventoryService.holdInventory(request.inventoryId());
         return ResponseEntity.ok().build();
-    }   // 여기부터
+    }
 
 /*    @PostMapping("/api/inventory/confirm")
     public ResponseEntity<Void> confirmInventory(@RequestBody InventoryConfirmRequestDto request) {

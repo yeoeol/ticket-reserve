@@ -19,7 +19,6 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final EventServiceClient eventServiceClient;
-    private final RedissonClient redissonClient;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
@@ -68,7 +67,7 @@ public class InventoryService {
         return InventoryResponseDto.from(inventory);
     }
 
-    // 좌석 선점 로직
+    // 락 미적용
     @Transactional
     public void holdInventoryV1(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
@@ -76,6 +75,7 @@ public class InventoryService {
         inventory.hold();
     }
 
+    // DB 수준 비관적 락 적용
     @Transactional
     public void holdInventoryV2(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
@@ -83,7 +83,8 @@ public class InventoryService {
         inventory.hold();
     }
 
-    @DistributedLock(key = "'INVENTORY_LOCK' + #inventoryId")
+    // Redisson 분산 락 적용
+    @DistributedLock(key = "'INVENTORY_LOCK:' + #inventoryId")
     public void holdInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
