@@ -1,8 +1,10 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.inventory.aop.annotation.DistributedLock;
 import ticket.reserve.inventory.client.EventServiceClient;
 import ticket.reserve.inventory.client.dto.EventDetailResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
@@ -65,10 +67,26 @@ public class InventoryService {
         return InventoryResponseDto.from(inventory);
     }
 
-    // 좌석 선점 로직
+    // 락 미적용
     @Transactional
-    public void holdInventory(Long inventoryId) {
+    public void holdInventoryV1(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.hold();
+    }
+
+    // DB 수준 비관적 락 적용
+    @Transactional
+    public void holdInventoryV2(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.hold();
+    }
+
+    // Redisson 분산 락 적용
+    @DistributedLock(key = "'INVENTORY_LOCK:' + #inventoryId")
+    public void holdInventory(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.hold();
     }
