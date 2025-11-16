@@ -1,8 +1,10 @@
 package ticket.reserve.inventory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.inventory.aop.annotation.DistributedLock;
 import ticket.reserve.inventory.client.EventServiceClient;
 import ticket.reserve.inventory.client.dto.EventDetailResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
@@ -17,6 +19,7 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final EventServiceClient eventServiceClient;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
@@ -67,8 +70,22 @@ public class InventoryService {
 
     // 좌석 선점 로직
     @Transactional
-    public void holdInventory(Long inventoryId) {
+    public void holdInventoryV1(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.hold();
+    }
+
+    @Transactional
+    public void holdInventoryV2(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
+                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+        inventory.hold();
+    }
+
+    @DistributedLock(key = "'INVENTORY_LOCK' + #inventoryId")
+    public void holdInventory(Long inventoryId) {
+        Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
         inventory.hold();
     }
