@@ -10,7 +10,7 @@ spring:
         webflux:
           default-filters:
             - PreserveHostHeader
-            - name: JwtAuthenticationFilter
+            - name: JwtCookieGatewayFilter
           routes:
             - id: user-service
               uri: lb://USER-SERVICE   # service-registry(Eureka)에 등록된 이름
