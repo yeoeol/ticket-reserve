@@ -38,8 +38,12 @@
                 <a th:href="@{'/admin/events/' + ${event.id}}" class="text-white" th:text="${event.eventTitle}">이벤트명</a>
             </td>
             <td style="color:#ffffff" th:text="${event.location}">이벤트 장소</td>
-            <td style="color:#ffffff" th:text="${event.startTime}">시작 시간</td>
-            <td style="color:#ffffff" th:text="${event.endTime}">종료 시간</td>
+            <td style="color:#ffffff">
+                <span th:text="${#temporals.format(event.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</span>
+            </td>
+            <td style="color:#ffffff">
+                <span th:text="${#temporals.format(event.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</span>
+            </td>
         </tr>
         </tbody>
     </table>
