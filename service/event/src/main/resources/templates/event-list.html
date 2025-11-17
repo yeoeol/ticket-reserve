@@ -232,8 +232,8 @@
                         <span>⭐ 4.8</span>
                     </div>
                     <div class="location" th:text="'위치 : ' + ${event.location}">Bridlepath, Ontario, Canada</div>
-                    <div class="startTime" th:text="'시작 시간 : ' + ${event.startTime}">startTime</div>
-                    <div class="endTime" th:text="'종료 시간 : ' + ${event.endTime}">endTime</div>
+                    <div class="startTime" th:text="'시작 시간 : ' + ${#temporals.format(event.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</div>
+                    <div class="endTime" th:text="'종료 시간 : ' + ${#temporals.format(event.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</div>
                 </div>
                 </a>
             </div>

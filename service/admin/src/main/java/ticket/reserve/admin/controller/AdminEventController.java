@@ -36,7 +36,7 @@ public class AdminEventController {
 
     @GetMapping("/admin/events/create")
     public String createEventPage(Model model) {
-        model.addAttribute("event", new EventDetailResponseDto());
+        model.addAttribute("event", new EventRequestDto());
         return "admin/eventdetails";
     }
 

@@ -1,5 +1,7 @@
 package ticket.reserve.admin.client.event.dto;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 public record EventUpdateRequestDto(
