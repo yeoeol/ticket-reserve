@@ -191,12 +191,12 @@
 
                     <div class="info-item">
                         <strong>시작 시간</strong>
-                        <span th:text="*{startTime}">2025-12-01 18:00</span>
+                        <span th:text="${#temporals.format(event.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</span>
                     </div>
 
                     <div class="info-item">
                         <strong>종료 시간</strong>
-                        <span th:text="*{endTime}">2025-12-01 21:00</span>
+                        <span th:text="${#temporals.format(event.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</span>
                     </div>
 
                     <div class="info-item">
