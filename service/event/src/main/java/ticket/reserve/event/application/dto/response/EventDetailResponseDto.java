@@ -1,4 +1,4 @@
-package ticket.reserve.event.dto;
+package ticket.reserve.event.application.dto.response;
 
 import lombok.Builder;
 import ticket.reserve.event.domain.Event;

@@ -1,12 +1,12 @@
-package ticket.reserve.event.controller;
+package ticket.reserve.event.presentation.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.event.dto.EventDetailResponseDto;
-import ticket.reserve.event.dto.EventResponseDto;
-import ticket.reserve.event.service.EventService;
+import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
+import ticket.reserve.event.application.dto.response.EventResponseDto;
+import ticket.reserve.event.application.EventService;
 
 import java.util.List;
 

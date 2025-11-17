@@ -1,4 +1,4 @@
-package ticket.reserve.event.config;
+package ticket.reserve.event.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

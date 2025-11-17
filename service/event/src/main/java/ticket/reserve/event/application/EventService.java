@@ -1,17 +1,17 @@
-package ticket.reserve.event.service;
+package ticket.reserve.event.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
-import ticket.reserve.event.client.InventoryServiceClient;
-import ticket.reserve.event.dto.EventDetailResponseDto;
-import ticket.reserve.event.dto.EventRequestDto;
-import ticket.reserve.event.dto.EventResponseDto;
-import ticket.reserve.event.dto.EventUpdateRequestDto;
+import ticket.reserve.event.application.port.out.EventPublishPort;
+import ticket.reserve.event.application.port.out.InventoryPort;
+import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
+import ticket.reserve.event.application.dto.request.EventRequestDto;
+import ticket.reserve.event.application.dto.response.EventResponseDto;
+import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 import ticket.reserve.event.domain.Event;
-import ticket.reserve.event.producer.EventCreatedProducer;
-import ticket.reserve.event.repository.EventRepository;
+import ticket.reserve.event.domain.repository.EventRepository;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final InventoryServiceClient inventoryServiceClient;
-    private final EventCreatedProducer eventCreatedProducer;
+    private final InventoryPort inventoryPort;
+    private final EventPublishPort eventPublishPort;
 
     @Transactional
     public EventDetailResponseDto createEvent(EventRequestDto request) {
@@ -37,7 +37,7 @@ public class EventService {
                 .endTime(event.getEndTime())
                 .totalSeats(event.getTotalSeats())
                 .build();
-        eventCreatedProducer.createEvent(payload);
+        eventPublishPort.createEvent(payload);
 
         return EventDetailResponseDto.from(savedEvent, savedEvent.getTotalSeats());
     }
@@ -51,7 +51,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public EventDetailResponseDto getEvent(Long eventId) {
-        Integer availableInventoryCount = inventoryServiceClient.countsInventory(eventId);
+        Integer availableInventoryCount = inventoryPort.countsInventory(eventId);
 
         return eventRepository.findById(eventId)
                 .map(e -> EventDetailResponseDto.from(e, availableInventoryCount))
