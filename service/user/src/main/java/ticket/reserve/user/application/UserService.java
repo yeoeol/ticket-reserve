@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.domain.User;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.repository.UserRepository;
-import ticket.reserve.user.infrastructure.security.JwtUtil;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final GenerateTokenPort generateTokenPort;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -41,7 +41,7 @@ public class UserService {
             throw new RuntimeException("Invalid password");
         }
 
-        return jwtUtil.generateToken(user.getId(), user.getRole());
+        return generateTokenPort.generateToken(user.getId(), user.getRole());
     }
 
     @Transactional(readOnly = true)
