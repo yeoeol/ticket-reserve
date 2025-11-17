@@ -1,6 +1,7 @@
 package ticket.reserve.admin.client.event.dto;
 
 import lombok.Builder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -10,12 +11,11 @@ public record EventDetailResponseDto(
         String eventTitle,          // 공연 제목
         String description,
         String location,            // 장소
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         LocalDateTime startTime,
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         LocalDateTime endTime,
         int availableInventory,
         int totalSeats
 ) {
-    public EventDetailResponseDto() {
-        this(null, "", "", "", null, null, 0, 0);
-    }
 }

@@ -182,7 +182,7 @@
         <section class="event-title-header">
             <h1 th:text="*{event.eventTitle}">공연 이름 예시 (예: 락 페스티벌)</h1>
             <div class="event-meta">
-                <span th:text="*{event.startTime}">2025-12-01 18:00</span>
+                <span th:text="${#temporals.format(inventoryList.event.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</span>
                 <span th:text="'· ' + *{event.location}">· 위치: 서울시 강남구</span>
             </div>
         </section>
