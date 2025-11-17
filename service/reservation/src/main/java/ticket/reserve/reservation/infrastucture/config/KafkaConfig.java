@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.config;
+package ticket.reserve.reservation.infrastucture.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

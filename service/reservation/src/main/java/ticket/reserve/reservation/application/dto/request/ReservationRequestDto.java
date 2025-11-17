@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.dto;
+package ticket.reserve.reservation.application.dto.request;
 
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
