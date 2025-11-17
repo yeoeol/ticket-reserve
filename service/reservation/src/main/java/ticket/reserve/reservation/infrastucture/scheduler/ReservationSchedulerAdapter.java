@@ -7,7 +7,7 @@ import ticket.reserve.reservation.application.ReservationExpiryService;
 
 @Component
 @RequiredArgsConstructor
-public class ReservationScheduler {
+public class ReservationSchedulerAdapter {
 
     private final ReservationExpiryService reservationExpiryService;
 
