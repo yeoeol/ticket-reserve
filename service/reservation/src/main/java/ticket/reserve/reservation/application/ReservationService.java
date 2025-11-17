@@ -1,28 +1,28 @@
-package ticket.reserve.reservation.service;
+package ticket.reserve.reservation.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.reservation.client.InventoryServiceClient;
-import ticket.reserve.reservation.client.dto.InventoryHoldRequestDto;
+import ticket.reserve.reservation.application.port.out.InventoryPort;
+import ticket.reserve.reservation.application.dto.request.InventoryHoldRequestDto;
+import ticket.reserve.reservation.application.dto.request.ReservationRequestDto;
+import ticket.reserve.reservation.application.dto.response.ReservationResponseDto;
 import ticket.reserve.reservation.domain.Reservation;
-import ticket.reserve.reservation.dto.ReservationRequestDto;
-import ticket.reserve.reservation.dto.ReservationResponseDto;
-import ticket.reserve.reservation.repository.ReservationRepository;
+import ticket.reserve.reservation.domain.repository.ReservationRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final InventoryServiceClient inventoryServiceClient;
+    private final InventoryPort inventoryPort;
 
     @Transactional
     public ReservationResponseDto createReservation(ReservationRequestDto request, Long userId) {
         try {
             InventoryHoldRequestDto holdRequest = new InventoryHoldRequestDto(request.eventId(), request.inventoryId());
             // 좌석 선점 로직
-            inventoryServiceClient.holdInventory(holdRequest);
+            inventoryPort.holdInventory(holdRequest);
         } catch (Exception e) {
             throw new RuntimeException("좌석 선점에 실패했습니다.");
         }

@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.dto;
+package ticket.reserve.reservation.application.dto.response;
 
 import lombok.Builder;
 

@@ -1,11 +1,11 @@
-package ticket.reserve.reservation.controller;
+package ticket.reserve.reservation.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ticket.reserve.reservation.service.ReservationService;
+import ticket.reserve.reservation.application.ReservationService;
 
 @RestController
 @RequiredArgsConstructor

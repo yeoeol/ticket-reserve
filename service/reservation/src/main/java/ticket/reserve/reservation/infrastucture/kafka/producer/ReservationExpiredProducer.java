@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.producer;
+package ticket.reserve.reservation.infrastucture.kafka.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,15 +8,17 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.ReservationExpiredPayload;
+import ticket.reserve.reservation.application.port.out.ReservationPublishPort;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ReservationExpiredProducer {
+public class ReservationExpiredProducer implements ReservationPublishPort {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
+    @Override
     public void expireReservation(ReservationExpiredPayload payload) {
         String reservationExpiredMessage = null;
         try {
