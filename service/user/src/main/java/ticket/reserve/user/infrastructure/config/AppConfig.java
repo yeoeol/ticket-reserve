@@ -1,4 +1,4 @@
-package ticket.reserve.user.config;
+package ticket.reserve.user.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

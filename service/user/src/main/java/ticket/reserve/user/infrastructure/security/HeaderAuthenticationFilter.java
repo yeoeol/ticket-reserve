@@ -1,4 +1,4 @@
-package ticket.reserve.user.filter;
+package ticket.reserve.user.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
