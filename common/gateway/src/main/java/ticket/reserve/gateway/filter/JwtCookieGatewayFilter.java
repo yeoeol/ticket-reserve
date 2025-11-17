@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -19,8 +20,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-//@Component
-public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
+@Component
+public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 
     public static final List<String> permitUris = List.of(
             // user-service
@@ -33,8 +34,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     private final long expiration;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    public JwtAuthenticationFilter(@Value("${jwt.secret}") String secret,
-                                   @Value("${jwt.expiration}") long expiration) {
+    public JwtCookieGatewayFilter(@Value("${jwt.secret}") String secret,
+                                  @Value("${jwt.expiration}") long expiration) {
         super(Object.class);
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
@@ -54,11 +55,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
                 return chain.filter(exchange);
             }
 
-            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+            HttpCookie accessTokenCookie = request.getCookies().getFirst("accessToken");
+            if (accessTokenCookie == null) {
+                return onError(exchange, "No Access Token Cookie", HttpStatus.UNAUTHORIZED);
             }
-            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-            String jwt = authorizationHeader.replace("Bearer ", "");
+
+            String jwt = accessTokenCookie.getValue();
 
             if (!isJwtValid(jwt)) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);

@@ -1,5 +1,6 @@
 package ticket.reserve.user.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -29,8 +30,17 @@ public class UserController {
     @PostMapping("/users/login")
     public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
         String token = userService.login(requestDto.username(), requestDto.password());
+        setHttpOnlyCookie(token, response);
 
         response.addHeader(HttpHeaders.AUTHORIZATION, token);
         return "redirect:/";
+    }
+
+    private static void setHttpOnlyCookie(String accessToken, HttpServletResponse response) {
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(60*60*24);  // 1일
+        response.addCookie(accessTokenCookie);
     }
 }
