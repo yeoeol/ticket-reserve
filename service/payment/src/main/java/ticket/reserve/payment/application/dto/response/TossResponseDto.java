@@ -1,4 +1,4 @@
-package ticket.reserve.payment.client.dto;
+package ticket.reserve.payment.application.dto.response;
 
 import java.time.OffsetDateTime;
 

@@ -1,23 +1,23 @@
-package ticket.reserve.payment.service;
+package ticket.reserve.payment.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
-import ticket.reserve.payment.client.TossPaymentsClient;
-import ticket.reserve.payment.client.dto.TossResponseDto;
+import ticket.reserve.payment.application.port.out.PaymentPublishPort;
+import ticket.reserve.payment.application.port.out.TossPaymentsPort;
+import ticket.reserve.payment.application.dto.response.TossResponseDto;
+import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.domain.Payment;
-import ticket.reserve.payment.dto.PaymentConfirmRequestDto;
-import ticket.reserve.payment.producer.PaymentConfirmedProducer;
-import ticket.reserve.payment.repository.PaymentRepository;
+import ticket.reserve.payment.domain.repository.PaymentRepository;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final TossPaymentsClient tossPaymentsClient;
-    private final PaymentConfirmedProducer paymentConfirmedProducer;
+    private final TossPaymentsPort tossPaymentsPort;
+    private final PaymentPublishPort paymentPublishPort;
 
     @Transactional
     public void createPayment(String orderId, Long userId, Long reservationId, Long inventoryId) {
@@ -33,14 +33,19 @@ public class PaymentService {
 
     @Transactional
     public void confirmPayment(PaymentConfirmRequestDto request) {
-        TossResponseDto tossResponseDto = tossPaymentsClient.confirmPayment(request);
+        TossResponseDto tossResponseDto = tossPaymentsPort.confirmPayment(request);
 
         Payment payment = paymentRepository.findByOrderId(tossResponseDto.orderId())
                 .orElseThrow(() -> new RuntimeException("Payment NOT FOUND : By orderId"));
-        payment.setting(tossResponseDto);
 
-        // OpenFeign - Reservation-service의 confirm 호출
-//        reservationServiceClient.confirmReservation(payment.getReservationId());
+        payment.confirmPayment(
+                tossResponseDto.paymentKey(),
+                tossResponseDto.orderName(),
+                tossResponseDto.status(),
+                tossResponseDto.requestedAt().toLocalDateTime(),
+                tossResponseDto.approvedAt().toLocalDateTime(),
+                tossResponseDto.totalAmount()
+        );
 
         // Kafka - 비동기 결제 완료 이벤트 발행
         PaymentConfirmedEventPayload payload = PaymentConfirmedEventPayload.builder()
@@ -50,6 +55,6 @@ public class PaymentService {
                 .orderId(payment.getOrderId())
                 .totalAmount(payment.getTotalAmount())
                 .build();
-        paymentConfirmedProducer.paymentConfirmEvent(payload);
+        paymentPublishPort.paymentConfirmEvent(payload);
     }
 }

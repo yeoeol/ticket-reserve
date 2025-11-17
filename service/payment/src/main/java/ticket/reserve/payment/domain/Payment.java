@@ -2,7 +2,6 @@ package ticket.reserve.payment.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.payment.client.dto.TossResponseDto;
 
 import java.time.LocalDateTime;
 
@@ -31,12 +30,20 @@ public class Payment {
     private LocalDateTime approvedAt;
     private int totalAmount;
 
-    public void setting(TossResponseDto tossResponseDto) {
-        this.paymentKey = tossResponseDto.paymentKey();
-        this.orderName = tossResponseDto.orderName();
-        this.status = tossResponseDto.status();
-        this.requestedAt = tossResponseDto.requestedAt().toLocalDateTime();
-        this.approvedAt = tossResponseDto.approvedAt().toLocalDateTime();
-        this.totalAmount = tossResponseDto.totalAmount();
+
+    public void confirmPayment(
+            String paymentKey,
+            String orderName,
+            String status,
+            LocalDateTime requestedAt,
+            LocalDateTime approvedAt,
+            int totalAmount
+    ) {
+        this.paymentKey = paymentKey;
+        this.orderName = orderName;
+        this.status = status;
+        this.requestedAt = requestedAt;
+        this.approvedAt = approvedAt;
+        this.totalAmount = totalAmount;
     }
 }
