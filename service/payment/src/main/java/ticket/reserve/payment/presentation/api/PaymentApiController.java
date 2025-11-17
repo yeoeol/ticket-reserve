@@ -1,4 +1,4 @@
-package ticket.reserve.payment.controller;
+package ticket.reserve.payment.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;

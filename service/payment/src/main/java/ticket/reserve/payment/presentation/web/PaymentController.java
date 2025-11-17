@@ -1,4 +1,4 @@
-package ticket.reserve.payment.controller;
+package ticket.reserve.payment.presentation.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -6,9 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import ticket.reserve.payment.config.PaymentProperties;
-import ticket.reserve.payment.dto.PaymentConfirmRequestDto;
-import ticket.reserve.payment.service.PaymentService;
+import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
+import ticket.reserve.payment.application.PaymentService;
+import ticket.reserve.payment.application.port.out.PaymentPropertiesPort;
 
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final PaymentProperties paymentProperties;
+    private final PaymentPropertiesPort paymentPropertiesPort;
 
     @GetMapping("/payments")
     public String paymentPage(@RequestParam Long userId,
@@ -33,7 +33,7 @@ public class PaymentController {
         model.addAttribute("amount", amount);
         model.addAttribute("orderId", orderId);
         model.addAttribute("orderName", "티켓 예매");
-        model.addAttribute("clientKey", paymentProperties.getClientKey());
+        model.addAttribute("clientKey", paymentPropertiesPort.getClientKey());
 
         paymentService.createPayment(orderId, userId, reservationId, inventoryId);
         return "payment";

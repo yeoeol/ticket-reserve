@@ -1,4 +1,4 @@
-package ticket.reserve.payment.config;
+package ticket.reserve.payment.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

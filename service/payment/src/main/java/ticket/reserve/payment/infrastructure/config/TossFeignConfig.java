@@ -1,4 +1,4 @@
-package ticket.reserve.payment.config;
+package ticket.reserve.payment.infrastructure.config;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

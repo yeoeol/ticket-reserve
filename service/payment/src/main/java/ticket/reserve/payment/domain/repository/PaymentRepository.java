@@ -1,4 +1,4 @@
-package ticket.reserve.payment.repository;
+package ticket.reserve.payment.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ticket.reserve.payment.domain.Payment;
