@@ -1,4 +1,4 @@
-package ticket.reserve.user.controller;
+package ticket.reserve.user.presentation.web;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.user.dto.UserLoginRequestDto;
-import ticket.reserve.user.dto.UserRegisterRequestDto;
-import ticket.reserve.user.service.UserService;
+import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
+import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.UserService;
 
 @Controller
 @RequiredArgsConstructor

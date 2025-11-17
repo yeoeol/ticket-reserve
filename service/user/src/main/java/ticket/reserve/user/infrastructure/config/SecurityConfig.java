@@ -1,4 +1,4 @@
-package ticket.reserve.user.config;
+package ticket.reserve.user.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ticket.reserve.user.filter.HeaderAuthenticationFilter;
+import ticket.reserve.user.infrastructure.security.HeaderAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity

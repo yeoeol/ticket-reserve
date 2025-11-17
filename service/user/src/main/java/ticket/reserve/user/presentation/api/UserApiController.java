@@ -1,14 +1,13 @@
-package ticket.reserve.user.controller;
+package ticket.reserve.user.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ticket.reserve.user.dto.UserLoginRequestDto;
-import ticket.reserve.user.dto.UserRegisterRequestDto;
-import ticket.reserve.user.dto.UserResponseDto;
-import ticket.reserve.user.dto.UserUpdateRequestDto;
-import ticket.reserve.user.service.UserService;
+import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
+import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.response.UserResponseDto;
+import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
+import ticket.reserve.user.application.UserService;
 
 import java.util.HashMap;
 import java.util.List;

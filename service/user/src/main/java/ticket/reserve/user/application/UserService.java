@@ -1,15 +1,15 @@
-package ticket.reserve.user.service;
+package ticket.reserve.user.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.user.domain.User;
-import ticket.reserve.user.dto.UserRegisterRequestDto;
-import ticket.reserve.user.dto.UserResponseDto;
-import ticket.reserve.user.dto.UserUpdateRequestDto;
-import ticket.reserve.user.repository.UserRepository;
-import ticket.reserve.user.util.JwtUtil;
+import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.response.UserResponseDto;
+import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
+import ticket.reserve.user.domain.repository.UserRepository;
+import ticket.reserve.user.infrastructure.security.JwtUtil;
 
 import java.util.List;
 

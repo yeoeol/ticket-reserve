@@ -1,4 +1,4 @@
-package ticket.reserve.user.util;
+package ticket.reserve.user.infrastructure.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
