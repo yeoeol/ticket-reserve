@@ -1,4 +1,4 @@
-package ticket.reserve.event.dto;
+package ticket.reserve.event.application.dto.request;
 
 import ticket.reserve.event.domain.Event;
 

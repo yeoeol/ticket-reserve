@@ -2,7 +2,7 @@ package ticket.reserve.event.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.event.dto.EventUpdateRequestDto;
+import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 
 import java.time.LocalDateTime;
 

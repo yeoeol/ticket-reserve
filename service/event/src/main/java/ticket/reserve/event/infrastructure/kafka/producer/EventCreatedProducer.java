@@ -1,4 +1,4 @@
-package ticket.reserve.event.producer;
+package ticket.reserve.event.infrastructure.kafka.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,15 +8,17 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
+import ticket.reserve.event.application.port.out.EventPublishPort;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventCreatedProducer {
+public class EventCreatedProducer implements EventPublishPort {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
+    @Override
     public void createEvent(EventCreatedEventPayload payload) {
         String eventCreatedMessage = null;
         try {
