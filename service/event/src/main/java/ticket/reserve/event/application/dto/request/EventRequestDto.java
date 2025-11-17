@@ -1,0 +1,26 @@
+package ticket.reserve.event.application.dto.request;
+
+import ticket.reserve.event.domain.Event;
+
+import java.time.LocalDateTime;
+
+public record EventRequestDto(
+        Long id,
+        String eventTitle,          // 공연 제목
+        String description,         // 상세 내용
+        String location,            // 장소
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        int totalSeats             // 총 좌석 수
+) {
+    public Event toEntity() {
+        return Event.builder()
+                .eventTitle(this.eventTitle)
+                .description(this.description)
+                .location(this.location)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .totalSeats(this.totalSeats)
+                .build();
+    }
+}
