@@ -201,6 +201,7 @@
                              th:text="${inventory.inventoryName}"
                              th:class="'seat ' + (${inventory.status} == 'AVAILABLE' ? 'available' : 'occupied')"
                              th:data-seat-number="${inventory.inventoryId}"
+                             th:data-seat-name="${inventory.inventoryName}"
                              th:data-seat-price="${inventory.price}"
                              th:data-status="${inventory.status}">
                         </div>
@@ -316,19 +317,19 @@
         const selectedSeat = document.querySelector('.seat.selected');
 
         let count = 0;
-        let seatNumber = '선택된 좌석 없음';
+        let seatName = '선택된 좌석 없음';
         let totalPrice = 0; // 기본값을 0으로 설정
 
         // 선택된 좌석이 있을 경우에만 정보 업데이트
         if (selectedSeat) {
             count = 1;
             // Thymeleaf에서 설정한 data-seat-number 속성 값을 가져옴
-            seatNumber = selectedSeat.dataset.seatNumber;
+            seatName = selectedSeat.dataset.seatName;
             totalPrice = count * parseFloat(selectedSeat.dataset.seatPrice);
         }
 
         // 화면에 업데이트
-        selectedSeatsListEl.textContent = seatNumber;
+        selectedSeatsListEl.textContent = seatName;
         ticketCountEl.textContent = `${count} 장`;
         totalPriceEl.textContent = `₩${totalPrice.toLocaleString()}`;
 
