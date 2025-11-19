@@ -1,4 +1,4 @@
-package ticket.reserve.gateway.filter;
+package ticket.reserve.gateway.infrastructure.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -6,12 +6,10 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -20,8 +18,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@Component
-public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object> {
+//@Component
+public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
 
     public static final List<String> permitUris = List.of(
             // user-service
@@ -34,8 +32,8 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
     private final long expiration;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    public JwtCookieGatewayFilter(@Value("${jwt.secret}") String secret,
-                                  @Value("${jwt.expiration}") long expiration) {
+    public JwtAuthenticationFilter(@Value("${jwt.secret}") String secret,
+                                   @Value("${jwt.expiration}") long expiration) {
         super(Object.class);
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
@@ -55,12 +53,11 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
                 return chain.filter(exchange);
             }
 
-            HttpCookie accessTokenCookie = request.getCookies().getFirst("accessToken");
-            if (accessTokenCookie == null) {
-                return onError(exchange, "No Access Token Cookie", HttpStatus.UNAUTHORIZED);
+            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
             }
-
-            String jwt = accessTokenCookie.getValue();
+            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            String jwt = authorizationHeader.replace("Bearer ", "");
 
             if (!isJwtValid(jwt)) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
