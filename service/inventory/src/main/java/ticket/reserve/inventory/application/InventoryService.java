@@ -3,8 +3,11 @@ package ticket.reserve.inventory.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
 import ticket.reserve.inventory.application.port.out.EventPort;
@@ -30,7 +33,7 @@ public class InventoryService {
         EventDetailResponseDto eventResponseDto = eventPort.getOne(request.eventId());
         Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.eventId());
         if (eventResponseDto.totalSeats() == eventInventoryCount) {
-            throw new RuntimeException("해당 이벤트에 더이상 좌석을 생성할 수 없습니다.");
+            throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
 
         Inventory inventory = request.toEntity();
@@ -40,7 +43,7 @@ public class InventoryService {
     @Transactional
     public void updateInventory(Long inventoryId, InventoryUpdateRequestDto request) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.update(request.inventoryName(), request.price());
     }
 
@@ -67,7 +70,7 @@ public class InventoryService {
     @Transactional(readOnly = true)
     public InventoryResponseDto getInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new RuntimeException("발견된 좌석이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
 
         return InventoryResponseDto.from(inventory);
     }
@@ -76,7 +79,7 @@ public class InventoryService {
     @Transactional
     public void holdInventoryV1(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.hold();
     }
 
@@ -84,7 +87,7 @@ public class InventoryService {
     @Transactional
     public void holdInventoryV2(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.hold();
     }
 
@@ -92,21 +95,21 @@ public class InventoryService {
     @DistributedLock(key = "'INVENTORY_LOCK:' + #inventoryId")
     public void holdInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.hold();
     }
 
     @Transactional
     public void confirmInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.confirm();
     }
 
     @Transactional
     public void releaseInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
-                .orElseThrow(() -> new RuntimeException("이벤트의 좌석 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
         inventory.release();
     }
 

@@ -8,6 +8,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.reservation.application.ReservationService;
 
 @Slf4j
@@ -25,10 +27,9 @@ public class ReservationExpiredEventConsumer {
             PaymentConfirmedEventPayload payload = objectMapper.readValue(message, PaymentConfirmedEventPayload.class);
             reservationService.releaseReservation(payload.getReservationId());
             log.info("[ReservationExpiredEventConsumer.listen] 예매 취소 처리 완료 - reservationId = {}", payload.getReservationId());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("[ReservationExpiredEventConsumer.listen] JSON 파싱 중 오류 발생", e);
         } catch (Exception e) {
-            throw new RuntimeException("[ReservationExpiredEventConsumer.listen] 오류 발생", e);
+            log.error("[ReservationExpiredEventConsumer.listen]", e);
+            throw new CustomException(ErrorCode.RESERVATION_EXPIRED_ERROR);
         }
     }
 }

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.domain.User;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
@@ -35,10 +37,10 @@ public class UserService {
     @Transactional
     public String login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new CustomException(ErrorCode.INVALID_LOGIN);
         }
 
         return generateTokenPort.generateToken(user.getId(), user.getRole());
@@ -55,19 +57,23 @@ public class UserService {
     public UserResponseDto getUser(Long userId) {
         return userRepository.findById(userId)
                 .map(UserResponseDto::from)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional
     public UserResponseDto updateUser(UserUpdateRequestDto request) {
         User user = userRepository.findById(request.id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 틀립니다.");
-        }
+        validatePassword(request.password(), user.getPassword());
         user.update(request.username(), request.email());
 
         return UserResponseDto.from(user);
+    }
+
+    private void validatePassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new CustomException(ErrorCode.INVALID_LOGIN);
+        }
     }
 }

@@ -12,6 +12,8 @@ import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 
 import java.util.List;
 
@@ -55,13 +57,13 @@ public class EventService {
 
         return eventRepository.findById(eventId)
                 .map(e -> EventDetailResponseDto.from(e, availableInventoryCount))
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
     }
 
     @Transactional
     public void updateEvent(Long id, EventUpdateRequestDto request) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
         event.update(request);
     }

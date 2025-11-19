@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.payment.application.port.out.PaymentPublishPort;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
 import ticket.reserve.payment.application.dto.response.TossResponseDto;
@@ -36,7 +38,10 @@ public class PaymentService {
         TossResponseDto tossResponseDto = tossPaymentsPort.confirmPayment(request);
 
         Payment payment = paymentRepository.findByOrderId(tossResponseDto.orderId())
-                .orElseThrow(() -> new RuntimeException("Payment NOT FOUND : By orderId"));
+                .orElseThrow(() -> new CustomException(
+                        ErrorCode.PAYMENT_NOT_FOUND,
+                        ErrorCode.PAYMENT_NOT_FOUND.getMessage() + " By orderId"
+                ));
 
         payment.confirmPayment(
                 tossResponseDto.paymentKey(),

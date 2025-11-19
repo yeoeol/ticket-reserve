@@ -2,6 +2,8 @@ package ticket.reserve.inventory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
 
 @Entity
@@ -29,7 +31,7 @@ public class Inventory extends BaseTimeEntity {
 
     public void hold() {
         if (this.status != InventoryStatus.AVAILABLE) {
-            throw new RuntimeException("좌석 ID : " + this.id + " - 이미 선택된 좌석입니다.");
+            throw new CustomException(ErrorCode.INVENTORY_HOLD_FAIL);
         }
         this.status = InventoryStatus.PENDING;
     }
