@@ -1,6 +1,8 @@
 package ticket.reserve.inventory.presentation.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.inventory.application.InventoryService;
@@ -8,9 +10,9 @@ import ticket.reserve.inventory.application.dto.request.InventoryHoldRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryReleaseRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
+import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.application.dto.response.InventoryResponseDto;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,8 +51,11 @@ public class InventoryApiController {
     }
 
     @GetMapping("/api/inventory/{eventId}")
-    public ResponseEntity<List<InventoryResponseDto>> getInventories(@PathVariable Long eventId) {
-        return ResponseEntity.ok(inventoryService.getInventoryList(eventId));
+    public ResponseEntity<CustomPageResponse<InventoryResponseDto>> getInventories(
+            @PathVariable Long eventId,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return ResponseEntity.ok(inventoryService.getInventoryPaging(eventId, pageable));
     }
 
     @GetMapping("/api/inventory/{eventId}/{inventoryId}")

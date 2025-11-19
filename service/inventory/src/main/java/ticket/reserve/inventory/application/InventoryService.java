@@ -1,8 +1,11 @@
 package ticket.reserve.inventory.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
 import ticket.reserve.inventory.application.port.out.EventPort;
 import ticket.reserve.inventory.application.dto.response.InventoryListResponseDto;
@@ -54,11 +57,11 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<InventoryResponseDto> getInventoryList(Long eventId) {
-        List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
-        return inventoryList.stream()
-                .map(InventoryResponseDto::from)
-                .toList();
+    public CustomPageResponse<InventoryResponseDto> getInventoryPaging(Long eventId, Pageable pageable) {
+        Page<Inventory> inventoryPage = inventoryRepository.findAllByEventId(eventId, pageable);
+        Page<InventoryResponseDto> inventoryPageResponseDto = inventoryPage.map(InventoryResponseDto::from);
+
+        return CustomPageResponse.from(inventoryPageResponseDto);
     }
 
     @Transactional(readOnly = true)
