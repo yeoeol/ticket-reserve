@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.event.application.port.out.EventPublishPort;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 
 @Slf4j
 @Component
@@ -23,8 +25,9 @@ public class EventCreatedProducer implements EventPublishPort {
         String eventCreatedMessage = null;
         try {
             eventCreatedMessage = objectMapper.writeValueAsString(payload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("[EventCreatedProducer.createEvent] JSON 파싱 과정 중 오류 발생");
+        } catch (Exception e) {
+            log.error("[EventCreatedProducer.createEvent]", e);
+            throw new CustomException(ErrorCode.EVENT_CREATED_ERROR);
         }
 
         kafkaTemplate.send(EventType.Topic.TICKET_RESERVE_EVENT, eventCreatedMessage);

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>에러 발생</title>
+</head>
+<body>
+<div class="container">
+    <h1>요청을 처리할 수 없습니다.</h1>
+
+    <div class="alert alert-danger">
+        <p th:text="${errorMessage}">에러 메시지가 여기에 표시됩니다.</p>
+    </div>
+
+    <a href="/" class="btn btn-primary">메인으로 돌아가기</a>
+    <a href="javascript:history.back()" class="btn btn-secondary">뒤로 가기</a>
+</div>
+</body>
+</html>

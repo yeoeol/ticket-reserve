@@ -8,6 +8,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.payment.application.port.out.PaymentPublishPort;
 
 @Slf4j
@@ -23,8 +25,9 @@ public class PaymentConfirmedProducer implements PaymentPublishPort {
         String paymentConfirmedMessage = null;
         try {
             paymentConfirmedMessage = objectMapper.writeValueAsString(payload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("[PaymentConfirmedProducer.paymentConfirmEvent] JSON 파싱 과정 중 오류 발생");
+        } catch (Exception e) {
+            log.error("[PaymentConfirmedProducer.paymentConfirmEvent]", e);
+            throw new CustomException(ErrorCode.PAYMENT_CONFIRMED_ERROR);
         }
 
         kafkaTemplate.send(EventType.Topic.TICKET_RESERVE_PAYMENT, paymentConfirmedMessage);

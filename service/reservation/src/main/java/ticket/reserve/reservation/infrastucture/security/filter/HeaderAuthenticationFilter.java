@@ -1,4 +1,4 @@
-package ticket.reserve.inventory.infrastructure.security;
+package ticket.reserve.reservation.infrastucture.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
