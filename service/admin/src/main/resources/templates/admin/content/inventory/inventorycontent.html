@@ -22,6 +22,35 @@
     .rounded-table tbody tr:last-child td:last-child {
         border-bottom-right-radius: 10px; /* 마지막 셀의 오른쪽 하단 모서리 */
     }
+
+    /* 페이지네이션 스타일 추가 */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        list-style: none;
+        padding: 0;
+    }
+    .page-item {
+        margin: 0 5px;
+    }
+    .page-link {
+        color: #000;
+        padding: 8px 16px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+    .page-item.active .page-link {
+        background-color: #060C1C; /* 테이블 색상과 맞춤 */
+        color: #fff;
+        border-color: #060C1C;
+    }
+    .page-item.disabled .page-link {
+        color: #ccc;
+        pointer-events: none;
+    }
 </style>
 <div class="tbl_wrp form-custom">
     <table class="table rounded-table">
@@ -45,6 +74,35 @@
         </tr>
         </tbody>
     </table>
+
+    <div th:if="${inventoryPage.totalPages > 0}">
+        <ul class="pagination">
+
+            <li class="page-item" th:classappend="${inventoryPage.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/{eventId}/inventory(eventId=${event.id}, page=${inventoryPage.pageNumber - 1})}">
+                    Previous
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:each="page : ${#numbers.sequence(0, inventoryPage.totalPages - 1)}"
+                th:classappend="${page == inventoryPage.pageNumber} ? 'active'"
+                th:if="${page >= inventoryPage.pageNumber - 2 and page <= inventoryPage.pageNumber + 2}">
+                <a class="page-link"
+                   th:text="${page + 1}"
+                   th:href="@{/admin/{eventId}/inventory(eventId=${event.id}, page=${page})}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${inventoryPage.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/{eventId}/inventory(eventId=${event.id}, page=${inventoryPage.pageNumber + 1})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </div>
+
     <div style="text-align:right;">
         <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/events}">이벤트 목록</a>
         <a class="btn btn-dark btn-lg" th:href="@{/admin/{eventId}/inventory/create(eventId=${event.id})}">좌석 등록</a>
