@@ -9,9 +9,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableJpaAuditing
 @EnableScheduling
-@SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+@SpringBootApplication(scanBasePackages = {
+        "ticket.reserve.global",
+        "ticket.reserve.reservation"
+})
 public class ReservationApplication {
     public static void main(String[] args) {
         SpringApplication.run(ReservationApplication.class);

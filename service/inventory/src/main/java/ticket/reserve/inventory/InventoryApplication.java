@@ -7,9 +7,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
-@SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+@SpringBootApplication(scanBasePackages = {
+        "ticket.reserve.global",
+        "ticket.reserve.inventory"
+})
 public class InventoryApplication {
     public static void main(String[] args) {
         SpringApplication.run(InventoryApplication.class);
