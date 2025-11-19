@@ -1,6 +1,8 @@
 package ticket.reserve.inventory.domain.repository;
 
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +17,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByIdForUpdate(Long inventoryId);
 
     List<Inventory> findAllByEventId(Long eventId);
+
+    Page<Inventory> findAllByEventId(Long eventId, Pageable pageable);
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.eventId = :eventId AND i.status = 'AVAILABLE'")
     Integer countAvailableInventoryByEventId(Long eventId);
