@@ -1,4 +1,4 @@
-package ticket.reserve.user.infrastructure.security;
+package ticket.reserve.event.infrastructure.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,12 +17,12 @@ import java.util.List;
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
     public static final List<String> permitUris = List.of(
-            // user-service
-            "/users", "/users/register", "/users/login", "/css/**", "/users/css/**"
+            // event-service
+            "/events", "/events/{id}"
     );
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String requestURI = request.getRequestURI();
         return permitUris.stream().anyMatch(

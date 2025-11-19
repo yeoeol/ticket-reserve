@@ -8,6 +8,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.ReservationExpiredPayload;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.reservation.application.port.out.ReservationPublishPort;
 
 @Slf4j
@@ -20,11 +22,13 @@ public class ReservationExpiredProducer implements ReservationPublishPort {
 
     @Override
     public void expireReservation(ReservationExpiredPayload payload) {
+        log.info("[ReservationExpiredEventConsumer.listen] 예매 만료 이벤트 발행: payload = {}", payload);
         String reservationExpiredMessage = null;
         try {
             reservationExpiredMessage = objectMapper.writeValueAsString(payload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("[ReservationExpiredProducer.expireReservation] JSON 파싱 과정 중 오류 발생");
+        } catch (Exception e) {
+            log.error("[ReservationExpiredProducer.expireReservation]", e);
+            throw new CustomException(ErrorCode.RESERVATION_EXPIRED_ERROR);
         }
 
         kafkaTemplate.send(EventType.Topic.TICKET_RESERVE_RESERVATION, reservationExpiredMessage);
