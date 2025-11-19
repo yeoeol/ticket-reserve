@@ -83,10 +83,10 @@ public class AdminService {
         inventoryPort.deleteInventory(eventId, inventoryId);
     }
 
-    public InventoryListPageDto getInventoryListPageData(Long eventId) {
+    public InventoryListPageDto getInventoryListPageData(Long eventId, int page) {
         return InventoryListPageDto.of(
                 eventPort.getEvent(eventId),
-                inventoryPort.getInventories(eventId)
+                inventoryPort.getInventories(eventId, page)
         );
     }
 }

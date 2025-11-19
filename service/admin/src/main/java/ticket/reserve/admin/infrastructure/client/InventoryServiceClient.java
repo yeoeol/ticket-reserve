@@ -2,18 +2,20 @@ package ticket.reserve.admin.infrastructure.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.admin.application.dto.inventory.response.CustomPageResponse;
 import ticket.reserve.admin.application.port.out.InventoryPort;
 import ticket.reserve.admin.application.dto.inventory.request.InventoryRequestDto;
 import ticket.reserve.admin.application.dto.inventory.request.InventoryUpdateRequestDto;
 import ticket.reserve.admin.application.dto.inventory.response.InventoryResponseDto;
 
-import java.util.List;
-
 @FeignClient(name = "INVENTORY-SERVICE")
 public interface InventoryServiceClient extends InventoryPort {
 
     @GetMapping("/api/inventory/{eventId}")
-    List<InventoryResponseDto> getInventories(@PathVariable Long eventId);
+    CustomPageResponse<InventoryResponseDto> getInventories(
+            @PathVariable Long eventId,
+            @RequestParam(value = "page", defaultValue = "0") int page
+    );
 
     @GetMapping("/api/inventory/{eventId}/{inventoryId}")
     InventoryResponseDto getInventory(@PathVariable("eventId") Long eventId,

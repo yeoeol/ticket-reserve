@@ -17,11 +17,15 @@ public class AdminInventoryController {
     private final AdminService adminService;
 
     @GetMapping("/admin/{eventId}/inventory")
-    public String getInventoryListPage(@PathVariable("eventId") Long eventId, Model model) {
-        InventoryListPageDto inventoryListPageDto = adminService.getInventoryListPageData(eventId);
+    public String getInventoryListPage(
+            @PathVariable("eventId") Long eventId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        InventoryListPageDto inventoryListPageDto = adminService.getInventoryListPageData(eventId, page);
 
         model.addAttribute("event", inventoryListPageDto.event());
-        model.addAttribute("inventoryList", inventoryListPageDto.inventoryList());
+        model.addAttribute("inventoryList", inventoryListPageDto.inventoryList().getContent());
+        model.addAttribute("inventoryPage", inventoryListPageDto.inventoryList());
         return "admin/inventory";
     }
 
