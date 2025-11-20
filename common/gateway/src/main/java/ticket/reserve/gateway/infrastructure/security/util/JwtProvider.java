@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtProvider {
@@ -28,7 +30,8 @@ public class JwtProvider {
     }
 
     public String getRolesFromJwt(String jwt) {
-        return getClaims(jwt).get("roles", String.class);
+        List<String> roles = getClaims(jwt).get("roles", List.class);
+        return String.join(",", roles);
     }
 
     public boolean isJwtValid(String jwt) {
@@ -48,7 +51,7 @@ public class JwtProvider {
         return returnValue;
     }
 
-    public Claims getClaims(String jwt) {
+    private Claims getClaims(String jwt) {
         return Jwts.parser()
                 .verifyWith(key)
                 .build()
