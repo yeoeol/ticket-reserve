@@ -11,25 +11,25 @@ import ticket.reserve.admin.application.dto.inventory.response.InventoryResponse
 @FeignClient(name = "INVENTORY-SERVICE")
 public interface InventoryServiceClient extends InventoryPort {
 
-    @GetMapping("/api/inventory/{eventId}")
+    @GetMapping("/api/inventories/{eventId}")
     CustomPageResponse<InventoryResponseDto> getInventories(
             @PathVariable Long eventId,
             @RequestParam(value = "page", defaultValue = "0") int page
     );
 
-    @GetMapping("/api/inventory/{eventId}/{inventoryId}")
+    @GetMapping("/api/inventories/{eventId}/{inventoryId}")
     InventoryResponseDto getInventory(@PathVariable("eventId") Long eventId,
                                       @PathVariable("inventoryId") Long inventoryId);
 
-    @PostMapping("/api/inventory")
+    @PostMapping("/api/inventories")
     void createInventory(@RequestBody InventoryRequestDto request);
 
-    @PutMapping("/api/inventory/{eventId}/{inventoryId}")
+    @PutMapping("/api/inventories/{eventId}/{inventoryId}")
     void updateInventory(@PathVariable("eventId") Long eventId,
                          @PathVariable("inventoryId") Long inventoryId,
                          @RequestBody InventoryUpdateRequestDto request);
 
-    @DeleteMapping("/api/inventory/{eventId}/{inventoryId}")
+    @DeleteMapping("/api/inventories/{eventId}/{inventoryId}")
     void deleteInventory(@PathVariable("eventId") Long eventId,
                          @PathVariable("inventoryId") Long inventoryId);
 }

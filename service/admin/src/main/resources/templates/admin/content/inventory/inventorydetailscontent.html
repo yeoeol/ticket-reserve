@@ -1,7 +1,7 @@
 <div class="tbl_wrp">
     <form class="form-horizontal form-custom"
           id="inventory-form"
-          th:action="${inventory.inventoryId == null} ? @{/admin/{eventId}/inventory(eventId=${eventId})} : @{/admin/{eventId}/inventory/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
+          th:action="${inventory.inventoryId == null} ? @{/admin/events/{eventId}/inventories(eventId=${eventId})} : @{/admin/events/{eventId}/inventories/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
           th:method="${inventory.inventoryId == null} ? 'POST' : 'PUT'"
           th:object="${inventory}">
 
@@ -29,9 +29,9 @@
                     th:text="${inventory.inventoryId == null} ? '등록' : '수정'">
                 등록
             </button>
-            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=${eventId})}">좌석 목록</a>
+            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/events/{eventId}/inventories(eventId=${eventId})}">좌석 목록</a>
             <form th:if="${inventory.inventoryId != null}"
-                  th:action="@{/admin/{eventId}/inventory/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
+                  th:action="@{/admin/events/{eventId}/inventories/{inventoryId}(eventId=${eventId}, inventoryId=${inventory.inventoryId})}"
                   th:method="DELETE"
                   style="display: inline-block;"
                   onsubmit="return confirm('이 좌석을 정말 삭제하시겠습니까?');">

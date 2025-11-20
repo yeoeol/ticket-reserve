@@ -12,22 +12,23 @@ import ticket.reserve.user.application.UserService;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users/register")
+    @GetMapping("/register")
     public String registerPage() {
         return "register";
     }
 
-    @PostMapping("/users/register")
+    @PostMapping("/register")
     public String register(UserRegisterRequestDto requestDto) {
         userService.register(requestDto);
         return "redirect:/users/register";
     }
 
-    @PostMapping("/users/login")
+    @PostMapping("/login")
     public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
         String token = userService.login(requestDto.username(), requestDto.password());
         setHttpOnlyCookie(token, response);
