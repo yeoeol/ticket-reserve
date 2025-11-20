@@ -64,7 +64,11 @@
 
                 <button type="submit" class="btn btn-dark btn-lg" style="margin:10px;">삭제</button>
             </form>
-            <a class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=*{id})}">좌석 관리</a>
+
+            <a th:if="${event.id != null}"
+                class="btn btn-dark btn-lg" style="margin:10px;" th:href="@{/admin/{eventId}/inventory(eventId=*{id})}">
+                좌석 관리
+            </a>
         </div>
     </div>
 </div>
