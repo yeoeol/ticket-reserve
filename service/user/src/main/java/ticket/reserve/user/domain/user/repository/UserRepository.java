@@ -1,7 +1,7 @@
-package ticket.reserve.user.domain.repository;
+package ticket.reserve.user.domain.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ticket.reserve.user.domain.User;
+import ticket.reserve.user.domain.user.User;
 
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
 package ticket.reserve.user.application.dto.response;
 
 import lombok.Builder;
-import ticket.reserve.user.domain.User;
+import ticket.reserve.user.domain.user.User;
 
 @Builder
 public record UserResponseDto(
