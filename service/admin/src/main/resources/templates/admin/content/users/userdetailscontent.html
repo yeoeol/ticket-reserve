@@ -26,11 +26,9 @@
         <div class="form-group">
             <label for="roles" class="col-sm-2 control-label">권한</label>
             <div class="col-sm-10">
-                <span th:text="*{role}"></span>
-<!--                <span th:each="role:${roleList}">-->
-<!--                    <input type="checkbox" th:field="*{roles}" th:value="${role.roleName}" />-->
-<!--                    <label th:text="${role.roleName}"></label>-->
-<!--                </span>-->
+                <span th:each="role,iter:${user.roles}">
+                    <h6 style="color:#ffffff" th:text="${role}"></h6>
+                </span>
             </div>
         </div>
 

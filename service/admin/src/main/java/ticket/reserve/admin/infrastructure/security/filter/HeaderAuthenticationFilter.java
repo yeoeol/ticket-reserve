@@ -11,17 +11,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String userId = request.getHeader("X-USER-ID");
-        String userRole = request.getHeader("X-User-Roles");
+        String userRoles = request.getHeader("X-User-Roles");
 
-        if (userId != null && userRole != null) {
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userRole));
+        if (userId != null && userRoles != null) {
+            List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userId, null, authorities);
             SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(authenticationToken);
