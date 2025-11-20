@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.application.PaymentService;
@@ -14,12 +15,13 @@ import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final PaymentPropertiesPort paymentPropertiesPort;
 
-    @GetMapping("/payments")
+    @GetMapping
     public String paymentPage(@RequestParam Long userId,
                               @RequestParam Long reservationId,
                               @RequestParam Long inventoryId,
@@ -39,7 +41,7 @@ public class PaymentController {
         return "payment";
     }
 
-    @GetMapping("/payments/success")
+    @GetMapping("/success")
     public String paymentSuccess(@ModelAttribute PaymentConfirmRequestDto request) {
         paymentService.confirmPayment(request);
         return "redirect:/";
