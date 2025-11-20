@@ -39,6 +39,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private void setUpData() {
         User admin = createUserIfNotFound("admin", "admin@gmail.com", "1111");
         Role adminRole = createRoleIfNotFound("ROLE_ADMIN", "관리자");
+        createRoleIfNotFound("ROLE_USER", "사용자");
         UserRole userRole = createUserRoleIfNotFound(admin, adminRole);
         admin.getUserRoles().add(userRole);
     }
