@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
-import ticket.reserve.user.domain.User;
+import ticket.reserve.user.domain.user.User;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
-import ticket.reserve.user.domain.repository.UserRepository;
+import ticket.reserve.user.domain.user.repository.UserRepository;
 
 import java.util.List;
 

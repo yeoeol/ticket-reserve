@@ -34,10 +34,9 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
             ServerHttpRequest request = exchange.getRequest();
 
             String path = request.getURI().getPath();
-            boolean isPermitted = isPermitted(path);
 
             // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
-            if (isPermitted) {
+            if (isPermitted(path)) {
                 return chain.filter(exchange);
             }
 

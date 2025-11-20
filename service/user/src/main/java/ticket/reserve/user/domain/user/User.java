@@ -1,15 +1,19 @@
-package ticket.reserve.user.domain;
+package ticket.reserve.user.domain.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ticket.reserve.user.domain.BaseTimeEntity;
+import ticket.reserve.user.domain.userrole.UserRole;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "users")
 public class User extends BaseTimeEntity {
@@ -26,8 +30,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @OneToMany(mappedBy = "user")
     @Builder.Default
-    private String role = "ROLE_USER";
+    private Set<UserRole> userRoles = new HashSet<>();
 
     public void update(String username, String email) {
         this.username = username;
