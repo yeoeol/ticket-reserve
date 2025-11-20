@@ -3,15 +3,14 @@ package ticket.reserve.user.application.dto.response;
 import lombok.Builder;
 import ticket.reserve.user.domain.user.User;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Builder
 public record UserResponseDto(
         Long id,
         String username,
         String email,
-        Set<String> roles
+        List<String> roles
 ) {
 
     public static UserResponseDto from(User user) {
@@ -21,7 +20,7 @@ public record UserResponseDto(
                 .email(user.getEmail())
                 .roles(user.getUserRoles().stream()
                         .map(ur -> ur.getRole().getRoleName())
-                        .collect(Collectors.toSet())
+                        .toList()
                 )
                 .build();
     }
