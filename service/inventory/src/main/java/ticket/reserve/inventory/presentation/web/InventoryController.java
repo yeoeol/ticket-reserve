@@ -13,7 +13,7 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @GetMapping("/inventory/{eventId}")
+    @GetMapping("/inventories/{eventId}")
     public String getAll(@PathVariable Long eventId, Model model) {
         InventoryListResponseDto inventoryList = inventoryService.getInventories(eventId);
         model.addAttribute("inventoryList", inventoryList);

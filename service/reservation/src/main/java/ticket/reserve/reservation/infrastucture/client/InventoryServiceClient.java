@@ -13,6 +13,6 @@ public interface InventoryServiceClient extends InventoryPort {
      * inventory-service의 /api/inventory/hold (좌석 임시 선점) API를 호출
      */
     @Override
-    @PostMapping("/api/inventory/hold")
+    @PostMapping("/api/inventories/hold")
     void holdInventory(@RequestBody InventoryHoldRequestDto request);
 }

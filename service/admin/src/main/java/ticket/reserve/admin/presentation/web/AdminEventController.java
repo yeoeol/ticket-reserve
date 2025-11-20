@@ -14,11 +14,12 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/admin/events")
 public class AdminEventController {
 
     private final AdminService adminService;
 
-    @GetMapping("/admin/events")
+    @GetMapping
     public String getEvents(Model model) {
         List<EventResponseDto> events = adminService.getEvents();
 
@@ -26,7 +27,7 @@ public class AdminEventController {
         return "admin/events";
     }
 
-    @GetMapping("/admin/events/{id}")
+    @GetMapping("/{id}")
     public String getEvent(@PathVariable("id") Long eventId, Model model) {
         EventDetailResponseDto event = adminService.getEvent(eventId);
 
@@ -34,26 +35,26 @@ public class AdminEventController {
         return "admin/eventdetails";
     }
 
-    @GetMapping("/admin/events/create")
+    @GetMapping("/new")
     public String createEventPage(Model model) {
         model.addAttribute("event", new EventRequestDto());
         return "admin/eventdetails";
     }
 
-    @PostMapping("/admin/events")
+    @PostMapping
     public String createEvent(@ModelAttribute EventRequestDto request) {
         adminService.createEvent(request);
         return "redirect:/admin/events";
     }
 
-    @PutMapping("/admin/events/{id}")
+    @PutMapping("/{id}")
     public String updateEvent(@PathVariable("id") Long eventId,
                               @ModelAttribute EventUpdateRequestDto request) {
         adminService.updateEvent(eventId, request);
         return "redirect:/admin/events";
     }
 
-    @DeleteMapping("/admin/events/{id}")
+    @DeleteMapping("/{id}")
     public String deleteEvent(@PathVariable("id") Long eventId) {
         adminService.deleteEvent(eventId);
         return "redirect:/admin/events";

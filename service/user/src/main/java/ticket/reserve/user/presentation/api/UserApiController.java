@@ -15,11 +15,12 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserApiController {
 
     private final UserService userService;
 
-    @PostMapping("/api/users/register")
+    @PostMapping("/register")
     public ResponseEntity<Map<String, Long>> register(@RequestBody UserRegisterRequestDto requestDto) {
         Long userId = userService.register(requestDto);
 
@@ -29,7 +30,7 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/api/users/login")
+    @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto.username(), requestDto.password());
 
@@ -39,17 +40,17 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/users")
+    @GetMapping
     public ResponseEntity<List<UserResponseDto>> getUsers() {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    @PostMapping("/api/users")
+    @PostMapping
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateRequestDto request) {
         return ResponseEntity.ok(userService.updateUser(request));
     }
