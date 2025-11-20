@@ -16,41 +16,36 @@ import ticket.reserve.inventory.application.dto.response.InventoryResponseDto;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/inventories")
 public class InventoryApiController {
 
     private final InventoryService inventoryService;
 
-    @PostMapping("/api/inventory")
+    @PostMapping
     public ResponseEntity<Void> createInventory(@RequestBody InventoryRequestDto request) {
         inventoryService.createInventory(request);
         return ResponseEntity.ok().build();
     }
 
     // 좌석 선점 로직
-    @PostMapping("/api/inventory/hold")
+    @PostMapping("/hold")
     public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
         inventoryService.holdInventory(request.inventoryId());
         return ResponseEntity.ok().build();
     }
 
-/*    @PostMapping("/api/inventory/confirm")
-    public ResponseEntity<Void> confirmInventory(@RequestBody InventoryConfirmRequestDto request) {
-        inventoryService.confirmInventory(request);
-        return ResponseEntity.ok().build();
-    }*/
-
-    @PostMapping("/api/inventory/release")
+    @PostMapping("/release")
     public ResponseEntity<Void> releaseInventory(@RequestBody InventoryReleaseRequestDto request) {
         inventoryService.releaseInventory(request.inventoryId());
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/api/inventory/counts")
+    @GetMapping("/counts")
     public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
         return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(eventId));
     }
 
-    @GetMapping("/api/inventory/{eventId}")
+    @GetMapping("/{eventId}")
     public ResponseEntity<CustomPageResponse<InventoryResponseDto>> getInventories(
             @PathVariable Long eventId,
             @RequestParam(value = "page", defaultValue = "0") int page) {
@@ -58,13 +53,13 @@ public class InventoryApiController {
         return ResponseEntity.ok(inventoryService.getInventoryPaging(eventId, pageable));
     }
 
-    @GetMapping("/api/inventory/{eventId}/{inventoryId}")
+    @GetMapping("/{eventId}/{inventoryId}")
     public ResponseEntity<InventoryResponseDto> getInventory(@PathVariable("eventId") Long eventId,
                                                              @PathVariable("inventoryId") Long inventoryId) {
         return ResponseEntity.ok(inventoryService.getInventory(inventoryId));
     }
 
-    @PutMapping("/api/inventory/{eventId}/{inventoryId}")
+    @PutMapping("/{eventId}/{inventoryId}")
     public ResponseEntity<Void> updateInventory(@PathVariable("eventId") Long eventId,
                                                 @PathVariable("inventoryId") Long inventoryId,
                                                 @RequestBody InventoryUpdateRequestDto request) {
@@ -72,7 +67,7 @@ public class InventoryApiController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/api/inventory/{eventId}/{inventoryId}")
+    @DeleteMapping("/{eventId}/{inventoryId}")
     public ResponseEntity<Void> deleteInventory(@PathVariable("eventId") Long eventId,
                                                 @PathVariable("inventoryId") Long inventoryId) {
         inventoryService.deleteInventory(inventoryId);
