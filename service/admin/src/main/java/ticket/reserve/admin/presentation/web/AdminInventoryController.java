@@ -12,15 +12,17 @@ import ticket.reserve.admin.application.AdminService;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/admin/events/{eventId}/inventories")
 public class AdminInventoryController {
 
     private final AdminService adminService;
 
-    @GetMapping("/admin/{eventId}/inventory")
+    @GetMapping
     public String getInventoryListPage(
             @PathVariable("eventId") Long eventId,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            Model model) {
+            Model model
+    ) {
         InventoryListPageDto inventoryListPageDto = adminService.getInventoryListPageData(eventId, page);
 
         model.addAttribute("event", inventoryListPageDto.event());
@@ -29,10 +31,11 @@ public class AdminInventoryController {
         return "admin/inventory";
     }
 
-    @GetMapping("/admin/{eventId}/inventory/{inventoryId}")
+    @GetMapping("/{inventoryId}")
     public String getInventory(@PathVariable("eventId") Long eventId,
                                @PathVariable("inventoryId") Long inventoryId,
-                               Model model) {
+                               Model model
+    ) {
         InventoryResponseDto inventory = adminService.getInventory(eventId, inventoryId);
 
         model.addAttribute("eventId", eventId);
@@ -40,30 +43,32 @@ public class AdminInventoryController {
         return "admin/inventorydetails";
     }
 
-    @GetMapping("/admin/{eventId}/inventory/create")
+    @GetMapping("/new")
     public String createInventoryPage(@PathVariable Long eventId, Model model) {
         model.addAttribute("inventory", new InventoryResponseDto(eventId));
         return "admin/inventorydetails";
     }
 
-    @PostMapping("/admin/{eventId}/inventory")
+    @PostMapping
     public String createInventory(@PathVariable Long eventId,
                                   @ModelAttribute InventoryRequestDto request) {
         adminService.createInventory(request);
         return "redirect:/admin/%d/inventory".formatted(eventId);
     }
 
-    @PutMapping("/admin/{eventId}/inventory/{inventoryId}")
+    @PutMapping("/{inventoryId}")
     public String updateInventory(@PathVariable("eventId") Long eventId,
                                   @PathVariable("inventoryId") Long inventoryId,
-                                  @ModelAttribute InventoryUpdateRequestDto request) {
+                                  @ModelAttribute InventoryUpdateRequestDto request
+    ) {
         adminService.updateInventory(eventId, inventoryId, request);
         return "redirect:/admin/%d/inventory".formatted(eventId);
     }
 
-    @DeleteMapping("/admin/{eventId}/inventory/{inventoryId}")
+    @DeleteMapping("/{inventoryId}")
     public String deleteInventory(@PathVariable("eventId") Long eventId,
-                                  @PathVariable("inventoryId") Long inventoryId) {
+                                  @PathVariable("inventoryId") Long inventoryId
+    ) {
         adminService.deleteInventory(eventId, inventoryId);
         return "redirect:/admin/%d/inventory".formatted(eventId);
     }
