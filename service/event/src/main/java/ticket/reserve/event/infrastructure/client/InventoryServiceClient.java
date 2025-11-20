@@ -9,6 +9,6 @@ import ticket.reserve.event.application.port.out.InventoryPort;
 public interface InventoryServiceClient extends InventoryPort {
 
     @Override
-    @GetMapping("/api/inventory/counts")
+    @GetMapping("/api/inventories/counts")
     Integer countsInventory(@RequestParam("eventId") Long eventId);
 }

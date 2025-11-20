@@ -12,11 +12,12 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/events")
 public class EventController {
 
     private final EventService eventService;
 
-    @GetMapping("/events")
+    @GetMapping
     public String getAll(Model model) {
         List<EventResponseDto> eventList = eventService.getAllEvents();
         model.addAttribute("eventList", eventList);
@@ -24,12 +25,11 @@ public class EventController {
         return "event-list";
     }
 
-    @GetMapping("/events/{id}")
+    @GetMapping("/{id}")
     public String getOne(@PathVariable Long id, Model model) {
         EventDetailResponseDto event = eventService.getEvent(id);
         model.addAttribute("event", event);
 
         return "event-detail";
     }
-
 }
