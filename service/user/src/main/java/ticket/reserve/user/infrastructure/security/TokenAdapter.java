@@ -9,7 +9,7 @@ import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Component
 public class TokenAdapter implements GenerateTokenPort {
@@ -26,7 +26,7 @@ public class TokenAdapter implements GenerateTokenPort {
     }
 
     @Override
-    public String generateToken(Long userId, Set<String> userRoles) {
+    public String generateToken(Long userId, List<String> userRoles) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + expiration);
         return Jwts.builder()
