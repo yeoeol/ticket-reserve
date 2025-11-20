@@ -18,8 +18,6 @@ import ticket.reserve.user.domain.userrole.UserRole;
 import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,9 +57,9 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_LOGIN);
         }
-        Set<String> userRoles = user.getUserRoles().stream()
+        List<String> userRoles = user.getUserRoles().stream()
                 .map(ur -> ur.getRole().getRoleName())
-                .collect(Collectors.toSet());
+                .toList();
 
         return generateTokenPort.generateToken(user.getId(), userRoles);
     }

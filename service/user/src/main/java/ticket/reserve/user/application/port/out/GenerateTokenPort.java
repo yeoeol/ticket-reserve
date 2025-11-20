@@ -1,7 +1,7 @@
 package ticket.reserve.user.application.port.out;
 
-import java.util.Set;
+import java.util.List;
 
 public interface GenerateTokenPort {
-    String generateToken(Long userId, Set<String> userRoles);
+    String generateToken(Long userId, List<String> userRoles);
 }
