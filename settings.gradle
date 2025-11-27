@@ -2,7 +2,6 @@ rootProject.name = 'ticket-reserve'
 
 include 'common'
 include 'service'
-include 'infra'
 
 include 'common:gateway'
 include 'common:registry'
@@ -14,7 +13,6 @@ include 'service:user'
 include 'service:admin'
 include 'service:event'
 include 'service:inventory'
-include 'service:notification'
 include 'service:payment'
 include 'service:reservation'
 
