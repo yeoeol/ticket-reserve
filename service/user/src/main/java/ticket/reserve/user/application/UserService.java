@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
+import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;
@@ -16,10 +17,8 @@ import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 import ticket.reserve.user.domain.userrole.UserRole;
 import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
-import ticket.reserve.user.infrastructure.security.TokenAdapter;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class UserService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final GenerateTokenPort generateTokenPort;
-    private final TokenAdapter tokenAdapter;
+    private final TokenStorePort tokenStorePort;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -92,12 +91,13 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
+    @Transactional
     public void logout(String accessToken) {
         if (accessToken != null) {
-            long remainingTime = tokenAdapter.getRemainingTime(accessToken);
+            long remainingTime = generateTokenPort.getRemainingTime(accessToken);
 
             if (remainingTime > 0) {
-                redisService.save("BL:"+accessToken, "logout", remainingTime, TimeUnit.MILLISECONDS);
+                tokenStorePort.addBlackList(accessToken, remainingTime);
             }
         }
 

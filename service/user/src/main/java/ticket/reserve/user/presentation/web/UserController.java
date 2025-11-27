@@ -3,7 +3,6 @@ package ticket.reserve.user.presentation.web;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
@@ -31,27 +30,29 @@ public class UserController {
     @PostMapping("/login")
     public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
         String token = userService.login(requestDto.username(), requestDto.password());
-        Cookie accessTokenCookie = setHttpOnlyCookie(token, 60 * 60 * 24);// 1일
+        Cookie accessTokenCookie = setHttpOnlyCookie("accessToken", token, 60 * 60 * 24);// 1일
 
         response.addCookie(accessTokenCookie);
         return "redirect:/";
     }
 
     @PostMapping("/logout")
-    public String logout(@CookieValue(value = "accessToken", required = false) String accessToken,
-                         HttpServletResponse response
+    public String logout(
+            @CookieValue(value = "accessToken", required = false) String accessToken,
+            HttpServletResponse response
     ) {
         userService.logout(accessToken);
 
-        Cookie accessTokenCookie = setHttpOnlyCookie(null, 0);
+        Cookie accessTokenCookie = setHttpOnlyCookie("accessToken", null, 0);
         response.addCookie(accessTokenCookie);
         return "redirect:/";
     }
 
-    private Cookie setHttpOnlyCookie(String accessToken, int expiry) {
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(expiry);
+    private Cookie setHttpOnlyCookie(String key, String value, int expiry) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(expiry);
+        return cookie;
     }
 }
