@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.UserService;
+import ticket.reserve.user.global.util.CookieUtil;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class UserController {
     @PostMapping("/login")
     public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
         String token = userService.login(requestDto.username(), requestDto.password());
-        Cookie accessTokenCookie = setHttpOnlyCookie("accessToken", token, 60 * 60 * 24);// 1일
+        Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie("accessToken", token, 60 * 60 * 24);// 1일
 
         response.addCookie(accessTokenCookie);
         return "redirect:/";
@@ -43,16 +44,8 @@ public class UserController {
     ) {
         userService.logout(accessToken);
 
-        Cookie accessTokenCookie = setHttpOnlyCookie("accessToken", null, 0);
+        Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie("accessToken", null, 0);
         response.addCookie(accessTokenCookie);
         return "redirect:/";
-    }
-
-    private Cookie setHttpOnlyCookie(String key, String value, int expiry) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(expiry);
-        return cookie;
     }
 }

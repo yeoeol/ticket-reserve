@@ -7,7 +7,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form id="logoutForm" th:action="@{/users/logout}" method="post" style="display: none;">
+                    <form id="logoutForm" th:action="@{/admin/users/logout}" method="post" style="display: none;">
                     </form>
 
                     <a class="nav-link" href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
