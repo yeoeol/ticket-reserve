@@ -43,7 +43,7 @@ public class TokenAdapter implements GenerateTokenPort {
     public long getRemainingTime(String jwt) {
         long nowTime = new Date().getTime();
         long expTime = getClaims(jwt).getExpiration().getTime();
-        return nowTime - expTime;
+        return expTime - nowTime;
     }
 
     private Claims getClaims(String jwt) {
