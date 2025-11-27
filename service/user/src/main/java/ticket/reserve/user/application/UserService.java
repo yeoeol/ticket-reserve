@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
+import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;
@@ -28,6 +29,7 @@ public class UserService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final GenerateTokenPort generateTokenPort;
+    private final TokenStorePort tokenStorePort;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -87,6 +89,18 @@ public class UserService {
         user.update(request.username(), request.email());
 
         return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public void logout(String accessToken) {
+        if (accessToken != null) {
+            long remainingTime = generateTokenPort.getRemainingTime(accessToken);
+
+            if (remainingTime > 0) {
+                tokenStorePort.addBlackList(accessToken, remainingTime);
+            }
+        }
+
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {

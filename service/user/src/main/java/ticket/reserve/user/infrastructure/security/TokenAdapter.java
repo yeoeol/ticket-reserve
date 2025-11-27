@@ -1,5 +1,6 @@
 package ticket.reserve.user.infrastructure.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,5 +37,20 @@ public class TokenAdapter implements GenerateTokenPort {
                 .expiration(exp)
                 .signWith(key)
                 .compact();
+    }
+
+    @Override
+    public long getRemainingTime(String jwt) {
+        long nowTime = new Date().getTime();
+        long expTime = getClaims(jwt).getExpiration().getTime();
+        return expTime - nowTime;
+    }
+
+    private Claims getClaims(String jwt) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
     }
 }

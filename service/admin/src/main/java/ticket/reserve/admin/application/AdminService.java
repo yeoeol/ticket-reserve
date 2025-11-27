@@ -16,7 +16,9 @@ import ticket.reserve.admin.application.dto.inventory.response.InventoryListPage
 import ticket.reserve.admin.application.dto.user.response.UserResponseDto;
 import ticket.reserve.admin.application.dto.user.request.UserUpdateRequestDto;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,12 @@ public class AdminService {
     /**
      * USER-SERVICE
      */
+    public void logout(String accessToken) {
+        Map<String, String> request = new HashMap<>();
+        request.put("accessToken", accessToken);
+        userPort.logout(request);
+    }
+
     public List<UserResponseDto> getUsers() {
         return userPort.getUsers();
     }

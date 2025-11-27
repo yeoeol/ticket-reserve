@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface GenerateTokenPort {
     String generateToken(Long userId, List<String> userRoles);
+    long getRemainingTime(String jwt);
 }
