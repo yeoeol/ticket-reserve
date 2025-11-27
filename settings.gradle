@@ -8,7 +8,6 @@ include 'common:gateway'
 include 'common:registry'
 include 'common:event'
 include 'common:global'
-include 'common:configserver'
 
 include 'service:user'
 include 'service:admin'
