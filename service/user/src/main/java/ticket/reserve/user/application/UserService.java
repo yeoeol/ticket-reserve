@@ -16,8 +16,10 @@ import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 import ticket.reserve.user.domain.userrole.UserRole;
 import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
+import ticket.reserve.user.infrastructure.security.TokenAdapter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class UserService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final GenerateTokenPort generateTokenPort;
+    private final TokenAdapter tokenAdapter;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -87,6 +90,17 @@ public class UserService {
         user.update(request.username(), request.email());
 
         return UserResponseDto.from(user);
+    }
+
+    public void logout(String accessToken) {
+        if (accessToken != null) {
+            long remainingTime = tokenAdapter.getRemainingTime(accessToken);
+
+            if (remainingTime > 0) {
+                redisService.save("BL:"+accessToken, "logout", remainingTime, TimeUnit.MILLISECONDS);
+            }
+        }
+
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {

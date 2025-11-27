@@ -18,4 +18,4 @@ eureka:
 
 jwt:
   secret: 0ydHRc8EG9P/RJDjjPbE8dezJ0IXc8z61Y7hDZRJKkkrDW81g9FPKb0XdU5Knun3kIBEabqtzGnsNSqbufv79g==
-  expiration: 3600000
+  expiration: 3600000   # 1시간

@@ -31,17 +31,27 @@ public class UserController {
     @PostMapping("/login")
     public String login(UserLoginRequestDto requestDto, HttpServletResponse response) {
         String token = userService.login(requestDto.username(), requestDto.password());
-        setHttpOnlyCookie(token, response);
+        Cookie accessTokenCookie = setHttpOnlyCookie(token, 60 * 60 * 24);// 1일
 
-        response.addHeader(HttpHeaders.AUTHORIZATION, token);
+        response.addCookie(accessTokenCookie);
         return "redirect:/";
     }
 
-    private static void setHttpOnlyCookie(String accessToken, HttpServletResponse response) {
+    @PostMapping("/logout")
+    public String logout(@CookieValue(value = "accessToken", required = false) String accessToken,
+                         HttpServletResponse response
+    ) {
+        userService.logout(accessToken);
+
+        Cookie accessTokenCookie = setHttpOnlyCookie(null, 0);
+        response.addCookie(accessTokenCookie);
+        return "redirect:/";
+    }
+
+    private Cookie setHttpOnlyCookie(String accessToken, int expiry) {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60*60*24);  // 1일
-        response.addCookie(accessTokenCookie);
+        accessTokenCookie.setMaxAge(expiry);
     }
 }
