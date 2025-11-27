@@ -3,6 +3,7 @@ package ticket.reserve.gateway.infrastructure.security.filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.AuthenticationException;
@@ -20,6 +21,7 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
     private final JwtProvider jwtProvider;
     private final AntPathMatcher antPathMatcher;
     private final ServerAuthenticationEntryPoint authenticationEntryPoint;
+    private final ReactiveRedisTemplate<String, String> redisTemplate;
 
     public static final List<String> permitUris = List.of(
             // user-service
@@ -41,24 +43,33 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
             }
 
             HttpCookie accessTokenCookie = request.getCookies().getFirst("accessToken");
-            String accessToken = null;
+            String accessToken;
             if (accessTokenCookie != null) {
                 accessToken = accessTokenCookie.getValue();
+            } else {
+                accessToken = null;
             }
 
             if (accessToken == null || !jwtProvider.isJwtValid(accessToken)) {
                 return authenticationEntryPoint.commence(exchange, new AuthenticationException("JWT token is not valid") {});
             }
 
-            String userId = jwtProvider.getUserIdFromJwt(accessToken);
-            String roles = jwtProvider.getRolesFromJwt(accessToken);
+            return redisTemplate.hasKey("BL:"+accessToken)
+                    .flatMap(isBlacklisted -> {
+                        if (isBlacklisted) {
+                            return authenticationEntryPoint.commence(exchange, new AuthenticationException("Logged out token") {});
+                        }
 
-            ServerHttpRequest newRequest = request.mutate()
-                    .header("X-USER-ID", userId)
-                    .header("X-User-Roles", roles)
-                    .build();
+                        String userId = jwtProvider.getUserIdFromJwt(accessToken);
+                        String roles = jwtProvider.getRolesFromJwt(accessToken);
 
-            return chain.filter(exchange.mutate().request(newRequest).build());
+                        ServerHttpRequest newRequest = request.mutate()
+                                .header("X-USER-ID", userId)
+                                .header("X-User-Roles", roles)
+                                .build();
+
+                        return chain.filter(exchange.mutate().request(newRequest).build());
+                    });
         };
     }
 

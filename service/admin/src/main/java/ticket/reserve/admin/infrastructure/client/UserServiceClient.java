@@ -7,9 +7,13 @@ import ticket.reserve.admin.application.dto.user.response.UserResponseDto;
 import ticket.reserve.admin.application.port.out.UserPort;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "USER-SERVICE")
 public interface UserServiceClient extends UserPort {
+
+    @PostMapping("/api/users/logout")
+    void logout(@RequestBody Map<String, String> request);
 
     @GetMapping("/api/users")
     List<UserResponseDto> getUsers();
