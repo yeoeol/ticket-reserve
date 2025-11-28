@@ -34,20 +34,39 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-
             String path = request.getURI().getPath();
 
-            // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
-            if (isPermitted(path)) {
-                return chain.filter(exchange);
-            }
-
+            // 쿠키 확인
             HttpCookie accessTokenCookie = request.getCookies().getFirst("accessToken");
             String accessToken;
             if (accessTokenCookie != null) {
                 accessToken = accessTokenCookie.getValue();
             } else {
                 accessToken = null;
+            }
+
+            if (accessToken != null && jwtProvider.isJwtValid(accessToken)) {
+                return redisTemplate.hasKey("BL:"+accessToken)
+                        .flatMap(isBlacklisted -> {
+                            if (isBlacklisted) {
+                                return authenticationEntryPoint.commence(exchange, new AuthenticationException("Logged out token") {});
+                            }
+
+                            String userId = jwtProvider.getUserIdFromJwt(accessToken);
+                            String roles = jwtProvider.getRolesFromJwt(accessToken);
+
+                            ServerHttpRequest newRequest = request.mutate()
+                                    .header("X-USER-ID", userId)
+                                    .header("X-User-Roles", roles)
+                                    .build();
+
+                            return chain.filter(exchange.mutate().request(newRequest).build());
+                        });
+            }
+
+            // 허용된 경로라면, JWT 검증 로직을 건너뛰고 바로 다음 필터로 진행
+            if (isPermitted(path)) {
+                return chain.filter(exchange);
             }
 
             if (accessToken == null || !jwtProvider.isJwtValid(accessToken)) {

@@ -28,8 +28,8 @@ public enum ErrorCode {
     // RESERVATION-SERVICE
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION001", "예매 정보를 찾을 수 없습니다."),
     RESERVATION_EXPIRED_ERROR(HttpStatus.BAD_REQUEST, "RESERVATION002", "예매 만료 이벤트 처리 중 오류가 발생했습니다."),
-    NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RESERVATION003", "대기열을 통과하지 않은 사용자입니다.")
-
+    NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RESERVATION003", "대기열을 통과하지 않은 사용자입니다."),
+    QUEUE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION004", "대기열에 존재하지 않는 사용자입니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;
