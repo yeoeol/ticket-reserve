@@ -33,7 +33,7 @@ public class QueueInterceptorAop {
                 parameterNames, args, allowedUser.eventId()
         );
         Long userId = (Long) CustomSpringELParser.getDynamicValue(
-                parameterNames, args, allowedUser.eventId()
+                parameterNames, args, allowedUser.userId()
         );
 
         // Active queue에 있는지 확인

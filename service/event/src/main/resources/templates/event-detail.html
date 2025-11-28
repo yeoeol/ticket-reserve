@@ -163,6 +163,18 @@
             color: #333;
         }
 
+        /* --- (3) 대기열 모달 스타일 추가 --- */
+        #queue-modal {
+            display: none; /* 평소에는 숨김 */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .queue-content {
+            background: white; padding: 30px; border-radius: 12px;
+            text-align: center; width: 320px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -204,7 +216,7 @@
                         <span th:text="*{availableInventory} + ' 석'">100 석</span>
                     </div>
 
-                    <a class="reserve-button" th:href="@{/inventories/{eventId}(eventId=*{id})}">예약하기</a>
+                    <button class="reserve-button" onclick="startReservation()">예약하기</button>
                 </div>
             </div>
 
@@ -219,6 +231,98 @@
 
     </div>
 </main>
+
+<div id="queue-modal">
+    <div class="queue-content">
+        <h3>🚦 접속 대기 중...</h3>
+        <p style="margin-top: 10px; color: #555;">현재 접속자가 많아 대기 중입니다.<br>잠시만 기다려 주세요.</p>
+
+        <div style="margin: 20px 0;">
+            <h2 id="queue-rank" style="color: #ff385c; font-size: 48px; margin: 0;">-</h2>
+            <span style="font-size: 14px; color: #777;">번째 순서</span>
+        </div>
+
+        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #ff385c; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+
+        <p style="margin-top: 20px; font-size: 12px; color: #999;">⚠️ 새로고침 하시면 대기 순번이 초기화될 수 있습니다.</p>
+    </div>
+</div>
+
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
+<script th:inline="javascript">
+    const eventId = [[${event.id}]];
+    const isAuthenticated = [[${isAuthenticated}]];
+
+    function startReservation() {
+        // 로그인 확인
+        if (!isAuthenticated) {
+            if(confirm("로그인이 필요한 서비스입니다.\n\n로그인 페이지로 이동하시겠습니까?")) {
+                window.location.href = "/users/register";
+            }
+            return;
+        }
+
+        // 대기열 등록 요청 (POST)
+        fetch(`/api/reservations/${eventId}/queue/register`, {
+            method: 'POST'
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ACTIVE") {
+                    goToInventoryPage(eventId);
+                } else {
+                    // 대기 상태 진입 -> 모달 띄우고 폴링 시작
+                    showQueueModal(data.rank);
+                    startPolling();
+                }
+            })
+            .catch(err => {
+                console.error("대기열 등록 실패:", err);
+                alert("서버 통신 중 오류가 발생했습니다.");
+            });
+    }
+
+    let pollingInterval;
+
+    function startPolling() {
+        // 3초마다 내 순번 확인 (GET)
+        pollingInterval = setInterval(() => {
+            fetch(`/api/reservations/${eventId}/queue/rank`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "ACTIVE") {
+                        clearInterval(pollingInterval); // 폴링 중단
+                        goToInventoryPage(eventId);
+                    } else {
+                        // 아직 대기 중 -> 화면에 순번 업데이트
+                        updateQueueRank(data.rank);
+                    }
+                })
+                .catch(err => {
+                    console.error("폴링 실패:", err);
+                });
+        }, 3000); // 3000ms = 3초
+    }
+
+    function goToInventoryPage(eventId) {
+        // 좌석 선택 페이지로 이동
+        window.location.href = `/inventories/${eventId}`;
+    }
+
+    function showQueueModal(rank) {
+        const modal = document.getElementById('queue-modal');
+        updateQueueRank(rank);
+        modal.style.display = 'flex';
+    }
+
+    function updateQueueRank(rank) {
+        const rankEl = document.getElementById('queue-rank');
+        if (rankEl) rankEl.innerText = rank;
+    }
+</script>
 
 </body>
 </html>

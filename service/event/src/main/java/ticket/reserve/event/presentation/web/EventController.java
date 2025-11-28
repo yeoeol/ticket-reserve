@@ -26,9 +26,14 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public String getOne(@PathVariable Long id, Model model) {
+    public String getOne(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-USER-ID", required = false, defaultValue = "0") String userId,
+            Model model
+    ) {
         EventDetailResponseDto event = eventService.getEvent(id);
         model.addAttribute("event", event);
+        model.addAttribute("isAuthenticated", !userId.equals("0"));
 
         return "event-detail";
     }
