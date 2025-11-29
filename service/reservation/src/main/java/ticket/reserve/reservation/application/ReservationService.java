@@ -13,6 +13,7 @@ import ticket.reserve.reservation.application.dto.response.ReservationResponseDt
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
+import ticket.reserve.reservation.global.annotation.AllowedUser;
 
 @Slf4j
 @Service
@@ -22,6 +23,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final InventoryPort inventoryPort;
 
+    @AllowedUser(eventId = "#request.eventId", userId = "#userId")
     @Transactional
     public ReservationResponseDto createReservation(ReservationRequestDto request, Long userId) {
         try {

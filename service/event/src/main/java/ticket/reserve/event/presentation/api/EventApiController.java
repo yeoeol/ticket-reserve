@@ -45,4 +45,9 @@ public class EventApiController {
         eventService.deleteEvent(eventId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/event-ids")
+    public ResponseEntity<List<Long>> getEventIds() {
+        return ResponseEntity.ok(eventService.getEventIds());
+    }
 }
