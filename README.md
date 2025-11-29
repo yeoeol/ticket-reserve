@@ -12,11 +12,9 @@
 
 # 📊 요청 플로우 예시 (티켓 예매)
 
-1. 클라이언트 → API Gateway → **booking-service** 호출
-2. booking-service → **inventory-service** 에 좌석 Lock 요청
-3. 재고 확인 & Lock 성공 → **payment-service** 호출
-4. 결제 성공 이벤트 → **notification-service** 로 메시지 발행
-5. 알림 발송 → 최종 완료
+1. 클라이언트 → API Gateway → **inventory-service** 호출
+2. inventory-service → **reservation-service** 대기열 시스템 적용
+3. 재고 확인 & Lock 성공 → **payment-service** 좌석 별 분산락 적용
 
 ---
 
@@ -27,6 +25,7 @@
 
 - **service-registry (Eureka)**
 - **api-gateway (Spring Cloud Gateway)**  
+- **config-server (Spring Cloud Config Server)**
 
 ---
 
@@ -45,14 +44,14 @@
 ---
 
 ## 3. 핵심 동시성 포인트
-➡️ 목표: **트래픽/동시성 문제 실습 -> 재고 10개인데 100명 동시에 예매 시 어떻게 처리되는지 테스트**
+➡️ 목표: **트래픽/동시성 문제 실습 -> 좌석(재고) 10개인데 100명 동시에 예매 시 어떻게 처리되는지 테스트**
 
 ### 3-1. inventory-service(좌석/재고 관리)
 - 동시성 이슈 발생 포인트
+  - 좌석 목록 화면 입장 
+  - 좌석 선점
 - 처음엔 단순 CRUD -> 이후 Redis/분산락으로 개선
-
-### 3-2. event-service (예매 처리)
-- inventory-service와 협력 : 좌석 예약 -> 결제 단계 전 전달  
+  - 분산락(redisson) + AOP 적용
 
 ---
 
@@ -60,10 +59,10 @@
 ➡️ 목표: **비동기 이벤트 기반 학습**
 
 ### 4-1. payment-service (모의 결제 API와 연결)
-- 성공/실패 이벤트 발행 (Kafka, RabbitMQ or 단순 Event Publisher)
+- 성공/실패 이벤트 발행 (Kafka)
 
-### 4-2. notification-service
-- 결제 성공 시 이메일/콘솔 알림  
+### 4-2. event-service (공연 생성 시 좌석 생성)
+- 공연 생성 이벤트 발행 (inventory-service는 consumer로, 좌석 생성)
 
 ---
 
