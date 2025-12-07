@@ -1,3 +1,28 @@
+# 🛠 Tech Stack
+![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?style=flat-square&logo=openjdk&logoColor=white)
+![Spring](https://img.shields.io/badge/Spring-%236DB33F.svg?style=flat-square&logo=spring&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-%236DB33F.svg?style=flat-square&logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-%236DB33F.svg?style=flat-square&logo=springsecurity&logoColor=white)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-%23005F0F.svg?style=flat-square&logo=thymeleaf&logoColor=white)
+
+![MySQL](https://img.shields.io/badge/MySQL-%234479A1.svg?style=flat-square&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-%23FF4438.svg?style=flat-square&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%232496ED.svg?style=flat-square&logo=docker&logoColor=white)
+
+![Apache_Kafka](https://img.shields.io/badge/Apache_Kafka-%23231F20.svg?style=flat-square&logo=apachekafka&logoColor=#231F20)
+
+![Git](https://img.shields.io/badge/git-%23F05032.svg?style=flat-square&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23181717.svg?style=flat-square&logo=github&logoColor=white)
+
+# ⭐ 기술적 의사결정
+- **MSA & Gateway**: 마이크로서비스 아키텍처 기반의 서비스 분리 및 Gateway를 통한 단일 진입점 구축
+- **Event-Driven (Kafka)**: Kafka를 활용한 서비스 간 느슨한 결합(Loose Coupling) 및 비동기 이벤트 처리
+- **Concurrency Control (Redisson)**: AOP와 Redis 분산 락을 활용한 대용량 트래픽 동시성 제어 및 데이터 정합성 보장
+- **Security (JWT)**: Stateless한 JWT 기반 인증/인가 프로세스 및 보안 필터 체인 구현
+- **Payment Integration**: 외부 PG사(Toss) 연동 및 결제 트랜잭션 관리
+
+---
+
 # 🔄 전체 플로우 예시 (사용자 입장)
 
 1. 전체 이벤트 목록 조회
@@ -70,3 +95,9 @@
 - Redis 캐시 적용 (조회 성능 개선)
 - 부하 테스트 (Jmeter, Locust)
 - 장애 상황 (동시성 충돌, 좌석 초과 예약) 실험
+
+---
+# ⬜ TODO
+- 부하 테스트
+- 단위 테스트
+- 동시 요청 성능 분석(테스트 코드) - 낙관적/비관적/분산 락 비교
