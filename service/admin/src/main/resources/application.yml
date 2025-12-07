@@ -1,0 +1,16 @@
+server:
+  port: 30010
+
+spring:
+  application:
+    name: admin-service
+
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
