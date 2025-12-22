@@ -8,6 +8,7 @@ include 'common:registry'
 include 'common:event'
 include 'common:global'
 include 'common:configserver'
+include 'common:data-serializer'
 
 include 'service:user'
 include 'service:admin'
