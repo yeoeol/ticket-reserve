@@ -9,6 +9,7 @@ include 'common:event'
 include 'common:global'
 include 'common:configserver'
 include 'common:data-serializer'
+include 'common:outbox-message-relay'
 
 include 'service:user'
 include 'service:admin'

@@ -25,6 +25,8 @@ allprojects {
     }
 
     dependencies {
+        implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
+
         implementation 'ch.qos.logback:logback-classic'
 
         compileOnly 'org.projectlombok:lombok'
