@@ -20,15 +20,15 @@ public class Outbox {
     private Long outboxId;
     @Enumerated(EnumType.STRING)
     private EventType eventType;
-    private Long key;
+    private Long partitionKey;
     private String payload;
     private LocalDateTime createdAt;
 
-    public static Outbox create(Long outboxId, EventType eventType, String payload, Long key) {
+    public static Outbox create(Long outboxId, EventType eventType, String payload, Long partitionKey) {
         Outbox outbox = new Outbox();
         outbox.outboxId = outboxId;
         outbox.eventType = eventType;
-        outbox.key = key;
+        outbox.partitionKey = partitionKey;
         outbox.payload = payload;
         outbox.createdAt = LocalDateTime.now();
         return outbox;
