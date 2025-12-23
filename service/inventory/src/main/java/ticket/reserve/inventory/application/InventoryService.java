@@ -1,14 +1,17 @@
 package ticket.reserve.inventory.application;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.Event;
+import ticket.reserve.common.event.EventPayload;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
+import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
 import ticket.reserve.inventory.application.port.out.EventPort;
 import ticket.reserve.inventory.application.dto.response.InventoryListResponseDto;
@@ -21,11 +24,13 @@ import ticket.reserve.inventory.domain.repository.InventoryRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final List<EventHandler> eventHandlers;
     private final EventPort eventPort;
 
     @Transactional
@@ -123,25 +128,19 @@ public class InventoryService {
         inventoryRepository.deleteById(inventoryId);
     }
 
-    @Transactional
-    public void createInventoryAsTotalSeats(Long eventId, int totalSeats) {
-        char prefix = 'A';
-        int seatNumber = 1;
-
-        for (int i = 1; i <= totalSeats; i++) {
-            String inventoryName = prefix + String.valueOf(seatNumber);
-            Inventory inventory = Inventory.builder()
-                    .eventId(eventId)
-                    .inventoryName(inventoryName)
-                    .price(1000*i)
-                    .build();
-            inventoryRepository.save(inventory);
-            seatNumber++;
-
-            if (seatNumber > 10) {
-                prefix++;
-                seatNumber = 1;
-            }
+    public void handleEvent(Event<EventPayload> event) {
+        EventHandler<EventPayload> eventHandler = findEventHandler(event);
+        if (eventHandler == null) {
+            return;
         }
+
+        eventHandler.handle(event);
+    }
+
+    private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {
+        return eventHandlers.stream()
+                .filter(eventHandler -> eventHandler.supports(event))
+                .findAny()
+                .orElse(null);
     }
 }
