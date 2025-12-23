@@ -3,6 +3,7 @@ package ticket.reserve.inventory.application.eventhandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.Event;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
@@ -19,6 +20,7 @@ public class PaymentConfirmedEventHandler implements EventHandler<PaymentConfirm
     private final InventoryRepository inventoryRepository;
 
     @Override
+    @Transactional
     public void handle(Event<PaymentConfirmedEventPayload> event) {
         PaymentConfirmedEventPayload payload = event.getPayload();
         confirmInventory(payload.getInventoryId());

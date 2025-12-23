@@ -3,6 +3,7 @@ package ticket.reserve.inventory.application.eventhandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.Event;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
@@ -17,6 +18,7 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
     private final InventoryRepository inventoryRepository;
 
     @Override
+    @Transactional
     public void handle(Event<EventCreatedEventPayload> event) {
         EventCreatedEventPayload payload = event.getPayload();
         createInventoryAsTotalSeats(payload.getEventId(), payload.getTotalSeats());
