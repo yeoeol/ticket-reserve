@@ -25,7 +25,7 @@ public class PaymentConfirmedEventHandler implements EventHandler<PaymentConfirm
     public void handle(Event<PaymentConfirmedEventPayload> event) {
         PaymentConfirmedEventPayload payload = event.getPayload();
         confirmReservation(payload.getReservationId());
-        log.info("[PaymentConfirmedEventConsumer.listen] 예매 확정 처리 완료 - reservationId = {}", payload.getReservationId());
+        log.info("[PaymentConfirmedEventHandler.handle] 예매 확정 처리 완료 - reservationId = {}", payload.getReservationId());
     }
 
     @Override

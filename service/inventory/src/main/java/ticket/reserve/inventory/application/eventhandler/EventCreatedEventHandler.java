@@ -22,7 +22,8 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
     public void handle(Event<EventCreatedEventPayload> event) {
         EventCreatedEventPayload payload = event.getPayload();
         createInventoryAsTotalSeats(payload.getEventId(), payload.getTotalSeats());
-        log.info("[EventCreatedEventConsumer.listen] 좌석 생성 완료 - eventId = {}, totalSeats = {}", payload.getEventId(), payload.getTotalSeats());
+        log.info("[EventCreatedEventHandler.handle] 좌석 생성 완료 " +
+                "- eventId = {}, totalSeats = {}", payload.getEventId(), payload.getTotalSeats());
     }
 
     @Override

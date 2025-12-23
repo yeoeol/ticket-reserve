@@ -25,7 +25,7 @@ public class ReservationExpiredEventHandler implements EventHandler<ReservationE
     public void handle(Event<ReservationExpiredPayload> event) {
         ReservationExpiredPayload payload = event.getPayload();
         releaseInventory(payload.getInventoryId());
-        log.info("[ReservationExpiredEventConsumer.listen] 예매 취소 처리 완료 " +
+        log.info("[ReservationExpiredEventHandler.handle] 예매 취소 처리 완료 " +
                 "- eventId = {}, reservationId = {}, inventoryId = {}", payload.getEventId(), payload.getReservationId(), payload.getInventoryId());
     }
 
