@@ -105,13 +105,6 @@ public class InventoryService {
     }
 
     @Transactional
-    public void confirmInventory(Long inventoryId) {
-        Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
-        inventory.confirm();
-    }
-
-    @Transactional
     public void releaseInventory(Long inventoryId) {
         Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));

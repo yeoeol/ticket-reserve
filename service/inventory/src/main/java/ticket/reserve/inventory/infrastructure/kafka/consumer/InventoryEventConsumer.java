@@ -17,7 +17,10 @@ public class InventoryEventConsumer {
 
     private final InventoryService inventoryService;
 
-    @KafkaListener(topics = EventType.Topic.TICKET_RESERVE_EVENT)
+    @KafkaListener(topics = {
+            EventType.Topic.TICKET_RESERVE_EVENT,
+            EventType.Topic.TICKET_RESERVE_PAYMENT
+    })
     public void listen(String message, Acknowledgment ack) {
         log.info("[InventoryEventConsumer.listen] 이벤트 수신: message = {}", message);
 
