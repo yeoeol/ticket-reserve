@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.ReservationExpiredPayload;
-import ticket.reserve.reservation.application.port.out.ReservationPublishPort;
+import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
@@ -19,9 +20,9 @@ import java.util.List;
 public class ReservationExpiryService {
 
     private final ReservationRepository reservationRepository;
-    private final ReservationPublishPort reservationPublishPort;
+    private final OutboxEventPublisher outboxEventPublisher;
 
-    private static final int RESERVATION_TIMEOUT_MINUTES = 5;
+    private static final int RESERVATION_TIMEOUT_MINUTES = 1;
 
     @Transactional
     public void findAndPublishExpiredReservations() {
@@ -41,14 +42,16 @@ public class ReservationExpiryService {
         log.warn("[ReservationScheduler.releaseExpiredReservations] {}건의 만료된 예매 롤백", expiredReservations.size());
         // 롤백 로직 실행
         for (Reservation reservation : expiredReservations) {
-            ReservationExpiredPayload payload = ReservationExpiredPayload.builder()
-                    .reservationId(reservation.getId())
-                    .inventoryId(reservation.getInventoryId())
-                    .eventId(reservation.getEventId())
-                    .userId(reservation.getUserId())
-                    .build();
-            reservationPublishPort.expireReservation(payload);
-
+            outboxEventPublisher.publish(
+                    EventType.RESERVATION_EXPIRED,
+                    ReservationExpiredPayload.builder()
+                            .reservationId(reservation.getId())
+                            .inventoryId(reservation.getInventoryId())
+                            .eventId(reservation.getEventId())
+                            .userId(reservation.getUserId())
+                            .build(),
+                    reservation.getEventId()
+            );
             log.error("예매 롤백 이벤트 발행 (reservationId : {})", reservation.getId());
         }
     }

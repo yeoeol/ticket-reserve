@@ -104,13 +104,6 @@ public class InventoryService {
         inventory.hold();
     }
 
-    @Transactional
-    public void releaseInventory(Long inventoryId) {
-        Inventory inventory = inventoryRepository.findByIdForUpdate(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
-        inventory.release();
-    }
-
     @Transactional(readOnly = true)
     public Integer getAvailableInventoryCounts(Long eventId) {
         return inventoryRepository.countAvailableInventoryByEventId(eventId);

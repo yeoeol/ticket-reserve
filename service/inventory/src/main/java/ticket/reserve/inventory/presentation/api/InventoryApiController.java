@@ -34,11 +34,11 @@ public class InventoryApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/release")
-    public ResponseEntity<Void> releaseInventory(@RequestBody InventoryReleaseRequestDto request) {
-        inventoryService.releaseInventory(request.inventoryId());
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/release")
+//    public ResponseEntity<Void> releaseInventory(@RequestBody InventoryReleaseRequestDto request) {
+//        inventoryService.releaseInventory(request.inventoryId());
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("/counts")
     public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
