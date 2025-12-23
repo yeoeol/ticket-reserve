@@ -15,17 +15,17 @@ public class ReservationApiController {
     private final ReservationService reservationService;
     private final QueueService queueService;
 
-    @PostMapping("/{id}/confirm")
-    public ResponseEntity<Void> confirmReservation(@PathVariable("id") Long reservationId) {
-        reservationService.confirmReservation(reservationId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/{id}/release")
-    public ResponseEntity<Void> releaseReservation(@PathVariable("id") Long reservationId) {
-        reservationService.releaseReservation(reservationId);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/{id}/confirm")
+//    public ResponseEntity<Void> confirmReservation(@PathVariable("id") Long reservationId) {
+//        reservationService.confirmReservation(reservationId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PostMapping("/{id}/release")
+//    public ResponseEntity<Void> releaseReservation(@PathVariable("id") Long reservationId) {
+//        reservationService.releaseReservation(reservationId);
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("/{eventId}/queue/register")
     public ResponseEntity<QueueStatusResponseDto> registerQueue(

@@ -11,8 +11,8 @@ import ticket.reserve.common.event.EventPayload;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationExpiredPayload implements EventPayload {
-    Long reservationId;
-    Long inventoryId;
-    Long eventId;
-    Long userId;
+    private Long reservationId;
+    private Long inventoryId;
+    private Long eventId;
+    private Long userId;
 }

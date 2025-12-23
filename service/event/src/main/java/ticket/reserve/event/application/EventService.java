@@ -3,8 +3,9 @@ package ticket.reserve.event.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
-import ticket.reserve.event.application.port.out.EventPublishPort;
+import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
@@ -23,23 +24,26 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final InventoryPort inventoryPort;
-    private final EventPublishPort eventPublishPort;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
     public EventDetailResponseDto createEvent(EventRequestDto request) {
         Event event = request.toEntity();
         Event savedEvent = eventRepository.save(event);
 
-        EventCreatedEventPayload payload = EventCreatedEventPayload.builder()
-                .eventId(event.getId())
-                .eventTitle(event.getEventTitle())
-                .description(event.getDescription())
-                .location(event.getLocation())
-                .startTime(event.getStartTime())
-                .endTime(event.getEndTime())
-                .totalSeats(event.getTotalSeats())
-                .build();
-        eventPublishPort.createEvent(payload);
+        outboxEventPublisher.publish(
+                EventType.EVENT_CREATED,
+                EventCreatedEventPayload.builder()
+                        .eventId(event.getId())
+                        .eventTitle(event.getEventTitle())
+                        .description(event.getDescription())
+                        .location(event.getLocation())
+                        .startTime(event.getStartTime())
+                        .endTime(event.getEndTime())
+                        .totalSeats(event.getTotalSeats())
+                        .build(),
+                savedEvent.getId()
+        );
 
         return EventDetailResponseDto.from(savedEvent, savedEvent.getTotalSeats());
     }

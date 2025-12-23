@@ -3,10 +3,11 @@ package ticket.reserve.payment.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.payment.application.port.out.PaymentPublishPort;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
 import ticket.reserve.payment.application.dto.response.TossResponseDto;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
@@ -19,7 +20,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final TossPaymentsPort tossPaymentsPort;
-    private final PaymentPublishPort paymentPublishPort;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
     public void createPayment(String orderId, Long userId, Long reservationId, Long inventoryId) {
@@ -53,13 +54,16 @@ public class PaymentService {
         );
 
         // Kafka - 비동기 결제 완료 이벤트 발행
-        PaymentConfirmedEventPayload payload = PaymentConfirmedEventPayload.builder()
-                .reservationId(payment.getReservationId())
-                .inventoryId(payment.getInventoryId())
-                .userId(payment.getUserId())
-                .orderId(payment.getOrderId())
-                .totalAmount(payment.getTotalAmount())
-                .build();
-        paymentPublishPort.paymentConfirmEvent(payload);
+        outboxEventPublisher.publish(
+                EventType.PAYMENT_CONFIRMED,
+                PaymentConfirmedEventPayload.builder()
+                        .reservationId(payment.getReservationId())
+                        .inventoryId(payment.getInventoryId())
+                        .userId(payment.getUserId())
+                        .orderId(payment.getOrderId())
+                        .totalAmount(payment.getTotalAmount())
+                        .build(),
+                payment.getId()
+        );
     }
 }

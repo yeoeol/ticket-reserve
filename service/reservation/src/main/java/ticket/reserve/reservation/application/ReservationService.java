@@ -4,16 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.common.event.Event;
+import ticket.reserve.common.event.EventPayload;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.reservation.application.eventHandler.EventHandler;
 import ticket.reserve.reservation.application.port.out.InventoryPort;
 import ticket.reserve.reservation.application.dto.request.InventoryHoldRequestDto;
 import ticket.reserve.reservation.application.dto.request.ReservationRequestDto;
 import ticket.reserve.reservation.application.dto.response.ReservationResponseDto;
 import ticket.reserve.reservation.domain.Reservation;
-import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
 import ticket.reserve.reservation.global.annotation.AllowedUser;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -22,6 +26,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final InventoryPort inventoryPort;
+    private final List<EventHandler> eventHandlers;
 
     @AllowedUser(eventId = "#request.eventId", userId = "#userId")
     @Transactional
@@ -40,31 +45,19 @@ public class ReservationService {
         return ReservationResponseDto.of(savedReservation.getId(), savedReservation.getInventoryId(), savedReservation.getPrice());
     }
 
-    @Transactional
-    public void confirmReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdForUpdate(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    public void handleEvent(Event<EventPayload> event) {
+        EventHandler<EventPayload> eventHandler = findEventHandler(event);
+        if (eventHandler == null) {
+            return;
+        }
 
-        if (isValidRequest(reservation)) return;
-
-        reservation.confirm();
+        eventHandler.handle(event);
     }
 
-    @Transactional
-    public void releaseReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdForUpdate(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-        reservation.release();
-    }
-
-    private static boolean isValidRequest(Reservation reservation) {
-        if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-            log.error("결제는 성공했으나 예매 시간 초과로 취소되었습니다. 환불 로직이 필요합니다. reservationId={}", reservation.getId());
-            return true;
-        }
-        if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
-            return true;
-        }
-        return false;
+    private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {
+        return eventHandlers.stream()
+                .filter(eventHandler -> eventHandler.supports(event))
+                .findAny()
+                .orElse(null);
     }
 }
