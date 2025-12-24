@@ -10,6 +10,11 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
+    // ShedLock 핵심 라이브러리
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:5.10.0'
+    // DB(JDBC)를 락 프로바이더로 사용
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0'
+
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 
