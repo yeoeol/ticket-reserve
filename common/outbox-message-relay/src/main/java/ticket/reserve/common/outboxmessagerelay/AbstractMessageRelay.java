@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -15,9 +13,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
-public class MessageRelay {
+public abstract class AbstractMessageRelay {
 
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, String> messageRelayKafkaTemplate;
@@ -34,6 +31,21 @@ public class MessageRelay {
         publishEvent(outboxEvent.getOutbox());
     }
 
+    // ShedLock이 적용될 스케줄러에서 호출할 핵심 로직
+    protected void runRelayProcess() {
+        List<Outbox> outboxes = outboxRepository.findAllByCreatedAtLessThanEqualOrderByCreatedAtAsc(
+                LocalDateTime.now().minusSeconds(10),
+                Pageable.ofSize(100)
+        );
+
+        if (outboxes.isEmpty()) return;
+
+        log.info("[MessageRelay] Found {} pending events", outboxes.size());
+        for (Outbox outbox : outboxes) {
+            publishEvent(outbox);
+        }
+    }
+
     private void publishEvent(Outbox outbox) {
         try {
             messageRelayKafkaTemplate.send(
@@ -44,26 +56,6 @@ public class MessageRelay {
             outboxRepository.delete(outbox);
         } catch (Exception e) {
             log.error("[MessageRelay.publishEvent] outbox={}", outbox, e);
-        }
-    }
-
-    @Scheduled(
-        fixedDelay = 10,
-        initialDelay = 5,
-        timeUnit = TimeUnit.SECONDS
-    )
-    public void publishPendingEvent() {
-        List<Outbox> outboxes = outboxRepository.findAllByCreatedAtLessThanEqualOrderByCreatedAtAsc(
-            LocalDateTime.now().minusSeconds(10),
-            Pageable.ofSize(100)
-        );
-        if (outboxes.isEmpty()) {
-            return;
-        }
-
-        log.info("[MessageRelay] Found {} pending events", outboxes.size());
-        for (Outbox outbox : outboxes) {
-            publishEvent(outbox);
         }
     }
 }
