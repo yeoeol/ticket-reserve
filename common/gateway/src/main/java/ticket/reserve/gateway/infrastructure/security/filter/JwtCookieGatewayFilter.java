@@ -30,7 +30,9 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
             // user-service
             "/", "/users/register", "/users/login",
             // event-service
-            "/events", "/events/{id}"
+            "/events", "/events/{id}",
+            // static resources
+            "/users/css/**"
     );
 
     @Override
