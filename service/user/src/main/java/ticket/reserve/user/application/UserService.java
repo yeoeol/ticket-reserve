@@ -15,8 +15,6 @@ import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.user.repository.UserRepository;
-import ticket.reserve.user.domain.userrole.UserRole;
-import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
 
 import java.util.List;
 
@@ -26,42 +24,35 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final UserRoleRepository userRoleRepository;
+
     private final PasswordEncoder passwordEncoder;
+
     private final GenerateTokenPort generateTokenPort;
     private final TokenStorePort tokenStorePort;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
-        Role roleUser = roleRepository.findByRoleName("ROLE_USER").get();
-        User user = User.builder()
-                .username(requestDto.username())
-                .password(passwordEncoder.encode(requestDto.password()))
-                .email(requestDto.email())
-                .build();
+        Role roleUser = roleRepository.findByRoleName("ROLE_USER")
+                .orElseThrow(() -> new CustomException(ErrorCode.ROLE_NOT_FOUND));
 
-        UserRole userRole = userRoleRepository.save(
-                UserRole.builder()
-                    .user(user)
-                    .role((roleUser))
-                    .build()
+        User user = User.of(
+                requestDto.username(),
+                passwordEncoder.encode(requestDto.password()),
+                requestDto.email()
         );
-        user.getUserRoles().add(userRole);
+        user.addRole(roleUser);
 
         return userRepository.save(user).getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public String login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_LOGIN);
-        }
-        List<String> userRoles = user.getUserRoles().stream()
-                .map(ur -> ur.getRole().getRoleName())
-                .toList();
+        validatePassword(password, user.getPassword());
+
+        List<String> userRoles = user.getRoleNames();
 
         return generateTokenPort.generateToken(user.getId(), userRoles);
     }

@@ -25,7 +25,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             // user-service
             "/users", "/users/register", "/users/login",
             // event-service
-            "/events/**"
+            "/events/**",
+            // static resources
+            "/users/css/**"
     );
 
     private final SecretKey key;
