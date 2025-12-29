@@ -358,6 +358,8 @@
                 <div class="form-wrapper align-items-center">
                     <div class="form sign-up">
                         <form th:action="@{/users/register}" method="post">
+                            <input type="hidden" name="redirectUri" th:value="${redirectUri}">
+
                             <div class="input-group">
                                 <i class='bx bxs-user'></i>
                                 <input type="text" placeholder="Username" name="username" required>
@@ -390,6 +392,8 @@
                 <div class="form-wrapper align-items-center">
                     <div class="form sign-in">
                         <form th:action="@{/users/login}" method="post">
+                            <input type="hidden" name="redirectUri" th:value="${redirectUri}">
+
                             <div class="input-group">
                                 <i class='bx bxs-user'></i>
                                 <input type="text" placeholder="Username" name="username" required>
