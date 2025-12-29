@@ -3,9 +3,9 @@ package ticket.reserve.user.domain.user;
 import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.user.domain.BaseTimeEntity;
+import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.userrole.UserRole;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +30,34 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<UserRole> userRoles = new HashSet<>();
+
+    public static User of(String username, String encodedPassword, String email) {
+        return User.builder()
+                .username(username)
+                .password(encodedPassword)
+                .email(email)
+                .build();
+    }
 
     public void update(String username, String email) {
         this.username = username;
         this.email = email;
+    }
+
+    public void addRole(Role role) {
+        UserRole userRole = UserRole.builder()
+                .user(this)
+                .role(role)
+                .build();
+        this.userRoles.add(userRole);
+    }
+
+    public List<String> getRoleNames() {
+        return this.getUserRoles().stream()
+                .map(ur -> ur.getRole().getRoleName())
+                .toList();
     }
 }
