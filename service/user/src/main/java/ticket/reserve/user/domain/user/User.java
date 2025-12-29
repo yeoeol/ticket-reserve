@@ -7,6 +7,7 @@ import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.userrole.UserRole;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -52,5 +53,11 @@ public class User extends BaseTimeEntity {
                 .role(role)
                 .build();
         this.userRoles.add(userRole);
+    }
+
+    public List<String> getRoleNames() {
+        return this.getUserRoles().stream()
+                .map(ur -> ur.getRole().getRoleName())
+                .toList();
     }
 }

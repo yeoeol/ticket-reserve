@@ -45,17 +45,14 @@ public class UserService {
         return userRepository.save(user).getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public String login(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUsernameWithRoles(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_LOGIN);
-        }
-        List<String> userRoles = user.getUserRoles().stream()
-                .map(ur -> ur.getRole().getRoleName())
-                .toList();
+        validatePassword(password, user.getPassword());
+
+        List<String> userRoles = user.getRoleNames();
 
         return generateTokenPort.generateToken(user.getId(), userRoles);
     }
