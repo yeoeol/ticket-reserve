@@ -28,9 +28,12 @@ public class CustomAuthenticationEntryPoint implements ServerAuthenticationEntry
     }
 
     private Mono<Void> redirect(ServerWebExchange exchange, String location) {
+        String currentPath = exchange.getRequest().getURI().getPath();
+
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FOUND);
-        response.getHeaders().setLocation(URI.create(location));
+        response.getHeaders().setLocation(URI.create(location + "?redirectUri=" + currentPath));
+
         return response.setComplete();
     }
 }
