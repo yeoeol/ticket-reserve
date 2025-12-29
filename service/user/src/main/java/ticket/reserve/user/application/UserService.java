@@ -47,7 +47,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String login(String username, String password) {
-        User user = userRepository.findByUsernameWithRoles(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN));
 
         validatePassword(password, user.getPassword());
