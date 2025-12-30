@@ -1,22 +1,34 @@
 package ticket.reserve.event.infrastructure.client;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ticket.reserve.event.application.port.out.InventoryPort;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 
 @Component
-@RequiredArgsConstructor
 public class InventoryRestClientAdapter implements InventoryPort {
 
-    // INVENTORY-SERVICE
-    private final RestClient restClient = RestClient.create("http://localhost:30002");
+    private final RestClient restClient;
+
+    public InventoryRestClientAdapter(
+            @Value("${endpoints.ticket-reserve-inventory-service.url}") String inventoryServiceUrl
+    ) {
+        this.restClient = RestClient.create(inventoryServiceUrl);
+    }
 
     @Override
     public Integer countsInventory(Long eventId) {
-        return restClient.get()
+        if (eventId == null) {
+            throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
+        }
+
+        Integer count = restClient.get()
                 .uri("/api/inventories/counts?eventId={eventId}", eventId)
                 .retrieve()
                 .body(Integer.class);
+
+        return count != null ? count : 0;
     }
 }
