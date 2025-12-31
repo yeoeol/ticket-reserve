@@ -19,6 +19,8 @@ public enum ErrorCode {
     INVENTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "INVENTORY001", "좌석을 찾지 못했습니다."),
     INVENTORY_EXCEED(HttpStatus.BAD_REQUEST, "INVENTORY002", "해당 이벤트에 더이상 좌석을 생성할 수 없습니다."),
     INVENTORY_HOLD_FAIL(HttpStatus.BAD_REQUEST, "INVENTORY003", "좌석 선점에 실패했습니다."),
+    INVENTORY_CONFIRM_FAIL(HttpStatus.BAD_REQUEST, "INVENTORY004", "선점 상태가 아닌 좌석의 승인을 시도하여 실패했습니다."),
+    INVENTORY_RELEASE_FAIL(HttpStatus.BAD_REQUEST, "INVENTORY005", "선점 상태가 아닌 좌석의 릴리즈를 시도하여 실패했습니다."),
 
     // PAYMENT-SERVICE
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT001", "결제 정보를 찾을 수 없습니다."),
