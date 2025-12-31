@@ -54,8 +54,8 @@ public class DistributedLockAop {
             throw new InterruptedException();
         } finally {
             try {
-                log.info("락 해제. (Lock Name: {})", key);
                 rLock.unlock();
+                log.info("락 해제. (Lock Name: {})", key);
             } catch (IllegalMonitorStateException e) {
                 log.info("Redisson Lock Already UnLock");
             }
