@@ -38,16 +38,14 @@ public class Inventory extends BaseTimeEntity {
 
     public void confirm() {
         if (this.status != InventoryStatus.PENDING) {
-            System.out.println("비정상적인 확정 시도");
-            return;
+            throw new CustomException(ErrorCode.INVENTORY_CONFIRM_FAIL);
         }
         this.status = InventoryStatus.OCCUPIED;
     }
 
     public void release() {
         if (this.status != InventoryStatus.PENDING) {
-            System.out.println("선점 상태가 아닌 좌석의 릴리즈 시도");
-            return;
+            throw new CustomException(ErrorCode.INVENTORY_RELEASE_FAIL);
         }
         this.status = InventoryStatus.AVAILABLE;
     }
