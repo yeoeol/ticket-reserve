@@ -47,8 +47,7 @@ public class InventoryService {
 
     @Transactional
     public void updateInventory(Long inventoryId, InventoryUpdateRequestDto request) {
-        Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
+        Inventory inventory = getInventoryById(inventoryId);
         inventory.update(request.inventoryName(), request.price());
     }
 
@@ -74,8 +73,7 @@ public class InventoryService {
 
     @Transactional(readOnly = true)
     public InventoryResponseDto getInventory(Long inventoryId) {
-        Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
+        Inventory inventory = getInventoryById(inventoryId);
 
         return InventoryResponseDto.from(inventory);
     }
@@ -83,8 +81,7 @@ public class InventoryService {
     // 락 미적용
     @Transactional
     public void holdInventoryV1(Long inventoryId) {
-        Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
+        Inventory inventory = getInventoryById(inventoryId);
         inventory.hold();
     }
 
@@ -99,8 +96,7 @@ public class InventoryService {
     // Redisson 분산 락 적용
     @DistributedLock(key = "'INVENTORY_LOCK:' + #inventoryId")
     public void holdInventory(Long inventoryId) {
-        Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
+        Inventory inventory = getInventoryById(inventoryId);
         inventory.hold();
     }
 
@@ -121,6 +117,11 @@ public class InventoryService {
         }
 
         eventHandler.handle(event);
+    }
+
+    private Inventory getInventoryById(Long inventoryId) {
+        return inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
     }
 
     private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {
