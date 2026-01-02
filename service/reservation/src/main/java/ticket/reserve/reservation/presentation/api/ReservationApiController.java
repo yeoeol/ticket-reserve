@@ -40,6 +40,6 @@ public class ReservationApiController {
             @PathVariable("eventId") Long eventId,
             @RequestHeader(value = "X-USER-ID", required = false, defaultValue = "0") String userId
     ) {
-        return ResponseEntity.ok(queueService.getQueueStatus(eventId, Long.parseLong(userId)));
+        return ResponseEntity.ok(queueService.getQueueStatus(eventId, userId));
     }
 }
