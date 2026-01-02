@@ -22,7 +22,7 @@ public class ReservationExpiryService {
     private final ReservationRepository reservationRepository;
     private final OutboxEventPublisher outboxEventPublisher;
 
-    private static final int RESERVATION_TIMEOUT_MINUTES = 1;
+    private static final int RESERVATION_TIMEOUT_MINUTES = 5;
 
     @Transactional
     public void findAndPublishExpiredReservations() {
