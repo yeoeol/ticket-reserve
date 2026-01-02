@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.reservation.application.dto.response.QueueStatusResponseDto;
-import ticket.reserve.reservation.infrastucture.client.EventServiceClient;
+import ticket.reserve.reservation.application.port.out.EventPort;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +18,7 @@ import java.util.Set;
 public class QueueService {
 
     private final RedisTemplate<String, String> redisTemplate;
-    private final EventServiceClient eventServiceClient;
+    private final EventPort eventPort;
 
     private static final long ALLOW_COUNT = 10L;       // 한 번에 입장시킬 인원 수 (조절 가능)
     private static final long ACTIVE_TTL = 2*60*1000L;  // ACTIVE 상태 유지 시간 (2분 뒤 만료)
@@ -67,7 +67,7 @@ public class QueueService {
 
     // 스케줄링 메서드 - 3초마다 실행
     public void processQueue() {
-        List<Long> eventIds = eventServiceClient.getEventIds();
+        List<Long> eventIds = eventPort.getEventIds();
         long currentTimeMillis = System.currentTimeMillis();
 
         for (Long eventId : eventIds) {
