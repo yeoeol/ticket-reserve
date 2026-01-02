@@ -73,7 +73,7 @@ public class QueueService {
             // 입장열로 이동
             long expireTime = System.currentTimeMillis() + ACTIVE_TTL;
             for (String userId : usersToEnter) {
-                queueRedisRepository.addToWaitingQueue(eventId, userId, expireTime);
+                queueRedisRepository.addToActiveQueue(eventId, userId, expireTime);
                 queueRedisRepository.removeToWaitingQueue(eventId, userId);
             }
         }

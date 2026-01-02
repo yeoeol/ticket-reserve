@@ -15,6 +15,11 @@ public class QueueRedisRepository {
     private static final String ACTIVE_KEY = "queue:active:%d";
     private static final String WAITING_KEY = "queue:waiting:%d";
 
+    public void addToActiveQueue(Long eventId, String userId, long score) {
+        redisTemplate.opsForZSet()
+                .add(generateActiveKey(eventId), userId, score);
+    }
+
     public void addToWaitingQueue(Long eventId, String userId, long score) {
         redisTemplate.opsForZSet()
                 .add(generateWaitingKey(eventId), userId, score);
