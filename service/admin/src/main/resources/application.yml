@@ -14,3 +14,11 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+
+endpoints:
+  ticket-reserve-user-service:
+    url: http://127.0.0.1:30000
+  ticket-reserve-event-service:
+    url: http://127.0.0.1:30001
+  ticket-reserve-inventory-service:
+    url: http://127.0.0.1:30002
