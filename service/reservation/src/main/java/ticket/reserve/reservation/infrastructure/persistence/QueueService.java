@@ -33,7 +33,7 @@ public class QueueService {
 
         Long rank = queueRedisRepository.getWaitingRank(eventId, userId);
 
-        return QueueStatusResponseDto.waiting(rank);
+        return QueueStatusResponseDto.waiting(rank+1);
     }
 
     // 앞의 대기 인원 수 조회
