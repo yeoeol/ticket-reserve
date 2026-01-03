@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.admin.application.AdminUserService;
 import ticket.reserve.admin.application.dto.user.request.UserUpdateRequestDto;
 import ticket.reserve.admin.application.dto.user.response.UserResponseDto;
-import ticket.reserve.admin.application.AdminService;
 import ticket.reserve.admin.global.util.CookieUtil;
 
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.List;
 @RequestMapping("/admin/users")
 public class AdminUserController {
 
-    private final AdminService adminService;
+    private final AdminUserService adminUserService;
 
     @PostMapping("/logout")
     public String logout(
             @CookieValue(value = "accessToken", required = false) String accessToken,
             HttpServletResponse response
     ) {
-        adminService.logout(accessToken);
+        adminUserService.logout(accessToken);
 
         Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie("accessToken", null, 0);
         response.addCookie(accessTokenCookie);
@@ -34,7 +34,7 @@ public class AdminUserController {
 
     @GetMapping
     public String getUsers(Model model) {
-        List<UserResponseDto> users = adminService.getUsers();
+        List<UserResponseDto> users = adminUserService.getUsers();
 
         model.addAttribute("users", users);
         return "admin/users";
@@ -42,7 +42,7 @@ public class AdminUserController {
 
     @GetMapping("/{id}")
     public String getUser(@PathVariable("id") Long userId, Model model) {
-        UserResponseDto user = adminService.getUser(userId);
+        UserResponseDto user = adminUserService.getUser(userId);
 
         model.addAttribute("user", user);
         return "admin/userdetails";
@@ -50,7 +50,7 @@ public class AdminUserController {
 
     @PostMapping
     public String updateUser(@ModelAttribute UserUpdateRequestDto request) {
-        adminService.updateUser(request);
+        adminUserService.updateUser(request);
         return "redirect:/admin/users";
     }
 }

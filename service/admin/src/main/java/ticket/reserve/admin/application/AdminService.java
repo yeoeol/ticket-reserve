@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ticket.reserve.admin.application.port.out.EventPort;
 import ticket.reserve.admin.application.port.out.InventoryPort;
-import ticket.reserve.admin.application.port.out.UserPort;
 import ticket.reserve.admin.application.dto.event.request.EventRequestDto;
 import ticket.reserve.admin.application.dto.event.request.EventUpdateRequestDto;
 import ticket.reserve.admin.application.dto.event.response.EventDetailResponseDto;
@@ -13,41 +12,15 @@ import ticket.reserve.admin.application.dto.inventory.request.InventoryRequestDt
 import ticket.reserve.admin.application.dto.inventory.request.InventoryUpdateRequestDto;
 import ticket.reserve.admin.application.dto.inventory.response.InventoryResponseDto;
 import ticket.reserve.admin.application.dto.inventory.response.InventoryListPageDto;
-import ticket.reserve.admin.application.dto.user.response.UserResponseDto;
-import ticket.reserve.admin.application.dto.user.request.UserUpdateRequestDto;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final UserPort userPort;
     private final EventPort eventPort;
     private final InventoryPort inventoryPort;
-
-    /**
-     * USER-SERVICE
-     */
-    public void logout(String accessToken) {
-        Map<String, String> request = new HashMap<>();
-        request.put("accessToken", accessToken);
-        userPort.logout(request);
-    }
-
-    public List<UserResponseDto> getUsers() {
-        return userPort.getUsers();
-    }
-
-    public UserResponseDto getUser(Long userId) {
-        return userPort.getUser(userId);
-    }
-
-    public void updateUser(UserUpdateRequestDto request) {
-        userPort.updateUser(request);
-    }
 
     /**
      * EVENT-SERVICE
