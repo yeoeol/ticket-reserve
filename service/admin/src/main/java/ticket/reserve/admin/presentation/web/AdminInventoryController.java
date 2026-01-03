@@ -53,7 +53,7 @@ public class AdminInventoryController {
     public String createInventory(@PathVariable Long eventId,
                                   @ModelAttribute InventoryRequestDto request) {
         adminInventoryService.createInventory(request);
-        return "redirect:/admin/%d/inventory".formatted(eventId);
+        return "redirect:/admin/events/%d/inventories".formatted(eventId);
     }
 
     @PutMapping("/{inventoryId}")
@@ -62,7 +62,7 @@ public class AdminInventoryController {
                                   @ModelAttribute InventoryUpdateRequestDto request
     ) {
         adminInventoryService.updateInventory(eventId, inventoryId, request);
-        return "redirect:/admin/%d/inventory".formatted(eventId);
+        return "redirect:/admin/events/%d/inventories".formatted(eventId);
     }
 
     @DeleteMapping("/{inventoryId}")
@@ -70,6 +70,6 @@ public class AdminInventoryController {
                                   @PathVariable("inventoryId") Long inventoryId
     ) {
         adminInventoryService.deleteInventory(eventId, inventoryId);
-        return "redirect:/admin/%d/inventory".formatted(eventId);
+        return "redirect:/admin/events/%d/inventories".formatted(eventId);
     }
 }
