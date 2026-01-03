@@ -36,11 +36,6 @@ public class QueueService {
         return QueueStatusResponseDto.waiting(rank);
     }
 
-    // 진입 가능 여부 반환
-    public boolean isAllowed(Long eventId, Long userId) {
-        return (queueRedisRepository.getActiveScore(eventId, String.valueOf(userId))) != null;
-    }
-
     // 앞의 대기 인원 수 조회
     public QueueStatusResponseDto getQueueStatus(Long eventId, String userId) {
         if (queueRedisRepository.getActiveScore(eventId, userId) != null) {
@@ -53,6 +48,11 @@ public class QueueService {
         }
 
         throw new CustomException(ErrorCode.QUEUE_TOKEN_NOT_FOUND);
+    }
+
+    // 진입 가능 여부 반환
+    public boolean isAllowed(Long eventId, Long userId) {
+        return (queueRedisRepository.getActiveScore(eventId, String.valueOf(userId))) != null;
     }
 
     // 스케줄링 메서드 - 3초마다 실행
