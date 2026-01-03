@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.application.PaymentService;
+import ticket.reserve.payment.application.dto.request.PaymentPageRequest;
 import ticket.reserve.payment.application.port.out.PaymentPropertiesPort;
 
 import java.util.UUID;
@@ -22,22 +23,20 @@ public class PaymentController {
     private final PaymentPropertiesPort paymentPropertiesPort;
 
     @GetMapping
-    public String paymentPage(@RequestParam Long userId,
-                              @RequestParam Long reservationId,
-                              @RequestParam Long inventoryId,
-                              @RequestParam int amount,
-                              Model model
+    public String paymentPage(
+            @ModelAttribute PaymentPageRequest request,
+            Model model
     ) {
         String orderId = UUID.randomUUID().toString().substring(0, 12);
 
-        model.addAttribute("userId", userId);
-        model.addAttribute("reservationId", reservationId);
-        model.addAttribute("amount", amount);
+        model.addAttribute("userId", request.userId());
+        model.addAttribute("reservationId", request.reservationId());
+        model.addAttribute("amount", request.amount());
         model.addAttribute("orderId", orderId);
         model.addAttribute("orderName", "티켓 예매");
         model.addAttribute("clientKey", paymentPropertiesPort.getClientKey());
 
-        paymentService.createPayment(orderId, userId, reservationId, inventoryId);
+        paymentService.createPayment(orderId, request.userId(), request.reservationId(), request.inventoryId());
         return "payment";
     }
 
