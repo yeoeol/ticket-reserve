@@ -1,11 +1,11 @@
-package ticket.reserve.reservation.infrastucture.scheduler;
+package ticket.reserve.reservation.infrastructure.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ticket.reserve.reservation.application.ReservationExpiryService;
-import ticket.reserve.reservation.infrastucture.persistence.QueueService;
+import ticket.reserve.reservation.infrastructure.persistence.QueueService;
 
 import static java.util.concurrent.TimeUnit.*;
 

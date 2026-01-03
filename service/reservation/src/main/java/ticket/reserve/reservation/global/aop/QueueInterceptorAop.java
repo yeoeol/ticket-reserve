@@ -10,7 +10,7 @@ import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.reservation.global.annotation.AllowedUser;
 import ticket.reserve.reservation.global.util.CustomSpringELParser;
-import ticket.reserve.reservation.infrastucture.persistence.QueueService;
+import ticket.reserve.reservation.infrastructure.persistence.QueueService;
 
 import java.lang.reflect.Method;
 
