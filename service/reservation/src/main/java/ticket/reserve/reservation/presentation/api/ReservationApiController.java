@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.reservation.application.dto.response.QueueStatusResponseDto;
-import ticket.reserve.reservation.infrastucture.persistence.QueueService;
+import ticket.reserve.reservation.infrastructure.persistence.QueueService;
 
 @RestController
 @RequiredArgsConstructor

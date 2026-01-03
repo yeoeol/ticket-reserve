@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.infrastucture.persistence;
+package ticket.reserve.reservation.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

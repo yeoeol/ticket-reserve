@@ -1,4 +1,4 @@
-package ticket.reserve.reservation.infrastucture.kafka.consumer;
+package ticket.reserve.reservation.infrastructure.kafka.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
