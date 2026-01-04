@@ -157,4 +157,17 @@ public class InventoryServiceUnitTest {
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
     }
+
+    @Test
+    @DisplayName("좌석 선점(분산 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    void holdInventoryDistributedLockSuccess() {
+        //given
+        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+
+        //when
+        inventoryService.holdInventory(1234L);
+
+        //then
+        assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
+    }
 }
