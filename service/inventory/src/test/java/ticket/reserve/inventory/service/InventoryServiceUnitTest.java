@@ -116,7 +116,7 @@ public class InventoryServiceUnitTest {
     }
 
     @Test
-    @DisplayName("좌석 선점 V1(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    @DisplayName("좌석 선점 V1 성공(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
     void holdInventoryV1Success() {
         //given
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
@@ -126,6 +126,23 @@ public class InventoryServiceUnitTest {
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
+    }
+
+    @Test
+    @DisplayName("좌석 선점 V1 실패(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    void holdInventoryV1Fail_InventoryHoldFail() {
+        //given
+        inventory.hold();   // 좌석을 선점 상태로 변경해주기 위해 먼저 호출
+        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+
+        //when
+        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1234L));
+
+        //then
+        assertThat(throwable)
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVENTORY_HOLD_FAIL.getMessage())
+                .extracting("errorCode").isEqualTo(ErrorCode.INVENTORY_HOLD_FAIL);
     }
 
     @Test
