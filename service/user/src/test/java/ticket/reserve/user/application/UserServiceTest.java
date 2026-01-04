@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
+import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
@@ -147,4 +149,24 @@ class UserServiceTest {
         verify(generateTokenPort, times(0)).generateToken(any(), any());
     }
 
+    @Test
+    @DisplayName("사용자 수정 성공 - 기존 사용자 정보가 파라미터로 넘어온 수정 정보로 변경된다")
+    void updateUserSuccess() {
+        //given
+        UserUpdateRequestDto request = new UserUpdateRequestDto(
+                1234L, "updateusername", "encodedPassword", "updateEmail@naver.com"
+        );
+
+        given(userRepository.findById(1234L))
+                .willReturn(Optional.of(user));
+        given(passwordEncoder.matches(request.password(), user.getPassword()))
+                .willReturn(true);
+
+        //when
+        UserResponseDto response = userService.updateUser(request);
+
+        //then
+        assertThat(response.username()).isEqualTo(request.username());
+        assertThat(response.email()).isEqualTo(request.email());
+    }
 }
