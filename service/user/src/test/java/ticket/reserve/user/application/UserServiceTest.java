@@ -1,12 +1,10 @@
 package ticket.reserve.user.application;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,14 +17,11 @@ import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 import ticket.reserve.user.domain.userrole.UserRole;
-import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,14 +34,12 @@ class UserServiceTest {
 
     @Mock UserRepository userRepository;
     @Mock RoleRepository roleRepository;
-    @Mock UserRoleRepository userRoleRepository;
     @Mock PasswordEncoder passwordEncoder;
     @Mock GenerateTokenPort generateTokenPort;
     @Mock TokenStorePort tokenStorePort;
 
     private Role role;
     private User user;
-    private UserRole userRole;
 
     @BeforeEach
     void setUp() {
@@ -60,11 +53,6 @@ class UserServiceTest {
                 .username("testusername")
                 .password("encodedPassword")
                 .email("test@naver.com")
-                .build();
-        userRole = UserRole.builder()
-                .id(12L)
-                .user(user)
-                .role(role)
                 .build();
     }
 
@@ -80,8 +68,6 @@ class UserServiceTest {
                 .willReturn(Optional.of(role));
         given(passwordEncoder.encode("rawPassword"))
                 .willReturn("encodedPassword");
-        given(userRoleRepository.save(any()))
-                .willReturn(userRole);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         given(userRepository.save(userCaptor.capture()))
@@ -97,15 +83,15 @@ class UserServiceTest {
         assertThat(savedUser.getUsername()).isEqualTo("testusername");
         assertThat(savedUser.getPassword()).isEqualTo("encodedPassword");
         assertThat(savedUser.getEmail()).isEqualTo("test@naver.com");
-        assertThat(savedUser.getUserRoles()).isNotEmpty();
+
+        assertThat(savedUser.getUserRoles()).hasSize(1);
         assertThat(savedUser.getUserRoles())
                 .extracting(UserRole::getRole)
+                .containsExactly(role)
                 .extracting(Role::getRoleName)
                 .containsExactly("ROLE_USER");
-        assertThat(savedUser.getUserRoles().contains(userRole)).isTrue();
 
         verify(userRepository, times(1)).save(any());
     }
-
 
 }

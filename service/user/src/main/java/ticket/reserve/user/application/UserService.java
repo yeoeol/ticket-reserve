@@ -15,7 +15,6 @@ import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.user.repository.UserRepository;
-import ticket.reserve.user.domain.userrole.repository.UserRoleRepository;
 
 import java.util.List;
 
