@@ -26,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -73,13 +75,19 @@ class EventServiceTest {
 
         assertThat(response.eventTitle()).isEqualTo(request.eventTitle());
         assertThat(response.description()).isEqualTo(request.description());
+        assertThat(response.location()).isEqualTo(request.location());
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
+        assertThat(response.totalSeats()).isEqualTo(request.totalSeats());
 
         assertThat(savedEvent.getEventTitle()).isEqualTo(request.eventTitle());
         assertThat(savedEvent.getDescription()).isEqualTo(request.description());
+        assertThat(savedEvent.getLocation()).isEqualTo(request.location());
         assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
+        assertThat(savedEvent.getTotalSeats()).isEqualTo(request.totalSeats());
+
+        verify(outboxEventPublisher, times(1)).publish(any(), any(), any());
     }
 
     @Test
@@ -109,11 +117,15 @@ class EventServiceTest {
     @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
     void updateEventFail_EventNotFound() {
         //given
+        EventUpdateRequestDto request = new EventUpdateRequestDto(
+                "updateEventTitle", "updateDesc", "테스트장소",
+                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
+        );
         given(eventRepository.findById(9999L))
                 .willReturn(Optional.empty());
 
         //when
-        Throwable throwable = catchThrowable(() -> eventService.updateEvent(9999L, any()));
+        Throwable throwable = catchThrowable(() -> eventService.updateEvent(9999L, request));
 
         //then
         assertThat(throwable)
