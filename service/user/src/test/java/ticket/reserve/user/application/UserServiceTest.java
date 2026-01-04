@@ -1,5 +1,7 @@
 package ticket.reserve.user.application;
 
+import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
@@ -20,7 +24,7 @@ import ticket.reserve.user.domain.userrole.UserRole;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -57,8 +61,8 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 - 성공 시 암호화된 비밀번호화 유저 정보를 저장한다")
-    void registerTest() {
+    @DisplayName("회원가입 성공 - 암호화된 비밀번호화 유저 정보를 저장한다")
+    void register_Success() {
         //given
         UserRegisterRequestDto request = new UserRegisterRequestDto(
         "testusername", "rawPassword", "test@naver.com"
@@ -92,6 +96,30 @@ class UserServiceTest {
                 .containsExactly("ROLE_USER");
 
         verify(userRepository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호가 일치하지 않으면 INVALID_LOGIN 예외가 발생한다")
+    void loginFail_InvalidPassword() {
+        //given
+        String username = "testusername";
+        String wrongPassword = "wrongPassword";
+
+        given(userRepository.findByUsername(username))
+                .willReturn(Optional.of(user));
+        given(passwordEncoder.matches(wrongPassword, user.getPassword()))
+                .willReturn(false);
+
+        //when
+        Throwable throwable = catchThrowable(() -> userService.login(username, wrongPassword));
+
+        //then
+        assertThat(throwable)
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_LOGIN.getMessage())
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.INVALID_LOGIN);
+        verify(generateTokenPort, times(0)).generateToken(any(), any());
     }
 
 }
