@@ -5,7 +5,6 @@ import ticket.reserve.event.domain.Event;
 import java.time.LocalDateTime;
 
 public record EventRequestDto(
-        Long id,
         String eventTitle,          // 공연 제목
         String description,         // 상세 내용
         String location,            // 장소
