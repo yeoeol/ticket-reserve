@@ -129,7 +129,7 @@ public class InventoryServiceUnitTest {
     }
 
     @Test
-    @DisplayName("좌석 선점 V1 실패(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    @DisplayName("좌석 선점 V1 실패(락 적용X) - 이미 선점된 좌석에 대해 선점 시도 시 예외가 발생한다")
     void holdInventoryV1Fail_InventoryHoldFail() {
         //given
         inventory.hold();   // 좌석을 선점 상태로 변경해주기 위해 먼저 호출
@@ -146,7 +146,7 @@ public class InventoryServiceUnitTest {
     }
 
     @Test
-    @DisplayName("좌석 선점 V2(비관적 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    @DisplayName("좌석 선점 V2 성공(비관적 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
     void holdInventoryV2Success() {
         //given
         given(inventoryRepository.findByIdForUpdate(1234L)).willReturn(Optional.of(inventory));
@@ -159,7 +159,7 @@ public class InventoryServiceUnitTest {
     }
 
     @Test
-    @DisplayName("좌석 선점(분산 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    @DisplayName("좌석 선점 성공(분산 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
     void holdInventoryDistributedLockSuccess() {
         //given
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
