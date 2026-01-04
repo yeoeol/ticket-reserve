@@ -11,6 +11,7 @@ import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.InventoryService;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
+import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
 import ticket.reserve.inventory.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.application.port.out.EventPort;
@@ -20,6 +21,7 @@ import ticket.reserve.inventory.domain.repository.InventoryRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -94,5 +96,22 @@ public class InventoryServiceUnitTest {
                 .hasMessage(ErrorCode.INVENTORY_EXCEED.getMessage())
                 .extracting("errorCode").isEqualTo(ErrorCode.INVENTORY_EXCEED);
         verify(inventoryRepository, never()).save(any(Inventory.class));
+    }
+
+    @Test
+    @DisplayName("좌석 수정 성공 - 수정 요청 정보를 기반으로 엔티티를 수정한다")
+    void updateInventorySuccess() {
+        //given
+        InventoryUpdateRequestDto request = new InventoryUpdateRequestDto(
+                "TEST_FAIL", 1000000
+        );
+        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+
+        //when
+        inventoryService.updateInventory(1234L, request);
+
+        //then
+        assertThat(inventory.getInventoryName()).isEqualTo(request.inventoryName());
+        assertThat(inventory.getPrice()).isEqualTo(request.price());
     }
 }
