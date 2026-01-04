@@ -10,12 +10,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
+import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,23 +49,26 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 생성 성공 - 요청 정보를 기반으로 이벤트 엔티티를 생성한다")
-    void createEventSuccess() {
+    @DisplayName("이벤트 수정 성공 - 수정 정보를 기반으로 이벤트 엔티티를 수정한다")
+    void updateEventSuccess() {
         //given
-        EventRequestDto request = new EventRequestDto(
-                1234L, "testTitle", "testDesc", "장소",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10
+        EventUpdateRequestDto request = new EventUpdateRequestDto(
+                "updateEventTitle", "updateDesc", "테스트장소",
+                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
         );
-        given(eventRepository.save(any()))
-                .willReturn(event);
+        given(eventRepository.findById(1234L))
+                .willReturn(Optional.of(event));
 
         //when
-        EventDetailResponseDto response = eventService.createEvent(request);
+        eventService.updateEvent(1234L, request);
 
         //then
-        assertThat(response.id()).isEqualTo(event.getId());
-        assertThat(response.eventTitle()).isEqualTo(event.getEventTitle());
-        assertThat(response.location()).isEqualTo(event.getLocation());
+        assertThat(event.getEventTitle()).isEqualTo(request.eventTitle());
+        assertThat(event.getDescription()).isEqualTo(request.description());
+        assertThat(event.getLocation()).isEqualTo(request.location());
+        assertThat(event.getStartTime()).isEqualTo(request.startTime());
+        assertThat(event.getEndTime()).isEqualTo(request.endTime());
+        assertThat(event.getTotalSeats()).isEqualTo(request.totalSeats());
     }
 
 }
