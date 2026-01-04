@@ -114,4 +114,17 @@ public class InventoryServiceUnitTest {
         assertThat(inventory.getInventoryName()).isEqualTo(request.inventoryName());
         assertThat(inventory.getPrice()).isEqualTo(request.price());
     }
+
+    @Test
+    @DisplayName("좌석 선점 V1(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
+    void holdInventoryV1Success() {
+        //given
+        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+
+        //when
+        inventoryService.holdInventoryV1(1234L);
+
+        //then
+        assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
+    }
 }
