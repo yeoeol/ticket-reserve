@@ -5,11 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
+import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
@@ -47,6 +50,36 @@ class EventServiceTest {
                 .endTime(LocalDateTime.now().plusDays(1))
                 .totalSeats(10)
                 .build();
+    }
+
+    @Test
+    @DisplayName("이벤트 생성 성공 - 요청 정보를 기반으로 이벤트를 생성한다")
+    void createEventSuccess() {
+        //given
+        EventRequestDto request = new EventRequestDto(
+                "testTitle", "testDesc", "장소",
+                event.getStartTime(), event.getEndTime(), 10
+        );
+
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+        given(eventRepository.save(eventCaptor.capture()))
+                .willReturn(event);
+
+        //when
+        EventDetailResponseDto response = eventService.createEvent(request);
+
+        //then
+        Event savedEvent = eventCaptor.getValue();
+
+        assertThat(response.eventTitle()).isEqualTo(request.eventTitle());
+        assertThat(response.description()).isEqualTo(request.description());
+        assertThat(response.startTime()).isEqualTo(request.startTime());
+        assertThat(response.endTime()).isEqualTo(request.endTime());
+
+        assertThat(savedEvent.getEventTitle()).isEqualTo(request.eventTitle());
+        assertThat(savedEvent.getDescription()).isEqualTo(request.description());
+        assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
+        assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
     }
 
     @Test
