@@ -9,17 +9,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
-import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
-import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -69,6 +70,23 @@ class EventServiceTest {
         assertThat(event.getStartTime()).isEqualTo(request.startTime());
         assertThat(event.getEndTime()).isEqualTo(request.endTime());
         assertThat(event.getTotalSeats()).isEqualTo(request.totalSeats());
+    }
+
+    @Test
+    @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
+    void updateEventFail_EventNotFound() {
+        //given
+        given(eventRepository.findById(9999L))
+                .willReturn(Optional.empty());
+
+        //when
+        Throwable throwable = catchThrowable(() -> eventService.updateEvent(9999L, any()));
+
+        //then
+        assertThat(throwable)
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.EVENT_NOT_FOUND.getMessage())
+                .extracting("errorCode").isEqualTo(ErrorCode.EVENT_NOT_FOUND);
     }
 
 }
