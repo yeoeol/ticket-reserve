@@ -92,7 +92,9 @@ class UserServiceTest {
         assertThat(savedUser.getUserRoles()).hasSize(1);
         assertThat(savedUser.getUserRoles())
                 .extracting(UserRole::getRole)
-                .containsExactly(role)
+                .containsExactly(role);
+        assertThat(savedUser.getUserRoles())
+                .extracting(UserRole::getRole)
                 .extracting(Role::getRoleName)
                 .containsExactly("ROLE_USER");
 
@@ -166,6 +168,11 @@ class UserServiceTest {
         UserResponseDto response = userService.updateUser(request);
 
         //then
+        // 실제 User 엔티티 필드 변경 검증
+        assertThat(user.getUsername()).isEqualTo(request.username());
+        assertThat(user.getEmail()).isEqualTo(request.email());
+
+        // 응답 DTO 검증
         assertThat(response.username()).isEqualTo(request.username());
         assertThat(response.email()).isEqualTo(request.email());
     }
