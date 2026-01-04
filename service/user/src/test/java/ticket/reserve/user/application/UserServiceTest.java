@@ -1,7 +1,5 @@
 package ticket.reserve.user.application;
 
-import org.assertj.core.api.AbstractThrowableAssert;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,6 +56,7 @@ class UserServiceTest {
                 .password("encodedPassword")
                 .email("test@naver.com")
                 .build();
+        user.addRole(role);
     }
 
     @Test
@@ -96,6 +95,32 @@ class UserServiceTest {
                 .containsExactly("ROLE_USER");
 
         verify(userRepository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("로그인 성공 - 올바른 정보 입력 시 JWT 토큰을 반환한다")
+    void loginSuccess() {
+        //given
+        String username = "testusername";
+        String password = "rawPassword";
+        String expectedToken = "valid.jwt.token";
+
+        given(userRepository.findByUsername(username))
+                .willReturn(Optional.of(user));
+        given(passwordEncoder.matches(password, user.getPassword()))
+                .willReturn(true);
+        given(generateTokenPort.generateToken(user.getId(), user.getRoleNames()))
+                .willReturn(expectedToken);
+
+        //when
+        String generatedToken = userService.login(username, password);
+
+        //then
+        assertThat(generatedToken).isEqualTo(expectedToken);
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+        verify(generateTokenPort, times(1)).generateToken(any(), any());
     }
 
     @Test
