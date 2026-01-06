@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ticket.reserve.reservation.application.dto.request.InventoryHoldRequestDto;
 import ticket.reserve.reservation.application.dto.request.ReservationRequestDto;
 import ticket.reserve.reservation.application.dto.response.ReservationResponseDto;
 import ticket.reserve.reservation.application.eventHandler.EventHandler;
@@ -20,6 +21,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
@@ -59,5 +62,7 @@ class ReservationServiceTest {
         assertThat(response.reservationId()).isEqualTo(1234L);
         assertThat(response.inventoryId()).isEqualTo(request.inventoryId());
         assertThat(response.price()).isEqualTo(request.price());
+
+        verify(inventoryPort, times(1)).holdInventory(any(InventoryHoldRequestDto.class));
     }
 }
