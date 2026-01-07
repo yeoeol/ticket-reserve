@@ -1,10 +1,9 @@
 package ticket.reserve.payment.application;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
@@ -44,10 +42,21 @@ class PaymentServiceTest {
         //given
         Payment payment = createPayment(1L, 1L, 1L, 10L);
 
+        ArgumentCaptor<Payment> captor = ArgumentCaptor.forClass(Payment.class);
+        given(paymentRepository.save(captor.capture()))
+                .willReturn(payment);
+
         //when
         paymentService.createPayment(payment.getOrderId(), 1L, 1L, 10L);
 
         //then
+        Payment savedPayment = captor.getValue();
+
+        assertThat(savedPayment.getUserId()).isEqualTo(payment.getUserId());
+        assertThat(savedPayment.getReservationId()).isEqualTo(payment.getReservationId());
+        assertThat(savedPayment.getInventoryId()).isEqualTo(payment.getInventoryId());
+        assertThat(savedPayment.getOrderId()).isEqualTo(payment.getOrderId());
+
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }
 
