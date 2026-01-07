@@ -1,5 +1,6 @@
 package ticket.reserve.event.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class EventApiController {
     }
 
     @PostMapping
-    public ResponseEntity<EventDetailResponseDto> createEvent(@RequestBody EventRequestDto request) {
+    public ResponseEntity<EventDetailResponseDto> createEvent(@Valid @RequestBody EventRequestDto request) {
         return ResponseEntity.ok(eventService.createEvent(request));
     }
 
