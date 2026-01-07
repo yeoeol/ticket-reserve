@@ -18,7 +18,6 @@ import ticket.reserve.payment.domain.repository.PaymentRepository;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,7 +92,7 @@ class PaymentServiceTest {
     }
 
     private Payment createPayment(Long paymentId, Long userId, Long reservationId, Long inventoryId) {
-        String orderId = UUID.randomUUID().toString().substring(0, 12);
+        String orderId = "test-order-" + paymentId;
         return Payment.builder()
                 .id(paymentId)
                 .userId(userId)
