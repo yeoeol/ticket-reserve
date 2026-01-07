@@ -1,33 +1,42 @@
 package ticket.reserve.event.presentation.api;
 
-import jakarta.validation.Valid;
-import org.assertj.core.api.InstanceOfAssertFactories;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import ticket.reserve.event.application.EventService;
+import ticket.reserve.event.application.dto.request.EventRequestDto;
+import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.domain.Event;
+import ticket.reserve.global.exception.GlobalExceptionRestHandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.notNull;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
-@WebMvcTest(EventApiController.class)
+@WebMvcTest(controllers = {EventApiController.class})
+@Import(GlobalExceptionRestHandler.class)
 @AutoConfigureMockMvc(addFilters = false)
 class EventApiControllerTest {
 
     @Autowired
     private MockMvcTester mvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     EventService eventService;
@@ -49,6 +58,35 @@ class EventApiControllerTest {
                 .hasPathSatisfying("$[0].eventTitle", v -> v.assertThat().isEqualTo("testTitle1"))
                 .hasPathSatisfying("$[1].id", v -> v.assertThat().isEqualTo(2))
                 .hasPathSatisfying("$[1].eventTitle", v -> v.assertThat().isEqualTo("testTitle2"));
+    }
+
+    @Test
+    @DisplayName("이벤트 생성 실패 - POST /api/events 요청 정보 필드에 null이 들어있으면 예외가 발생한다")
+    void handleValidationException() throws Exception {
+        //given
+        Event event = createEvent(1L);
+        EventRequestDto invalidRequest = new EventRequestDto(
+                null, null, event.getLocation(),
+                event.getStartTime(), event.getEndTime(), event.getTotalSeats()
+        );
+        given(eventService.createEvent(invalidRequest))
+                .willReturn(EventDetailResponseDto.from(event, event.getTotalSeats()));
+
+        //when & then
+        assertThat(mvc.post().uri("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRequest)))
+                .apply(print())
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyJson()
+                .hasPathSatisfying("$.code", v -> v.assertThat()
+                        .isEqualTo("400 BAD_REQUEST"))
+                .hasPathSatisfying("$.message", v -> v.assertThat()
+                        .isEqualTo("입력 값 검증에 실패했습니다."))
+                .hasPathSatisfying("$.errors.size()", v -> v.assertThat()
+                        .isEqualTo(2))
+                .hasPathSatisfying("$.errors[*].field", v -> v.assertThat()
+                        .asInstanceOf(LIST).containsExactlyInAnyOrder("eventTitle", "description"));
     }
 
     private Event createEvent(Long id) {
