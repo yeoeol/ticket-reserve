@@ -14,7 +14,7 @@ public record EventDetailResponseDto(
         LocalDateTime startTime,
         LocalDateTime endTime,
         int availableInventory,
-        int totalInventoryCount
+        Integer totalInventoryCount
 ) {
     public static EventDetailResponseDto from(Event event, Integer availableInventoryCount) {
         return EventDetailResponseDto.builder()

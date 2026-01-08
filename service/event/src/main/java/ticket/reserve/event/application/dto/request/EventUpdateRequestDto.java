@@ -8,6 +8,6 @@ public record EventUpdateRequestDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        int totalInventoryCount             // 총 좌석 수
+        Integer totalInventoryCount             // 총 좌석 수
 ) {
 }

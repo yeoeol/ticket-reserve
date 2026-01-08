@@ -13,6 +13,6 @@ public record EventDetailResponseDto(
         LocalDateTime startTime,
         LocalDateTime endTime,
         int availableInventory,
-        int totalInventoryCount
+        Integer totalInventoryCount
 ) {
 }

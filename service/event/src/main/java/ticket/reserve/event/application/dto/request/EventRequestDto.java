@@ -24,7 +24,7 @@ public record EventRequestDto(
         LocalDateTime endTime,
 
         @Positive(message = "좌석 수는 1 이상이어야 합니다.")
-        int totalInventoryCount  // 총 좌석 수
+        Integer totalInventoryCount  // 총 좌석 수
 ) {
     public Event toEntity(IdGenerator idGenerator) {
         return Event.builder()

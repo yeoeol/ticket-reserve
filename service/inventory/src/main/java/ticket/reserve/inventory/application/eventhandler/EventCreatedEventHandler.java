@@ -31,7 +31,7 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
         return EventType.EVENT_CREATED == event.getType();
     }
 
-    private void createInventoryAsTotalInventoryCount(Long eventId, int totalInventoryCount) {
+    private void createInventoryAsTotalInventoryCount(Long eventId, Integer totalInventoryCount) {
         char prefix = 'A';
         int seatNumber = 1;
 
