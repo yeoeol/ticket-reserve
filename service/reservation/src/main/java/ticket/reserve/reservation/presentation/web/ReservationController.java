@@ -1,5 +1,6 @@
 package ticket.reserve.reservation.presentation.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ public class ReservationController {
 
     @PostMapping("/reservations")
     public String create(
-            @ModelAttribute ReservationRequestDto request,
+            @Valid @ModelAttribute ReservationRequestDto request,
             @AuthenticationPrincipal String userId
     ) {
         ReservationResponseDto response = reservationService.createReservation(request, Long.parseLong(userId));
