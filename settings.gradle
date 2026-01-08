@@ -10,6 +10,7 @@ include 'common:global'
 include 'common:configserver'
 include 'common:data-serializer'
 include 'common:outbox-message-relay'
+include 'common:tsid'
 
 include 'service:user'
 include 'service:admin'

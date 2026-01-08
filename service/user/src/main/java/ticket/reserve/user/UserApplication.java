@@ -7,10 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {
-        "ticket.reserve.global",
-        "ticket.reserve.user"
-})
+@SpringBootApplication(scanBasePackages = "ticket.reserve")
 public class UserApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserApplication.class);

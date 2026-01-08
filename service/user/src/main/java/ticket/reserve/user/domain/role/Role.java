@@ -2,16 +2,15 @@ package ticket.reserve.user.domain.role;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ticket.reserve.tsid.IdGenerator;
 
 @Entity
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "roles")
 public class Role {
 
-    @Id @GeneratedValue
+    @Id
     @Column(name = "role_id")
     private Long id;
 
@@ -20,4 +19,11 @@ public class Role {
 
     @Column(name = "role_desc")
     private String roleDesc;
+
+    @Builder
+    private Role(IdGenerator idGenerator, String roleName, String roleDesc) {
+        this.id = idGenerator.nextId();
+        this.roleName = roleName;
+        this.roleDesc = roleDesc;
+    }
 }

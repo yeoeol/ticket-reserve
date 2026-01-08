@@ -2,6 +2,7 @@ package ticket.reserve.user.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ticket.reserve.tsid.IdGenerator;
 import ticket.reserve.user.domain.BaseTimeEntity;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.userrole.UserRole;
@@ -11,13 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 public class User extends BaseTimeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
     @Column(name = "user_id")
     private Long id;
 
@@ -31,11 +31,19 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private Set<UserRole> userRoles = new HashSet<>();
 
-    public static User of(String username, String encodedPassword, String email) {
+    @Builder
+    private User(IdGenerator idGenerator, String username, String password, String email) {
+        this.id = idGenerator.nextId();
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public static User of(IdGenerator idGenerator, String username, String encodedPassword, String email) {
         return User.builder()
+                .idGenerator(idGenerator)
                 .username(username)
                 .password(encodedPassword)
                 .email(email)
@@ -47,8 +55,9 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    public void addRole(Role role) {
+    public void addRole(IdGenerator idGenerator, Role role) {
         UserRole userRole = UserRole.builder()
+                .idGenerator(idGenerator)
                 .user(this)
                 .role(role)
                 .build();

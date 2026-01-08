@@ -6,6 +6,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.tsid.IdGenerator;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;
@@ -23,6 +24,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IdGenerator idGenerator;
 
     private boolean alreadySetup = false;
 
@@ -47,11 +49,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private User createUserIfNotFound(String username, String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            User user = User.builder()
-                    .username(username)
-                    .email(email)
-                    .password(passwordEncoder.encode(password))
-                    .build();
+            User user = User.of(
+                    idGenerator,
+                    username,
+                    passwordEncoder.encode(password),
+                    email
+            );
             return userRepository.save(user);
         }
         return optionalUser.get();
@@ -61,6 +64,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<Role> optionalRole = roleRepository.findByRoleName(roleName);
         if (optionalRole.isEmpty()) {
             Role role = Role.builder()
+                    .idGenerator(idGenerator)
                     .roleName(roleName)
                     .roleDesc(roleDesc)
                     .build();
@@ -73,6 +77,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Optional<UserRole> optionalUserRole = userRoleRepository.findByUserAndRole(user, role);
         if (optionalUserRole.isEmpty()) {
             UserRole userRole = UserRole.builder()
+                    .idGenerator(idGenerator)
                     .user(user)
                     .role(role)
                     .build();
