@@ -2,6 +2,7 @@ package ticket.reserve.user.presentation.web;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(
-            UserRegisterRequestDto requestDto,
+            @Valid UserRegisterRequestDto requestDto,
             @RequestParam(value = "redirectUri", required = false) String redirectUri
     ) {
         userService.register(requestDto);
@@ -43,7 +44,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(
-            UserLoginRequestDto requestDto,
+            @Valid UserLoginRequestDto requestDto,
             @RequestParam(value = "redirectUri", required = false) String redirectUri,
             HttpServletResponse response
     ) {
