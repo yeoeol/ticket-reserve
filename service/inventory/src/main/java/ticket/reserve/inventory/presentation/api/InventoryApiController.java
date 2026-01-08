@@ -1,5 +1,6 @@
 package ticket.reserve.inventory.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.inventory.application.InventoryService;
 import ticket.reserve.inventory.application.dto.request.InventoryHoldRequestDto;
-import ticket.reserve.inventory.application.dto.request.InventoryReleaseRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
@@ -22,14 +22,14 @@ public class InventoryApiController {
     private final InventoryService inventoryService;
 
     @PostMapping
-    public ResponseEntity<Void> createInventory(@RequestBody InventoryRequestDto request) {
+    public ResponseEntity<Void> createInventory(@Valid @RequestBody InventoryRequestDto request) {
         inventoryService.createInventory(request);
         return ResponseEntity.ok().build();
     }
 
     // 좌석 선점 로직
     @PostMapping("/hold")
-    public ResponseEntity<Void> holdInventory(@RequestBody InventoryHoldRequestDto request) {
+    public ResponseEntity<Void> holdInventory(@Valid @RequestBody InventoryHoldRequestDto request) {
         inventoryService.holdInventory(request.inventoryId());
         return ResponseEntity.ok().build();
     }
