@@ -16,6 +16,6 @@ public record EventDetailResponseDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         LocalDateTime endTime,
         int availableInventory,
-        int totalSeats
+        Integer totalInventoryCount
 ) {
 }

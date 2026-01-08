@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.tsid.IdGenerator;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
@@ -27,6 +28,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final GenerateTokenPort generateTokenPort;
     private final TokenStorePort tokenStorePort;
+    private final IdGenerator idGenerator;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -34,11 +36,12 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ROLE_NOT_FOUND));
 
         User user = User.of(
+                idGenerator,
                 requestDto.username(),
                 passwordEncoder.encode(requestDto.password()),
                 requestDto.email()
         );
-        user.addRole(roleUser);
+        user.addRole(idGenerator, roleUser);
 
         return userRepository.save(user).getId();
     }

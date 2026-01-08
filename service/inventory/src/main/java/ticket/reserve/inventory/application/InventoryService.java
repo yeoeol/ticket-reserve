@@ -37,7 +37,7 @@ public class InventoryService {
     public void createInventory(InventoryRequestDto request) {
         EventDetailResponseDto eventResponseDto = eventPort.getOne(request.eventId());
         Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.eventId());
-        if (eventResponseDto.totalSeats() == eventInventoryCount) {
+        if (eventResponseDto.totalInventoryCount() == eventInventoryCount) {
             throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
 

@@ -82,7 +82,7 @@
 </style>
 
 <script th:inline="javascript">
-    const eventId = [[${event.id}]];
+    const eventId = '[[${event.id}]]';
     const isAuthenticated = [[${isAuthenticated}]];
 
     function startReservation() {

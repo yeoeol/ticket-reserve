@@ -66,7 +66,7 @@ class EventApiControllerTest {
         Event event = createEvent(1L);
         EventRequestDto invalidRequest = new EventRequestDto(
                 null, null, event.getLocation(),
-                event.getStartTime(), event.getEndTime(), event.getTotalSeats()
+                event.getStartTime(), event.getEndTime(), event.getTotalInventoryCount()
         );
 
         //when & then
@@ -96,7 +96,7 @@ class EventApiControllerTest {
                 .location("test")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusDays(1))
-                .totalSeats(10)
+                .totalInventoryCount(10)
                 .build();
     }
 }
