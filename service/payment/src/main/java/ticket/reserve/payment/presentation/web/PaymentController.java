@@ -1,12 +1,12 @@
 package ticket.reserve.payment.presentation.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.application.PaymentService;
 import ticket.reserve.payment.application.dto.request.PaymentPageRequest;
@@ -24,7 +24,7 @@ public class PaymentController {
 
     @GetMapping
     public String paymentPage(
-            @ModelAttribute PaymentPageRequest request,
+            @Valid @ModelAttribute PaymentPageRequest request,
             Model model
     ) {
         String orderId = UUID.randomUUID().toString().substring(0, 12);
@@ -41,7 +41,7 @@ public class PaymentController {
     }
 
     @GetMapping("/success")
-    public String paymentSuccess(@ModelAttribute PaymentConfirmRequestDto request) {
+    public String paymentSuccess(@Valid @ModelAttribute PaymentConfirmRequestDto request) {
         paymentService.confirmPayment(request);
         return "redirect:/";
     }
