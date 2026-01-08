@@ -1,5 +1,6 @@
 package ticket.reserve.user.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Long>> register(@RequestBody UserRegisterRequestDto requestDto) {
+    public ResponseEntity<Map<String, Long>> register(@Valid @RequestBody UserRegisterRequestDto requestDto) {
         Long userId = userService.register(requestDto);
 
         Map<String, Long> response = new HashMap<>();
@@ -31,7 +32,7 @@ public class UserApiController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody UserLoginRequestDto requestDto) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto.username(), requestDto.password());
 
         Map<String, String> response = new HashMap<>();
@@ -58,7 +59,7 @@ public class UserApiController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateRequestDto request) {
+    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserUpdateRequestDto request) {
         return ResponseEntity.ok(userService.updateUser(request));
     }
 }
