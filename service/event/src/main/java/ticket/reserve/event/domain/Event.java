@@ -3,19 +3,17 @@ package ticket.reserve.event.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 
 @Entity
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "events")
 public class Event extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
     private Long id;
 
@@ -26,7 +24,18 @@ public class Event extends BaseTimeEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    private int totalSeats;             // 총 좌석 수
+    private Integer totalInventoryCount;             // 총 좌석 수
+
+    @Builder
+    private Event(IdGenerator idGenerator, String eventTitle, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
+        this.id = idGenerator.nextId();
+        this.eventTitle = eventTitle;
+        this.description = description;
+        this.location = location;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalInventoryCount = totalInventoryCount;
+    }
 
     public void update(EventUpdateRequestDto request) {
         this.eventTitle = request.eventTitle();
@@ -34,6 +43,6 @@ public class Event extends BaseTimeEntity {
         this.location = request.location();
         this.startTime = request.startTime();
         this.endTime = request.endTime();
-        this.totalSeats = request.totalSeats();
+        this.totalInventoryCount = request.totalInventoryCount();
     }
 }

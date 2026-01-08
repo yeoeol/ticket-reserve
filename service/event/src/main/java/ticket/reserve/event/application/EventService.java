@@ -15,6 +15,7 @@ import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.util.List;
 
@@ -25,10 +26,11 @@ public class EventService {
     private final EventRepository eventRepository;
     private final InventoryPort inventoryPort;
     private final OutboxEventPublisher outboxEventPublisher;
+    private final IdGenerator idGenerator;
 
     @Transactional
     public EventDetailResponseDto createEvent(EventRequestDto request) {
-        Event event = request.toEntity();
+        Event event = request.toEntity(idGenerator);
         Event savedEvent = eventRepository.save(event);
 
         outboxEventPublisher.publish(
@@ -40,12 +42,12 @@ public class EventService {
                         .location(event.getLocation())
                         .startTime(event.getStartTime())
                         .endTime(event.getEndTime())
-                        .totalSeats(event.getTotalSeats())
+                        .totalSeats(event.getTotalInventoryCount())
                         .build(),
                 savedEvent.getId()
         );
 
-        return EventDetailResponseDto.from(savedEvent, savedEvent.getTotalSeats());
+        return EventDetailResponseDto.from(savedEvent, savedEvent.getTotalInventoryCount());
     }
 
     @Transactional(readOnly = true)

@@ -78,14 +78,14 @@ class EventServiceTest {
         assertThat(response.location()).isEqualTo(request.location());
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
-        assertThat(response.totalSeats()).isEqualTo(request.totalSeats());
+        assertThat(response.totalSeats()).isEqualTo(request.totalInventoryCount());
 
         assertThat(savedEvent.getEventTitle()).isEqualTo(request.eventTitle());
         assertThat(savedEvent.getDescription()).isEqualTo(request.description());
         assertThat(savedEvent.getLocation()).isEqualTo(request.location());
         assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
-        assertThat(savedEvent.getTotalSeats()).isEqualTo(request.totalSeats());
+        assertThat(savedEvent.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
 
         verify(outboxEventPublisher, times(1)).publish(any(), any(), any());
     }
@@ -110,7 +110,7 @@ class EventServiceTest {
         assertThat(event.getLocation()).isEqualTo(request.location());
         assertThat(event.getStartTime()).isEqualTo(request.startTime());
         assertThat(event.getEndTime()).isEqualTo(request.endTime());
-        assertThat(event.getTotalSeats()).isEqualTo(request.totalSeats());
+        assertThat(event.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
     }
 
     @Test

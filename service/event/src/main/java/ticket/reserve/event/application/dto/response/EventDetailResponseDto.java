@@ -25,7 +25,7 @@ public record EventDetailResponseDto(
                 .startTime(event.getStartTime())
                 .endTime(event.getEndTime())
                 .availableInventory(availableInventoryCount)
-                .totalSeats(event.getTotalSeats())
+                .totalSeats(event.getTotalInventoryCount())
                 .build();
     }
 }

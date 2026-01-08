@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import ticket.reserve.event.domain.Event;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 
@@ -23,16 +24,17 @@ public record EventRequestDto(
         LocalDateTime endTime,
 
         @Positive(message = "좌석 수는 1 이상이어야 합니다.")
-        int totalSeats  // 총 좌석 수
+        int totalInventoryCount  // 총 좌석 수
 ) {
-    public Event toEntity() {
+    public Event toEntity(IdGenerator idGenerator) {
         return Event.builder()
+                .idGenerator(idGenerator)
                 .eventTitle(this.eventTitle)
                 .description(this.description)
                 .location(this.location)
                 .startTime(this.startTime)
                 .endTime(this.endTime)
-                .totalSeats(this.totalSeats)
+                .totalInventoryCount(this.totalInventoryCount)
                 .build();
     }
 }
