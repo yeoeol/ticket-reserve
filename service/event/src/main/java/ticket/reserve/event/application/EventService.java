@@ -42,7 +42,7 @@ public class EventService {
                         .location(event.getLocation())
                         .startTime(event.getStartTime())
                         .endTime(event.getEndTime())
-                        .totalSeats(event.getTotalInventoryCount())
+                        .totalInventoryCount(event.getTotalInventoryCount())
                         .build(),
                 savedEvent.getId()
         );

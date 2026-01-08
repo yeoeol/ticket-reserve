@@ -21,9 +21,9 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
     @Transactional
     public void handle(Event<EventCreatedEventPayload> event) {
         EventCreatedEventPayload payload = event.getPayload();
-        createInventoryAsTotalSeats(payload.getEventId(), payload.getTotalSeats());
+        createInventoryAsTotalInventoryCount(payload.getEventId(), payload.getTotalInventoryCount());
         log.info("[EventCreatedEventHandler.handle] 좌석 생성 완료 " +
-                "- eventId = {}, totalSeats = {}", payload.getEventId(), payload.getTotalSeats());
+                "- eventId = {}, totalInventoryCount = {}", payload.getEventId(), payload.getTotalInventoryCount());
     }
 
     @Override
@@ -31,11 +31,11 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
         return EventType.EVENT_CREATED == event.getType();
     }
 
-    private void createInventoryAsTotalSeats(Long eventId, int totalSeats) {
+    private void createInventoryAsTotalInventoryCount(Long eventId, int totalInventoryCount) {
         char prefix = 'A';
         int seatNumber = 1;
 
-        for (int i = 1; i <= totalSeats; i++) {
+        for (int i = 1; i <= totalInventoryCount; i++) {
             String inventoryName = prefix + String.valueOf(seatNumber);
             Inventory inventory = Inventory.builder()
                     .eventId(eventId)

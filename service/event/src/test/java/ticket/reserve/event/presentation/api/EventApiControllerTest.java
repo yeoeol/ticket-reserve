@@ -96,7 +96,7 @@ class EventApiControllerTest {
                 .location("test")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusDays(1))
-                .totalSeats(10)
+                .totalInventoryCount(10)
                 .build();
     }
 }

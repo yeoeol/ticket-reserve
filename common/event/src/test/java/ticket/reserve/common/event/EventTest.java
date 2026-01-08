@@ -20,7 +20,7 @@ class EventTest {
                 .location("한국")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plus(Duration.ofDays(1)))
-                .totalSeats(10)
+                .totalInventoryCount(10)
                 .build();
 
         Event<EventPayload> event = Event.of(
@@ -46,6 +46,6 @@ class EventTest {
         assertThat(resultPayload.getLocation()).isEqualTo(payload.getLocation());
         assertThat(resultPayload.getStartTime()).isEqualTo(payload.getStartTime());
         assertThat(resultPayload.getEndTime()).isEqualTo(payload.getEndTime());
-        assertThat(resultPayload.getTotalSeats()).isEqualTo(payload.getTotalSeats());
+        assertThat(resultPayload.getTotalInventoryCount()).isEqualTo(payload.getTotalInventoryCount());
     }
 }

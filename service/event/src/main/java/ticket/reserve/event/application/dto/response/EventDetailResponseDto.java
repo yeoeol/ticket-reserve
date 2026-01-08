@@ -14,7 +14,7 @@ public record EventDetailResponseDto(
         LocalDateTime startTime,
         LocalDateTime endTime,
         int availableInventory,
-        int totalSeats
+        int totalInventoryCount
 ) {
     public static EventDetailResponseDto from(Event event, Integer availableInventoryCount) {
         return EventDetailResponseDto.builder()
@@ -25,7 +25,7 @@ public record EventDetailResponseDto(
                 .startTime(event.getStartTime())
                 .endTime(event.getEndTime())
                 .availableInventory(availableInventoryCount)
-                .totalSeats(event.getTotalInventoryCount())
+                .totalInventoryCount(event.getTotalInventoryCount())
                 .build();
     }
 }

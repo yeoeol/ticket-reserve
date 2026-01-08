@@ -9,7 +9,7 @@ public record EventRequestDto(
         String location,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        int totalSeats
+        int totalInventoryCount
 ) {
         public EventRequestDto() {
                 this(null, "", "", "", LocalDateTime.now(), LocalDateTime.now(), 0);

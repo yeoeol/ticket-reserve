@@ -50,7 +50,7 @@ class EventServiceTest {
                 .location("장소")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusDays(1))
-                .totalSeats(10)
+                .totalInventoryCount(10)
                 .build();
     }
 
@@ -78,7 +78,7 @@ class EventServiceTest {
         assertThat(response.location()).isEqualTo(request.location());
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
-        assertThat(response.totalSeats()).isEqualTo(request.totalInventoryCount());
+        assertThat(response.totalInventoryCount()).isEqualTo(request.totalInventoryCount());
 
         assertThat(savedEvent.getEventTitle()).isEqualTo(request.eventTitle());
         assertThat(savedEvent.getDescription()).isEqualTo(request.description());

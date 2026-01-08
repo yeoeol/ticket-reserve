@@ -20,5 +20,5 @@ public class EventCreatedEventPayload implements EventPayload {
     private String location;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private int totalSeats;
+    private int totalInventoryCount;
 }
