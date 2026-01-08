@@ -7,10 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaAuditing
 @EnableDiscoveryClient
-@EntityScan(basePackages = {"ticket.reserve"})
-@EnableJpaRepositories(basePackages = "ticket.reserve")
 @SpringBootApplication
 public class EventApplication {
     public static void main(String[] args) {
