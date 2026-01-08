@@ -8,15 +8,15 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ErrorResponse {
-    String code;
-    String message;
-    List<FieldErrorDetail> errors;
+    private String code;
+    private String message;
+    private List<FieldErrorDetail> errors;
 
     @Getter
     @AllArgsConstructor
-    static class FieldErrorDetail {
-        String field;
-        String value;
-        String reason;
+    public static class FieldErrorDetail {
+        private String field;
+        private String value;
+        private String reason;
     }
 }

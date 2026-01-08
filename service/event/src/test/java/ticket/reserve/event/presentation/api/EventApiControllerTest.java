@@ -13,7 +13,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import ticket.reserve.event.application.EventService;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
-import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.domain.Event;
 import ticket.reserve.global.exception.GlobalExceptionRestHandler;
@@ -69,8 +68,6 @@ class EventApiControllerTest {
                 null, null, event.getLocation(),
                 event.getStartTime(), event.getEndTime(), event.getTotalSeats()
         );
-        given(eventService.createEvent(invalidRequest))
-                .willReturn(EventDetailResponseDto.from(event, event.getTotalSeats()));
 
         //when & then
         assertThat(mvc.post().uri("/api/events")
