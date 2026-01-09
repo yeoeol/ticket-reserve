@@ -31,7 +31,7 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRole> userRoles;
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private User(IdGenerator idGenerator, String username, String password, String email) {
@@ -39,7 +39,6 @@ public class User extends BaseTimeEntity {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.userRoles = new HashSet<>();
     }
 
     public static User create(IdGenerator idGenerator, String username, String encodedPassword, String email) {

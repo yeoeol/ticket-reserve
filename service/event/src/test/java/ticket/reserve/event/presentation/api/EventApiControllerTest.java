@@ -89,13 +89,14 @@ class EventApiControllerTest {
     private Event createEvent(Long id) {
         String eventTitle = "testTitle"+id;
         String description = "testDescription"+id;
+        LocalDateTime start = LocalDateTime.of(2030, 1, 1, 0, 0);
         return Event.create(
                 () -> id,
                 eventTitle,
                 description,
                 "test",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
+                start,
+                start.plusDays(1),
                 10
         );
     }
