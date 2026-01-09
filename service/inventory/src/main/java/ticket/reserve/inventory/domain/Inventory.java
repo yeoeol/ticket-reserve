@@ -65,7 +65,7 @@ public class Inventory extends BaseTimeEntity {
         this.status = InventoryStatus.AVAILABLE;
     }
 
-    public void update(String inventoryName, int price) {
+    public void update(String inventoryName, Integer price) {
         this.inventoryName = inventoryName;
         this.price = price;
     }
