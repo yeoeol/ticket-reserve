@@ -20,10 +20,18 @@ public class Role {
     @Column(name = "role_desc")
     private String roleDesc;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private Role(IdGenerator idGenerator, String roleName, String roleDesc) {
         this.id = idGenerator.nextId();
         this.roleName = roleName;
         this.roleDesc = roleDesc;
+    }
+
+    public static Role create(IdGenerator idGenerator, String roleName, String roleDesc) {
+        return Role.builder()
+                .idGenerator(idGenerator)
+                .roleName(roleName)
+                .roleDesc(roleDesc)
+                .build();
     }
 }

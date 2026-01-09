@@ -24,10 +24,18 @@ public class UserRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private UserRole(IdGenerator idGenerator, User user, Role role) {
         this.id = idGenerator.nextId();
         this.user = user;
         this.role = role;
+    }
+
+    public static UserRole create(IdGenerator idGenerator, User user, Role role) {
+        return UserRole.builder()
+                .idGenerator(idGenerator)
+                .user(user)
+                .role(role)
+                .build();
     }
 }

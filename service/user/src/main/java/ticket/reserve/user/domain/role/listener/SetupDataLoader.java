@@ -49,7 +49,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private User createUserIfNotFound(String username, String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
-            User user = User.of(
+            User user = User.create(
                     idGenerator,
                     username,
                     passwordEncoder.encode(password),
@@ -63,11 +63,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private Role createRoleIfNotFound(String roleName, String roleDesc) {
         Optional<Role> optionalRole = roleRepository.findByRoleName(roleName);
         if (optionalRole.isEmpty()) {
-            Role role = Role.builder()
-                    .idGenerator(idGenerator)
-                    .roleName(roleName)
-                    .roleDesc(roleDesc)
-                    .build();
+            Role role = Role.create(
+                    idGenerator,
+                    roleName,
+                    roleDesc
+            );
             return roleRepository.save(role);
         }
         return optionalRole.get();
@@ -76,11 +76,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private UserRole createUserRoleIfNotFound(User user, Role role) {
         Optional<UserRole> optionalUserRole = userRoleRepository.findByUserAndRole(user, role);
         if (optionalUserRole.isEmpty()) {
-            UserRole userRole = UserRole.builder()
-                    .idGenerator(idGenerator)
-                    .user(user)
-                    .role(role)
-                    .build();
+            UserRole userRole = UserRole.create(
+                    idGenerator,
+                    user,
+                    role
+            );
             return userRoleRepository.save(userRole);
         }
         return optionalUserRole.get();

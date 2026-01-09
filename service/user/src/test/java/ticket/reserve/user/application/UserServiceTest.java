@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.tsid.TsidIdGenerator;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
@@ -41,24 +43,26 @@ class UserServiceTest {
     @Mock PasswordEncoder passwordEncoder;
     @Mock GenerateTokenPort generateTokenPort;
     @Mock TokenStorePort tokenStorePort;
+    @Mock IdGenerator idGenerator;
 
     private Role role;
     private User user;
 
     @BeforeEach
     void setUp() {
-        role = Role.builder()
-                .id(1L)
-                .roleName("ROLE_USER")
-                .roleDesc("사용자")
-                .build();
-        user = User.builder()
-                .id(1234L)
-                .username("testusername")
-                .password("encodedPassword")
-                .email("test@naver.com")
-                .build();
-        user.addRole(role);
+        idGenerator = new TsidIdGenerator();
+        role = Role.create(
+                () -> 1L,
+                "ROLE_USER",
+                "사용자"
+        );
+        user = User.create(
+                () -> 1234L,
+                "testusername",
+                "encodedPassword",
+                "test@naver.com"
+        );
+        user.addRole(idGenerator, role);
     }
 
     @Test
