@@ -35,7 +35,7 @@ public class UserService {
         Role roleUser = roleRepository.findByRoleName("ROLE_USER")
                 .orElseThrow(() -> new CustomException(ErrorCode.ROLE_NOT_FOUND));
 
-        User user = User.of(
+        User user = User.create(
                 idGenerator,
                 requestDto.username(),
                 passwordEncoder.encode(requestDto.password()),

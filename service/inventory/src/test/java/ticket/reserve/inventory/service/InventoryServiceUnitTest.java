@@ -18,6 +18,7 @@ import ticket.reserve.inventory.application.port.out.EventPort;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +39,7 @@ public class InventoryServiceUnitTest {
     @Mock InventoryRepository inventoryRepository;
     @Mock List<EventHandler> eventHandlers;
     @Mock EventPort eventPort;
+    @Mock IdGenerator idGenerator;
 
     private Inventory inventory;
 

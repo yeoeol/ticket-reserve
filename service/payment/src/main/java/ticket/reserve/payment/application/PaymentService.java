@@ -13,6 +13,7 @@ import ticket.reserve.payment.application.dto.response.TossResponseDto;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.domain.Payment;
 import ticket.reserve.payment.domain.repository.PaymentRepository;
+import ticket.reserve.tsid.IdGenerator;
 
 @Service
 @RequiredArgsConstructor
@@ -21,16 +22,17 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final TossPaymentsPort tossPaymentsPort;
     private final OutboxEventPublisher outboxEventPublisher;
+    private final IdGenerator idGenerator;
 
     @Transactional
     public void createPayment(String orderId, Long userId, Long reservationId, Long inventoryId) {
-        Payment payment = Payment.builder()
-                .userId(userId)
-                .reservationId(reservationId)
-                .inventoryId(inventoryId)
-                .orderId(orderId)
-                .build();
-
+        Payment payment = Payment.create(
+                idGenerator,
+                userId,
+                reservationId,
+                inventoryId,
+                orderId
+        );
         paymentRepository.save(payment);
     }
 

@@ -27,14 +27,14 @@ public record EventRequestDto(
         Integer totalInventoryCount  // 총 좌석 수
 ) {
     public Event toEntity(IdGenerator idGenerator) {
-        return Event.builder()
-                .idGenerator(idGenerator)
-                .eventTitle(this.eventTitle)
-                .description(this.description)
-                .location(this.location)
-                .startTime(this.startTime)
-                .endTime(this.endTime)
-                .totalInventoryCount(this.totalInventoryCount)
-                .build();
+        return Event.create(
+                idGenerator,
+                this.eventTitle,
+                this.description,
+                this.location,
+                this.startTime,
+                this.endTime,
+                this.totalInventoryCount
+        );
     }
 }

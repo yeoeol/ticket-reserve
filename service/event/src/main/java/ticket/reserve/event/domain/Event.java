@@ -26,7 +26,7 @@ public class Event extends BaseTimeEntity {
 
     private Integer totalInventoryCount;             // 총 좌석 수
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private Event(IdGenerator idGenerator, String eventTitle, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
         this.id = idGenerator.nextId();
         this.eventTitle = eventTitle;
@@ -35,6 +35,18 @@ public class Event extends BaseTimeEntity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalInventoryCount = totalInventoryCount;
+    }
+
+    public static Event create(IdGenerator idGenerator, String eventTitle, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
+        return Event.builder()
+                .idGenerator(idGenerator)
+                .eventTitle(eventTitle)
+                .description(description)
+                .location(location)
+                .startTime(startTime)
+                .endTime(endTime)
+                .totalInventoryCount(totalInventoryCount)
+                .build();
     }
 
     public void update(EventUpdateRequestDto request) {
