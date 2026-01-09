@@ -71,8 +71,13 @@ class ReservationExpiryServiceTest {
     }
 
     private Reservation createReservation(Long id, Long eventId) {
-        return Reservation.create(
-                () -> id, 1L, eventId, 50L, 5000
-        );
+        return Reservation.builder()
+                .id(id)
+                .userId(1L)
+                .eventId(eventId)
+                .inventoryId(50L)
+                .price(5000)
+                .status(ReservationStatus.PENDING)
+                .build();
     }
 }

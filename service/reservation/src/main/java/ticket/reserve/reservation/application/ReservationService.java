@@ -16,7 +16,6 @@ import ticket.reserve.reservation.application.dto.response.ReservationResponseDt
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
 import ticket.reserve.reservation.global.annotation.AllowedUser;
-import ticket.reserve.tsid.IdGenerator;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final InventoryPort inventoryPort;
     private final List<EventHandler> eventHandlers;
-    private final IdGenerator idGenerator;
 
     @AllowedUser(eventId = "#request.eventId", userId = "#userId")
     @Transactional
@@ -41,7 +39,7 @@ public class ReservationService {
             throw new CustomException(ErrorCode.INVENTORY_HOLD_FAIL);
         }
 
-        Reservation reservation = request.toEntity(idGenerator, userId);
+        Reservation reservation = request.toEntity(userId);
         Reservation savedReservation = reservationRepository.save(reservation);
 
         return ReservationResponseDto.of(savedReservation.getId(), savedReservation.getInventoryId(), savedReservation.getPrice());

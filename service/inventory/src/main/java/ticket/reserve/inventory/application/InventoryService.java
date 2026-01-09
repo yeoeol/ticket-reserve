@@ -21,7 +21,6 @@ import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDt
 import ticket.reserve.inventory.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
-import ticket.reserve.tsid.IdGenerator;
 
 import java.util.List;
 
@@ -33,7 +32,6 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final List<EventHandler> eventHandlers;
     private final EventPort eventPort;
-    private final IdGenerator idGenerator;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
@@ -43,7 +41,7 @@ public class InventoryService {
             throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
 
-        Inventory inventory = request.toEntity(idGenerator);
+        Inventory inventory = request.toEntity();
         inventoryRepository.save(inventory);
     }
 
