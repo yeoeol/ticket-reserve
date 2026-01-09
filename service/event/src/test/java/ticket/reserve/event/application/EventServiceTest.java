@@ -43,15 +43,15 @@ class EventServiceTest {
 
     @BeforeEach
     void setUp() {
-        event = Event.builder()
-                .id(1234L)
-                .eventTitle("testTitle")
-                .description("testDesc")
-                .location("장소")
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusDays(1))
-                .totalInventoryCount(10)
-                .build();
+        event = Event.create(
+                () -> 1234L,
+                "testTitle",
+                "testDesc",
+                "장소",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                10
+        );
     }
 
     @Test
