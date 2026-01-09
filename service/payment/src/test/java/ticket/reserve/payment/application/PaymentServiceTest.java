@@ -15,6 +15,7 @@ import ticket.reserve.payment.application.dto.response.TossResponseDto;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
 import ticket.reserve.payment.domain.Payment;
 import ticket.reserve.payment.domain.repository.PaymentRepository;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -35,6 +36,7 @@ class PaymentServiceTest {
     @Mock PaymentRepository paymentRepository;
     @Mock TossPaymentsPort tossPaymentsPort;
     @Mock OutboxEventPublisher outboxEventPublisher;
+    @Mock IdGenerator idGenerator;
 
     @Test
     @DisplayName("결제 생성 성공 - 파라미터 정보를 바탕으로 결제 엔티티가 생성된다")
