@@ -38,14 +38,9 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        reservation = Reservation.builder()
-                .id(1234L)
-                .userId(1L)
-                .eventId(1L)
-                .inventoryId(1L)
-                .price(5000)
-                .status(ReservationStatus.PENDING)
-                .build();
+        reservation = Reservation.create(
+                () -> 1234L, 1L, 1L, 1L, 5000
+        );
     }
 
     @Test

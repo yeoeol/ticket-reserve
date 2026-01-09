@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import ticket.reserve.inventory.domain.Inventory;
+import ticket.reserve.tsid.IdGenerator;
 
 public record InventoryRequestDto(
         @NotBlank(message = "좌석 이름은 필수입니다.")
@@ -14,11 +15,7 @@ public record InventoryRequestDto(
         @PositiveOrZero(message = "가격은 0원 이상이어야 합니다.")
         Integer price
 ) {
-    public Inventory toEntity() {
-        return Inventory.builder()
-                .inventoryName(this.inventoryName)
-                .eventId(this.eventId)
-                .price(this.price)
-                .build();
+    public Inventory toEntity(IdGenerator idGenerator) {
+        return Inventory.create(idGenerator, this.eventId, this.inventoryName, this.price);
     }
 }
