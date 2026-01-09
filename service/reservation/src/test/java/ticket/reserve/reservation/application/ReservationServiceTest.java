@@ -15,6 +15,7 @@ import ticket.reserve.reservation.application.port.out.InventoryPort;
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ class ReservationServiceTest {
     @Mock ReservationRepository reservationRepository;
     @Mock InventoryPort inventoryPort;
     @Mock List<EventHandler> eventHandlers;
+    @Mock IdGenerator idGenerator;
 
     private Reservation reservation;
 

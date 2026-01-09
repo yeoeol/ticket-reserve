@@ -18,6 +18,7 @@ import ticket.reserve.event.domain.Event;
 import ticket.reserve.event.domain.repository.EventRepository;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -38,6 +39,7 @@ class EventServiceTest {
     @Mock EventRepository eventRepository;
     @Mock InventoryPort inventoryPort;
     @Mock OutboxEventPublisher outboxEventPublisher;
+    @Mock IdGenerator idGenerator;
 
     private Event event;
 
