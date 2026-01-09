@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
@@ -93,12 +94,12 @@ class PaymentServiceTest {
 
     private Payment createPayment(Long paymentId, Long userId, Long reservationId, Long inventoryId) {
         String orderId = "test-order-" + paymentId;
-        return Payment.builder()
-                .id(paymentId)
-                .userId(userId)
-                .reservationId(reservationId)
-                .inventoryId(inventoryId)
-                .orderId(orderId)
-                .build();
+        return Payment.create(
+                () -> paymentId,
+                userId,
+                reservationId,
+                inventoryId,
+                orderId
+        );
     }
 }
