@@ -8,7 +8,7 @@ public record InventoryResponseDto(
         Long inventoryId,
         Long eventId,
         String inventoryName,
-        int price,
+        Integer price,
         String status
 ) {
     public static InventoryResponseDto from(Inventory inventory) {
