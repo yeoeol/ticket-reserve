@@ -18,4 +18,5 @@ dependencies {
 
     implementation project(':common:event')
     implementation project(':common:global')
+    implementation project(':common:tsid')
 }

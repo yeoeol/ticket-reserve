@@ -5,17 +5,15 @@ import lombok.*;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
+import ticket.reserve.tsid.IdGenerator;
 
 @Entity
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "inventories")
 public class Inventory extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id")
     private Long id;
 
@@ -23,11 +21,28 @@ public class Inventory extends BaseTimeEntity {
 
     private String inventoryName;
 
-    private int price;
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private InventoryStatus status = InventoryStatus.AVAILABLE;
+    private InventoryStatus status;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Inventory(IdGenerator idGenerator, Long eventId, String inventoryName, Integer price) {
+        this.id = idGenerator.nextId();
+        this.eventId = eventId;
+        this.inventoryName = inventoryName;
+        this.price = price;
+        this.status = InventoryStatus.AVAILABLE;
+    }
+
+    public static Inventory create(IdGenerator idGenerator, Long eventId, String inventoryName, Integer price) {
+        return Inventory.builder()
+                .idGenerator(idGenerator)
+                .eventId(eventId)
+                .inventoryName(inventoryName)
+                .price(price)
+                .build();
+    }
 
     public void hold() {
         if (this.status != InventoryStatus.AVAILABLE) {

@@ -43,13 +43,9 @@ public class InventoryServiceUnitTest {
 
     @BeforeEach
     void setUp() {
-        inventory = Inventory.builder()
-                .id(1234L)
-                .eventId(1L)
-                .inventoryName("TEST_001")
-                .price(1000)
-                .status(InventoryStatus.AVAILABLE)
-                .build();
+        inventory = Inventory.create(
+                () -> 1L, 1L, "TEST_001", 1000
+        );
     }
 
     @Test

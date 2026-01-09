@@ -9,6 +9,7 @@ import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
+import ticket.reserve.tsid.IdGenerator;
 
 @Slf4j
 @Component
@@ -16,6 +17,7 @@ import ticket.reserve.inventory.domain.repository.InventoryRepository;
 public class EventCreatedEventHandler implements EventHandler<EventCreatedEventPayload> {
 
     private final InventoryRepository inventoryRepository;
+    private final IdGenerator idGenerator;
 
     @Override
     @Transactional
@@ -37,11 +39,8 @@ public class EventCreatedEventHandler implements EventHandler<EventCreatedEventP
 
         for (int i = 1; i <= totalInventoryCount; i++) {
             String inventoryName = prefix + String.valueOf(seatNumber);
-            Inventory inventory = Inventory.builder()
-                    .eventId(eventId)
-                    .inventoryName(inventoryName)
-                    .price(1000*i)
-                    .build();
+            Inventory inventory = Inventory.create(idGenerator, eventId, inventoryName, 1000*i);
+
             inventoryRepository.save(inventory);
             seatNumber++;
 
