@@ -1,0 +1,98 @@
+package ticket.reserve.image.application.impl;
+
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.models.BlobHttpHeaders;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.image.application.ImageCrudService;
+import ticket.reserve.image.application.ImageService;
+import ticket.reserve.image.application.dto.response.ImageResponseDto;
+import ticket.reserve.image.domain.Image;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class AzureImageServiceImpl implements ImageService {
+
+    private final BlobServiceClient blobServiceClient;
+    private final ImageCrudService imageCrudService;
+
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
+    private static final long MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+    private final String CONTAINER_NAME = "busking";
+
+    @PostConstruct
+    public void init() {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+        if (!containerClient.exists()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_BLOB_CONTAINER);
+        }
+    }
+
+    @Override
+    public ImageResponseDto upload(MultipartFile file, Long userId) {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+
+        validateExtension(file);
+        validateFileSize(file);
+
+        String uniqueFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        BlobClient blobClient = containerClient.getBlobClient(uniqueFileName);
+
+        try {
+            BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(file.getContentType());
+            blobClient.upload(file.getInputStream(), file.getSize(), true);
+            blobClient.setHttpHeaders(headers);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
+        }
+
+        String storedPath = blobClient.getBlobUrl();
+        try {
+            Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
+            return ImageResponseDto.from(savedImage);
+        } catch (Exception e) {
+            deleteFromAzure(blobClient);
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
+        }
+    }
+
+    private void deleteFromAzure(BlobClient blobClient) {
+        try {
+            blobClient.deleteIfExists();
+            log.info("보상 트랜잭션 성공: Azure에서 파일 삭제 완료 - {}", blobClient.getBlobName());
+        } catch (Exception e) {
+            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", blobClient.getBlobUrl(), e);
+        }
+    }
+
+    private void validateExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_FILE_NAME);
+        }
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new CustomException(ErrorCode.NOT_ALLOWED_EXT);
+        }
+    }
+
+    private void validateFileSize(MultipartFile file) {
+        if (file.getSize() > MAX_SIZE) {
+            throw new CustomException(ErrorCode.FILE_SIZE_EXCEED);
+        }
+    }
+}

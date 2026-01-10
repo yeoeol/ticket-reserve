@@ -12,6 +12,7 @@ import ticket.reserve.tsid.IdGenerator;
 public class Reservation extends BaseTimeEntity {
 
     @Id
+    @Column(name = "reservation_id")
     private Long id;
 
     private Long userId;

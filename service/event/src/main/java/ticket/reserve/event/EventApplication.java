@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 public class EventApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EventApplication.class);
+        SpringApplication.run(EventApplication.class, args);
     }
 }
