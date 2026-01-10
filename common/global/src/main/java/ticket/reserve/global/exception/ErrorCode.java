@@ -35,6 +35,13 @@ public enum ErrorCode {
     RESERVATION_EXPIRED_ERROR(HttpStatus.BAD_REQUEST, "RESERVATION002", "예매 만료 이벤트 처리 중 오류가 발생했습니다."),
     NOT_ALLOWED(HttpStatus.BAD_REQUEST, "RESERVATION003", "대기열을 통과하지 않은 사용자입니다."),
     QUEUE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION004", "대기열에 존재하지 않는 사용자입니다."),
+
+    // IMAGE-SERVICE
+    IMAGE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE001", "이미지 업로드 중 오류가 발생했습니다."),
+    NOT_ALLOWED_EXT(HttpStatus.BAD_REQUEST, "IMAGE002", "허용되지 않는 확장자입니다."),
+    FILE_SIZE_EXCEED(HttpStatus.BAD_REQUEST, "IMAGE003", "파일 크기는 5MB를 초과할 수 없습니다."),
+    NOT_FOUND_BLOB_CONTAINER(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE004", "Azure Blob container가 존재하지 않습니다. 애플리케이션을 시작하기 전에 만들어주세요."),
+    INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "IMAGE005", "파일명이 유효하지 않습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;

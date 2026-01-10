@@ -4,10 +4,13 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.image.application.ImageService;
 import ticket.reserve.image.application.dto.response.ImageResponseDto;
 import ticket.reserve.image.domain.Image;
@@ -31,13 +34,18 @@ public class AzureImageServiceImpl implements ImageService {
 
     private final String CONTAINER_NAME = "busking";
 
+    @PostConstruct
+    public void init() {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+        if (!containerClient.exists()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_BLOB_CONTAINER);
+        }
+    }
+
     @Override
     @Transactional
     public ImageResponseDto upload(MultipartFile file, Long userId) {
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-        if (!containerClient.exists()) {
-            containerClient.create();
-        }
 
         validateExtension(file);
         validateFileSize(file);
@@ -50,7 +58,7 @@ public class AzureImageServiceImpl implements ImageService {
             blobClient.upload(file.getInputStream(), file.getSize(), true);
             blobClient.setHttpHeaders(headers);
         } catch (Exception e) {
-            throw new RuntimeException("파일 업로드 실패", e);
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
 
         String storedPath = blobClient.getBlobUrl();
@@ -63,15 +71,18 @@ public class AzureImageServiceImpl implements ImageService {
 
     private void validateExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_FILE_NAME);
+        }
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new RuntimeException("허용되지 않는 확장자입니다.");
+            throw new CustomException(ErrorCode.NOT_ALLOWED_EXT);
         }
     }
 
     private void validateFileSize(MultipartFile file) {
         if (file.getSize() > MAX_SIZE) {
-            throw new RuntimeException("파일 크기는 5MB를 초과할 수 없습니다.");
+            throw new CustomException(ErrorCode.FILE_SIZE_EXCEED);
         }
     }
 }

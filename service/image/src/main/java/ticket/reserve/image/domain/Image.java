@@ -14,7 +14,7 @@ import ticket.reserve.tsid.IdGenerator;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "images")
-public class Image {
+public class Image extends BaseTimeEntity {
 
     @Id
     @Column(name = "image_id")
