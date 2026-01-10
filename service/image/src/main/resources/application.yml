@@ -18,4 +18,8 @@ spring:
           account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
           account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
 
+  servlet:
+    multipart:
+      max-file-size: 5MB      # 파일 한 개당 최대 용량
+      max-request-size: 25MB  # 한 번의 요청에 담긴 총 용량 (최대 5장)
 

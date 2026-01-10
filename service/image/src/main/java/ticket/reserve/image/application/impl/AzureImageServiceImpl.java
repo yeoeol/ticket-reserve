@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.image.application.ImageService;
+import ticket.reserve.image.application.dto.response.ImageResponseDto;
 import ticket.reserve.image.domain.Image;
 import ticket.reserve.image.domain.repository.ImageRepository;
 import ticket.reserve.tsid.IdGenerator;
@@ -25,13 +26,15 @@ public class AzureImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final IdGenerator idGenerator;
 
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
     private static final long MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+    private final String CONTAINER_NAME = "busking";
 
     @Override
     @Transactional
-    public String upload(MultipartFile file, String containerName) {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
+    public ImageResponseDto upload(MultipartFile file) {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
         if (!containerClient.exists()) {
             containerClient.create();
         }
@@ -51,9 +54,11 @@ public class AzureImageServiceImpl implements ImageService {
         }
 
         String storedPath = blobClient.getBlobUrl();
-        imageRepository.save(Image.create(idGenerator, file.getOriginalFilename(), storedPath, null));
+        Image savedImage = imageRepository.save(
+                Image.create(idGenerator, file.getOriginalFilename(), storedPath, null)
+        );
 
-        return storedPath; // 업로드된 파일 URL 반환
+        return ImageResponseDto.from(savedImage); // 업로드된 파일 URL 반환
     }
 
     private void validateExtension(MultipartFile file) {

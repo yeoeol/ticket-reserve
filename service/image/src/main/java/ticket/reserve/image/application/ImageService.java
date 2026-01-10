@@ -1,7 +1,8 @@
 package ticket.reserve.image.application;
 
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.image.application.dto.response.ImageResponseDto;
 
 public interface ImageService {
-    String upload(MultipartFile file, String containerName);
+    ImageResponseDto upload(MultipartFile file);
 }
