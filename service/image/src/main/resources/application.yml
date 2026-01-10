@@ -1,0 +1,15 @@
+server:
+  port: 33333
+
+spring:
+  application:
+    name: event-service
+
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+
+
