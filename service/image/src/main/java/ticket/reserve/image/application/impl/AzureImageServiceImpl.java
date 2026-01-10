@@ -6,28 +6,28 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobHttpHeaders;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.image.application.ImageCrudService;
 import ticket.reserve.image.application.ImageService;
 import ticket.reserve.image.application.dto.response.ImageResponseDto;
 import ticket.reserve.image.domain.Image;
-import ticket.reserve.image.domain.repository.ImageRepository;
-import ticket.reserve.tsid.IdGenerator;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AzureImageServiceImpl implements ImageService {
 
     private final BlobServiceClient blobServiceClient;
-    private final ImageRepository imageRepository;
-    private final IdGenerator idGenerator;
+    private final ImageCrudService imageCrudService;
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
     private static final long MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -43,7 +43,6 @@ public class AzureImageServiceImpl implements ImageService {
     }
 
     @Override
-    @Transactional
     public ImageResponseDto upload(MultipartFile file, Long userId) {
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
 
@@ -62,11 +61,22 @@ public class AzureImageServiceImpl implements ImageService {
         }
 
         String storedPath = blobClient.getBlobUrl();
-        Image savedImage = imageRepository.save(
-                Image.create(idGenerator, file.getOriginalFilename(), storedPath, userId)
-        );
+        try {
+            Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
+            return ImageResponseDto.from(savedImage);
+        } catch (Exception e) {
+            deleteFromAzure(blobClient);
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
+        }
+    }
 
-        return ImageResponseDto.from(savedImage); // 업로드된 파일 URL 반환
+    private void deleteFromAzure(BlobClient blobClient) {
+        try {
+            blobClient.deleteIfExists();
+            log.info("보상 트랜잭션 성공: Azure에서 파일 삭제 완료 - {}", blobClient.getBlobName());
+        } catch (Exception e) {
+            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", blobClient.getBlobUrl(), e);
+        }
     }
 
     private void validateExtension(MultipartFile file) {
