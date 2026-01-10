@@ -307,3 +307,15 @@ nav a {
     text-align: center; width: 320px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
+
+/* 게시판 형태를 위한 추가 스타일 */
+.form-section { max-width: 800px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+.form-group { margin-bottom: 24px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
+.form-group input[type="text"], .form-group textarea, .form-group input[type="datetime-local"] {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box;
+}
+.form-group textarea { height: 200px; resize: vertical; }
+.image-upload-box { border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; }
+.btn-container { display: flex; gap: 12px; justify-content: flex-end; margin-top: 30px; }
+.btn-cancel { background: #eee; color: #333; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; }

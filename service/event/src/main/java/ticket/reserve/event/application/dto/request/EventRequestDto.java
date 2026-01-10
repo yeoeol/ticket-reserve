@@ -21,10 +21,7 @@ public record EventRequestDto(
         @NotNull(message = "시작 날짜를 입력하세요.")
         LocalDateTime startTime,
         @NotNull(message = "종료 날짜를 입력하세요.")
-        LocalDateTime endTime,
-
-        @Positive(message = "좌석 수는 1 이상이어야 합니다.")
-        Integer totalInventoryCount  // 총 좌석 수
+        LocalDateTime endTime
 ) {
     public Event toEntity(IdGenerator idGenerator) {
         return Event.create(
@@ -34,7 +31,7 @@ public record EventRequestDto(
                 this.location,
                 this.startTime,
                 this.endTime,
-                this.totalInventoryCount
+                0
         );
     }
 }

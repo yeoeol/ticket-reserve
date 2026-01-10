@@ -14,6 +14,11 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
+  servlet:
+    multipart:
+      max-file-size: 5MB      # 파일 한 개당 최대 용량
+      max-request-size: 25MB  # 한 번의 요청에 담긴 총 용량 (최대 5장)
+
 eureka:
   client:
     service-url:

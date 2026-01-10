@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.EventService;
@@ -36,5 +38,19 @@ public class EventController {
         model.addAttribute("isAuthenticated", !userId.equals("0"));
 
         return "event-detail";
+    }
+
+    @GetMapping("/new")
+    public String createEventPage() {
+        return "event-create";
+    }
+
+    @PostMapping
+    public String createEvent(
+            EventRequestDto request,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        EventDetailResponseDto response = eventService.createEvent(request, file);
+        return "redirect:/events/%d".formatted(response.id());
     }
 }

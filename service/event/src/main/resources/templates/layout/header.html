@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
-    <div class="logo">localhost</div>
+    <div class="logo">Busking Station</div>
     <nav>
         <a href="#" th:href="@{/events}">Home</a>
     </nav>
     <div class="user-controls">
-        <span>
-            <a th:href="@{/users/register}">
-                👤
-            </a>
-        </span>
+        <nav>
+            <a href="/events">공연 목록</a>
+            <a th:href="@{/users/register}">로그인</a>
+        </nav>
     </div>
 </header>

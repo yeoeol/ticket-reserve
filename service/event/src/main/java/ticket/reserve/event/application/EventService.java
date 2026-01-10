@@ -3,6 +3,7 @@ package ticket.reserve.event.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
@@ -29,7 +30,7 @@ public class EventService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public EventDetailResponseDto createEvent(EventRequestDto request) {
+    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file) {
         Event event = request.toEntity(idGenerator);
         Event savedEvent = eventRepository.save(event);
 
