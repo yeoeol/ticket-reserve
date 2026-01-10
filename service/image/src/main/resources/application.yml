@@ -3,7 +3,13 @@ server:
 
 spring:
   application:
-    name: event-service
+    name: image-service
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/images}
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
 
   cloud:
     azure:
