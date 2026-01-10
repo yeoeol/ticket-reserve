@@ -66,7 +66,7 @@ class EventApiControllerTest {
         Event event = createEvent(1L);
         EventRequestDto invalidRequest = new EventRequestDto(
                 null, null, event.getLocation(),
-                event.getStartTime(), event.getEndTime(), event.getTotalInventoryCount()
+                event.getStartTime(), event.getEndTime()
         );
 
         //when & then

@@ -62,7 +62,7 @@ class EventServiceTest {
         //given
         EventRequestDto request = new EventRequestDto(
                 "testTitle", "testDesc", "장소",
-                event.getStartTime(), event.getEndTime(), 10
+                event.getStartTime(), event.getEndTime()
         );
 
         ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
@@ -80,14 +80,12 @@ class EventServiceTest {
         assertThat(response.location()).isEqualTo(request.location());
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
-        assertThat(response.totalInventoryCount()).isEqualTo(request.totalInventoryCount());
 
         assertThat(savedEvent.getEventTitle()).isEqualTo(request.eventTitle());
         assertThat(savedEvent.getDescription()).isEqualTo(request.description());
         assertThat(savedEvent.getLocation()).isEqualTo(request.location());
         assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
-        assertThat(savedEvent.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
 
         verify(outboxEventPublisher, times(1)).publish(any(), any(), any());
     }
