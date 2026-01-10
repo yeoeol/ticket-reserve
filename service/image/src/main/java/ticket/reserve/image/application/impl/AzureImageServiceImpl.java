@@ -33,7 +33,7 @@ public class AzureImageServiceImpl implements ImageService {
 
     @Override
     @Transactional
-    public ImageResponseDto upload(MultipartFile file) {
+    public ImageResponseDto upload(MultipartFile file, Long userId) {
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
         if (!containerClient.exists()) {
             containerClient.create();
@@ -55,7 +55,7 @@ public class AzureImageServiceImpl implements ImageService {
 
         String storedPath = blobClient.getBlobUrl();
         Image savedImage = imageRepository.save(
-                Image.create(idGenerator, file.getOriginalFilename(), storedPath, null)
+                Image.create(idGenerator, file.getOriginalFilename(), storedPath, userId)
         );
 
         return ImageResponseDto.from(savedImage); // 업로드된 파일 URL 반환

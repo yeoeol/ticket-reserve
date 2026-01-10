@@ -18,4 +18,5 @@ include 'service:event'
 include 'service:inventory'
 include 'service:payment'
 include 'service:reservation'
+include 'service:image'
 

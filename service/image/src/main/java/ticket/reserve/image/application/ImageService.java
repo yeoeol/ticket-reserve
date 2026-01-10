@@ -4,5 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.image.application.dto.response.ImageResponseDto;
 
 public interface ImageService {
-    ImageResponseDto upload(MultipartFile file);
+    ImageResponseDto upload(MultipartFile file, Long userId);
 }

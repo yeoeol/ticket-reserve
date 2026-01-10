@@ -2,6 +2,7 @@ package ticket.reserve.image.presentation.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,7 +19,10 @@ public class ImageApiController {
     private final ImageService imageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ImageResponseDto> uploadImage(@RequestPart("file") MultipartFile file) {
-        return ResponseEntity.ok(imageService.upload(file));
+    public ResponseEntity<ImageResponseDto> uploadImage(
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(imageService.upload(file, Long.valueOf(userId)));
     }
 }
