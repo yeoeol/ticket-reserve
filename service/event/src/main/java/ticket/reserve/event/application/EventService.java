@@ -16,6 +16,7 @@ import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 import ticket.reserve.event.domain.event.Event;
 import ticket.reserve.event.domain.event.repository.EventRepository;
+import ticket.reserve.event.domain.eventimage.enums.ImageType;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.tsid.IdGenerator;
@@ -35,11 +36,15 @@ public class EventService {
     @Transactional
     public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file, String userId) {
         Event event = request.toEntity(idGenerator);
-        Event savedEvent = eventRepository.save(event);
         if (!file.isEmpty()) {
             ImageResponseDto imageResponse = imagePort.uploadImage(file, userId);
+            event.addEventImage(
+                    idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
+                    ImageType.THUMBNAIL, 1
+            );
         }
 
+        Event savedEvent = eventRepository.save(event);
         outboxEventPublisher.publish(
                 EventType.EVENT_CREATED,
                 EventCreatedEventPayload.builder()
@@ -78,7 +83,10 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        event.update(request);
+        event.update(
+                request.eventTitle(), request.description(), request.location(),
+                request.startTime(), request.endTime(), request.totalInventoryCount()
+        );
     }
 
     @Transactional

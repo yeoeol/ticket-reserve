@@ -19,9 +19,12 @@ public class ImageRestClientAdapter implements ImagePort {
     private final RestClient restClient;
 
     public ImageRestClientAdapter(
+            RestClient.Builder restClientBuilder,
             @Value("${endpoints.ticket-reserve-image-service.url}") String imageServiceUrl
     ) {
-        this.restClient = RestClient.create(imageServiceUrl);
+        this.restClient = restClientBuilder
+                .baseUrl(imageServiceUrl)
+                .build();
     }
 
     @Override
@@ -42,8 +45,6 @@ public class ImageRestClientAdapter implements ImagePort {
         return restClient.post()
                 .uri("/api/images/upload")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
-                .header("X-USER-ID", userId)
-                .header("X-USER-ROLES", "ROLE_ADMIN")
                 .body(body)
                 .retrieve()
                 .body(ImageResponseDto.class);
