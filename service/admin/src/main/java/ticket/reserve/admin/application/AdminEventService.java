@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ticket.reserve.admin.application.dto.event.request.EventRequestDto;
 import ticket.reserve.admin.application.dto.event.request.EventUpdateRequestDto;
 import ticket.reserve.admin.application.dto.event.response.EventDetailResponseDto;
-import ticket.reserve.admin.application.dto.event.response.EventResponseDto;
 import ticket.reserve.admin.application.port.out.EventPort;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public class AdminEventService {
 
     private final EventPort eventPort;
 
-    public List<EventResponseDto> getEvents() {
+    public List<EventDetailResponseDto> getEvents() {
         return eventPort.getEvents();
     }
 
