@@ -21,7 +21,7 @@ public class EventApiController {
     private final EventService eventService;
 
     @GetMapping
-    public ResponseEntity<List<EventResponseDto>> getEvents() {
+    public ResponseEntity<List<EventDetailResponseDto>> getEvents() {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 

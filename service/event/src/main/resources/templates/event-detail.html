@@ -22,9 +22,17 @@
 
         <section class="event-content">
 
-            <div class="event-image">
-                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDR8fGNvbmNlcnR8ZW58MHx8fHwxNzMwNTA0NjE5fDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Event Image">
-            </div>
+            <section class="event-image">
+                <div th:each="url : ${event.imageUrls}" class="image-wrapper" style="margin-bottom: 10px;">
+                    <img th:src="${url}"
+                         alt="공연 포스터"
+                         style="width: 100%; border-radius: 12px; object-fit: cover;">
+                </div>
+
+                <div th:if="${#lists.isEmpty(event.imageUrls)}">
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDR8fGNvbmNlcnR8ZW58MHx8fHwxNzMwNTA0NjE5fDA&ixlib=rb-4.0.3&q=80&w=1080" alt="기본 포스터" style="width: 100%; border-radius: 12px;">
+                </div>
+            </section>
 
             <div class="event-info">
                 <div class="info-box">
