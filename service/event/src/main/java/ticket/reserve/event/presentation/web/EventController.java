@@ -22,7 +22,7 @@ public class EventController {
 
     @GetMapping
     public String getAll(Model model) {
-        List<EventResponseDto> eventList = eventService.getAllEvents();
+        List<EventDetailResponseDto> eventList = eventService.getAllEvents();
         model.addAttribute("eventList", eventList);
 
         return "event-list";
@@ -30,13 +30,13 @@ public class EventController {
 
     @GetMapping("/{id}")
     public String getOne(
-            @PathVariable Long id,
-            @RequestHeader(value = "X-USER-ID", required = false, defaultValue = "0") String userId,
+            @PathVariable("id") Long eventId,
+            @AuthenticationPrincipal String userId,
             Model model
     ) {
-        EventDetailResponseDto event = eventService.getEvent(id);
+        EventDetailResponseDto event = eventService.getEvent(eventId);
         model.addAttribute("event", event);
-        model.addAttribute("isAuthenticated", !userId.equals("0"));
+        model.addAttribute("isAuthenticated", userId != null);
 
         return "event-detail";
     }

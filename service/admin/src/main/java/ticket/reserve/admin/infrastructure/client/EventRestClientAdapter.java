@@ -7,7 +7,6 @@ import org.springframework.web.client.RestClient;
 import ticket.reserve.admin.application.dto.event.request.EventRequestDto;
 import ticket.reserve.admin.application.dto.event.request.EventUpdateRequestDto;
 import ticket.reserve.admin.application.dto.event.response.EventDetailResponseDto;
-import ticket.reserve.admin.application.dto.event.response.EventResponseDto;
 import ticket.reserve.admin.application.port.out.EventPort;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class EventRestClientAdapter implements EventPort {
     }
 
     @Override
-    public List<EventResponseDto> getEvents() {
+    public List<EventDetailResponseDto> getEvents() {
         return restClient.get()
                 .uri("/api/events")
                 .retrieve()

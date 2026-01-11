@@ -63,9 +63,9 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventResponseDto> getAllEvents() {
+    public List<EventDetailResponseDto> getAllEvents() {
         return eventRepository.findAll().stream()
-                .map(EventResponseDto::from)
+                .map(e -> EventDetailResponseDto.from(e, inventoryPort.countsInventory(e.getId())))
                 .toList();
     }
 

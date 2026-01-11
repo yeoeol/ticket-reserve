@@ -11,6 +11,11 @@ spring:
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
 
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
   kafka:
     bootstrap-servers: localhost:9092
 

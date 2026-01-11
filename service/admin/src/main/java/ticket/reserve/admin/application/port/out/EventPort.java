@@ -3,12 +3,11 @@ package ticket.reserve.admin.application.port.out;
 import ticket.reserve.admin.application.dto.event.request.EventRequestDto;
 import ticket.reserve.admin.application.dto.event.request.EventUpdateRequestDto;
 import ticket.reserve.admin.application.dto.event.response.EventDetailResponseDto;
-import ticket.reserve.admin.application.dto.event.response.EventResponseDto;
 
 import java.util.List;
 
 public interface EventPort {
-    List<EventResponseDto> getEvents();
+    List<EventDetailResponseDto> getEvents();
 
     EventDetailResponseDto getEvent(Long eventId);
 

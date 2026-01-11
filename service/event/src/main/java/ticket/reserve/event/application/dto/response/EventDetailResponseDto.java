@@ -2,8 +2,10 @@ package ticket.reserve.event.application.dto.response;
 
 import lombok.Builder;
 import ticket.reserve.event.domain.event.Event;
+import ticket.reserve.event.domain.eventimage.EventImage;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record EventDetailResponseDto(
@@ -14,7 +16,8 @@ public record EventDetailResponseDto(
         LocalDateTime startTime,
         LocalDateTime endTime,
         int availableInventory,
-        Integer totalInventoryCount
+        Integer totalInventoryCount,
+        List<String> imageUrls
 ) {
     public static EventDetailResponseDto from(Event event, Integer availableInventoryCount) {
         return EventDetailResponseDto.builder()
@@ -26,6 +29,9 @@ public record EventDetailResponseDto(
                 .endTime(event.getEndTime())
                 .availableInventory(availableInventoryCount)
                 .totalInventoryCount(event.getTotalInventoryCount())
-                .build();
+                .imageUrls(event.getEventImages().stream()
+                        .map(EventImage::getStoredPath)
+                        .toList()
+                ).build();
     }
 }
