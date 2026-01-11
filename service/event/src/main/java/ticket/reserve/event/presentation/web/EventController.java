@@ -1,6 +1,7 @@
 package ticket.reserve.event.presentation.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +49,10 @@ public class EventController {
     @PostMapping
     public String createEvent(
             EventRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal String userId
     ) {
-        EventDetailResponseDto response = eventService.createEvent(request, file);
+        EventDetailResponseDto response = eventService.createEvent(request, file, userId);
         return "redirect:/events/%d".formatted(response.id());
     }
 }

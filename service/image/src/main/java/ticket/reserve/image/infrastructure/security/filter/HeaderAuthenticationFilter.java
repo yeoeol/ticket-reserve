@@ -1,4 +1,4 @@
-package ticket.reserve.image.infrastructure.config.security.filter;
+package ticket.reserve.image.infrastructure.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

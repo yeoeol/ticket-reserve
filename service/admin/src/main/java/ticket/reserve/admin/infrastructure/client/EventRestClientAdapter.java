@@ -18,9 +18,12 @@ public class EventRestClientAdapter implements EventPort {
     private final RestClient restClient;
 
     public EventRestClientAdapter(
+            RestClient.Builder restClientBuilder,
             @Value("${endpoints.ticket-reserve-event-service.url}") String eventServiceUrl
     ) {
-        this.restClient = RestClient.create(eventServiceUrl);
+        this.restClient = restClientBuilder
+                .baseUrl(eventServiceUrl)
+                .build();
     }
 
     @Override

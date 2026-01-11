@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.event.application.port.out.ImagePort;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
@@ -26,13 +27,16 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final InventoryPort inventoryPort;
+    private final ImagePort imagePort;
     private final OutboxEventPublisher outboxEventPublisher;
     private final IdGenerator idGenerator;
 
     @Transactional
-    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file) {
+    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file, String userId) {
         Event event = request.toEntity(idGenerator);
         Event savedEvent = eventRepository.save(event);
+
+        imagePort.uploadImage(file, userId);
 
         outboxEventPublisher.publish(
                 EventType.EVENT_CREATED,

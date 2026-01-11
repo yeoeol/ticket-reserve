@@ -70,7 +70,7 @@ class EventServiceTest {
                 .willReturn(event);
 
         //when
-        EventDetailResponseDto response = eventService.createEvent(request, null);
+        EventDetailResponseDto response = eventService.createEvent(request, null, null);
 
         //then
         Event savedEvent = eventCaptor.getValue();
