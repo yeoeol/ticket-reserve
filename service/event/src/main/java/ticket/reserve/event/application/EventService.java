@@ -7,14 +7,15 @@ import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.event.application.dto.response.ImageResponseDto;
 import ticket.reserve.event.application.port.out.ImagePort;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
-import ticket.reserve.event.domain.Event;
-import ticket.reserve.event.domain.repository.EventRepository;
+import ticket.reserve.event.domain.event.Event;
+import ticket.reserve.event.domain.event.repository.EventRepository;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.tsid.IdGenerator;
@@ -35,8 +36,9 @@ public class EventService {
     public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file, String userId) {
         Event event = request.toEntity(idGenerator);
         Event savedEvent = eventRepository.save(event);
-
-        imagePort.uploadImage(file, userId);
+        if (!file.isEmpty()) {
+            ImageResponseDto imageResponse = imagePort.uploadImage(file, userId);
+        }
 
         outboxEventPublisher.publish(
                 EventType.EVENT_CREATED,

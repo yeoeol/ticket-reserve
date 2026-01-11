@@ -1,8 +1,9 @@
-package ticket.reserve.event.domain;
+package ticket.reserve.event.domain.event;
 
 import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
+import ticket.reserve.event.domain.BaseTimeEntity;
 import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;

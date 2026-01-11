@@ -1,8 +1,8 @@
-package ticket.reserve.event.domain.repository;
+package ticket.reserve.event.domain.event.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ticket.reserve.event.domain.Event;
+import ticket.reserve.event.domain.event.Event;
 
 import java.util.List;
 

@@ -2,9 +2,8 @@ package ticket.reserve.event.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import ticket.reserve.event.domain.Event;
+import ticket.reserve.event.domain.event.Event;
 import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
