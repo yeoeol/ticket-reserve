@@ -43,7 +43,7 @@ public class ImageRestClientAdapter implements ImagePort {
                 .uri("/api/images/upload")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("X-USER-ID", userId)
-                .header("X-User-Roles", "ROLE_ADMIN")
+                .header("X-USER-ROLES", "ROLE_ADMIN")
                 .body(body)
                 .retrieve()
                 .body(ImageResponseDto.class);

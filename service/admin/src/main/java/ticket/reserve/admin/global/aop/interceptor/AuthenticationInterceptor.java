@@ -25,7 +25,7 @@ public class AuthenticationInterceptor implements ClientHttpRequestInterceptor {
             String roles = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.joining(","));
-            request.getHeaders().add("X-User-Roles", roles);
+            request.getHeaders().add("X-USER-ROLES", roles);
         }
 
         return execution.execute(request, body);
