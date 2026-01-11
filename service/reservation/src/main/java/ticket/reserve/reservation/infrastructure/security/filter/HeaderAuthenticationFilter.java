@@ -20,7 +20,7 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String userId = request.getHeader("X-USER-ID");
-        String userRoles = request.getHeader("X-User-Roles");
+        String userRoles = request.getHeader("X-USER-ROLES");
 
         if (userId != null && userRoles != null) {
             List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))

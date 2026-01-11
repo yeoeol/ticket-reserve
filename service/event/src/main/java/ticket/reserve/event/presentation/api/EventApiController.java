@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
@@ -31,7 +32,7 @@ public class EventApiController {
 
     @PostMapping
     public ResponseEntity<EventDetailResponseDto> createEvent(@Valid @RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
+        return ResponseEntity.ok(eventService.createEvent(request, null));
     }
 
     @PutMapping("/{id}")

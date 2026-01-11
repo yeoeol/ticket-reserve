@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import ticket.reserve.event.application.EventService;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
-import ticket.reserve.event.domain.Event;
+import ticket.reserve.event.domain.event.Event;
 import ticket.reserve.global.exception.GlobalExceptionRestHandler;
 
 import java.time.LocalDateTime;
@@ -66,7 +66,7 @@ class EventApiControllerTest {
         Event event = createEvent(1L);
         EventRequestDto invalidRequest = new EventRequestDto(
                 null, null, event.getLocation(),
-                event.getStartTime(), event.getEndTime(), event.getTotalInventoryCount()
+                event.getStartTime(), event.getEndTime()
         );
 
         //when & then

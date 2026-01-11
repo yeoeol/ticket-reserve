@@ -17,9 +17,12 @@ public class UserRestClientAdapter implements UserPort {
     private final RestClient restClient;
 
     public UserRestClientAdapter(
+            RestClient.Builder restClientBuilder,
             @Value("${endpoints.ticket-reserve-user-service.url}") String userServiceUrl
     ) {
-        this.restClient = RestClient.create(userServiceUrl);
+        this.restClient = restClientBuilder
+                .baseUrl(userServiceUrl)
+                .build();
     }
 
 

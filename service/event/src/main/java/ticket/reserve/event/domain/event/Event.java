@@ -1,11 +1,15 @@
-package ticket.reserve.event.domain;
+package ticket.reserve.event.domain.event;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
+import ticket.reserve.event.domain.BaseTimeEntity;
+import ticket.reserve.event.domain.eventimage.EventImage;
+import ticket.reserve.event.domain.eventimage.enums.ImageType;
 import ticket.reserve.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +29,9 @@ public class Event extends BaseTimeEntity {
     private LocalDateTime endTime;
 
     private Integer totalInventoryCount;             // 총 좌석 수
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventImage> eventImages = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private Event(IdGenerator idGenerator, String eventTitle, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
@@ -49,12 +56,26 @@ public class Event extends BaseTimeEntity {
                 .build();
     }
 
-    public void update(EventUpdateRequestDto request) {
-        this.eventTitle = request.eventTitle();
-        this.description = request.description();
-        this.location = request.location();
-        this.startTime = request.startTime();
-        this.endTime = request.endTime();
-        this.totalInventoryCount = request.totalInventoryCount();
+    public void update(
+            String eventTitle, String description, String location,
+            LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount
+    ) {
+        this.eventTitle = eventTitle;
+        this.description = description;
+        this.location = location;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalInventoryCount = totalInventoryCount;
+    }
+
+    public void addEventImage(
+            IdGenerator idGenerator, String originalFileName, String storedPath,
+            ImageType type, Integer sortOrder
+    ) {
+        EventImage eventImage = EventImage.create(
+                idGenerator, originalFileName, storedPath,
+                type, sortOrder, this
+        );
+        this.eventImages.add(eventImage);
     }
 }

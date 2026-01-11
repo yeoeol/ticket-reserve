@@ -12,9 +12,12 @@ public class InventoryRestClientAdapter implements InventoryPort {
     private final RestClient restClient;
 
     public InventoryRestClientAdapter(
+            RestClient.Builder restClientBuilder,
             @Value("${endpoints.ticket-reserve-inventory-service.url}") String inventoryServiceUrl
     ) {
-        this.restClient = RestClient.create(inventoryServiceUrl);
+        this.restClient = restClientBuilder
+                .baseUrl(inventoryServiceUrl)
+                .build();
     }
 
     @Override

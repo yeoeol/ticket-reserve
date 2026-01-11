@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,24 +17,10 @@ import java.util.stream.Collectors;
 
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
-    public static final List<String> permitUris = List.of(
-            // event-service
-            "/events", "/events/{id}"
-    );
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        String requestURI = request.getRequestURI();
-        return permitUris.stream().anyMatch(
-                uri -> antPathMatcher.match(uri, requestURI)
-        );
-    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String userId = request.getHeader("X-USER-ID");
-        String userRoles = request.getHeader("X-User-Roles");
+        String userRoles = request.getHeader("X-USER-ROLES");
 
         if (userId != null && userRoles != null) {
             List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))

@@ -3,16 +3,20 @@ package ticket.reserve.event.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.common.event.EventType;
 import ticket.reserve.common.event.payload.EventCreatedEventPayload;
 import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.event.application.dto.response.ImageResponseDto;
+import ticket.reserve.event.application.port.out.ImagePort;
 import ticket.reserve.event.application.port.out.InventoryPort;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
 import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
-import ticket.reserve.event.domain.Event;
-import ticket.reserve.event.domain.repository.EventRepository;
+import ticket.reserve.event.domain.event.Event;
+import ticket.reserve.event.domain.event.repository.EventRepository;
+import ticket.reserve.event.domain.eventimage.enums.ImageType;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.tsid.IdGenerator;
@@ -25,14 +29,22 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final InventoryPort inventoryPort;
+    private final ImagePort imagePort;
     private final OutboxEventPublisher outboxEventPublisher;
     private final IdGenerator idGenerator;
 
     @Transactional
-    public EventDetailResponseDto createEvent(EventRequestDto request) {
+    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file) {
         Event event = request.toEntity(idGenerator);
-        Event savedEvent = eventRepository.save(event);
+        if (file != null && !file.isEmpty()) {
+            ImageResponseDto imageResponse = imagePort.uploadImage(file);
+            event.addEventImage(
+                    idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
+                    ImageType.THUMBNAIL, 1
+            );
+        }
 
+        Event savedEvent = eventRepository.save(event);
         outboxEventPublisher.publish(
                 EventType.EVENT_CREATED,
                 EventCreatedEventPayload.builder()
@@ -71,7 +83,10 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        event.update(request);
+        event.update(
+                request.eventTitle(), request.description(), request.location(),
+                request.startTime(), request.endTime(), request.totalInventoryCount()
+        );
     }
 
     @Transactional

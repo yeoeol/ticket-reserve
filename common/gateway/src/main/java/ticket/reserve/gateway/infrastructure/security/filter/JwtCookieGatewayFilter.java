@@ -73,7 +73,7 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
 
         ServerHttpRequest newRequest = exchange.getRequest().mutate()
                 .header("X-USER-ID", userId)
-                .header("X-User-Roles", roles)
+                .header("X-USER-ROLES", roles)
                 .build();
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
