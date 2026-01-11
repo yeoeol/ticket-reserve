@@ -49,10 +49,9 @@ public class EventController {
     @PostMapping
     public String createEvent(
             EventRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal String userId
+            @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        EventDetailResponseDto response = eventService.createEvent(request, file, userId);
+        EventDetailResponseDto response = eventService.createEvent(request, file);
         return "redirect:/events/%d".formatted(response.id());
     }
 }

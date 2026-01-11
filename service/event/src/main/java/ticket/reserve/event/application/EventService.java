@@ -34,10 +34,10 @@ public class EventService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file, String userId) {
+    public EventDetailResponseDto createEvent(EventRequestDto request, MultipartFile file) {
         Event event = request.toEntity(idGenerator);
-        if (!file.isEmpty()) {
-            ImageResponseDto imageResponse = imagePort.uploadImage(file, userId);
+        if (file != null && !file.isEmpty()) {
+            ImageResponseDto imageResponse = imagePort.uploadImage(file);
             event.addEventImage(
                     idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
                     ImageType.THUMBNAIL, 1

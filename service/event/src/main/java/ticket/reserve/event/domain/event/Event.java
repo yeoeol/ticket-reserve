@@ -74,7 +74,7 @@ public class Event extends BaseTimeEntity {
     ) {
         EventImage eventImage = EventImage.create(
                 idGenerator, originalFileName, storedPath,
-                type, 1, this
+                type, sortOrder, this
         );
         this.eventImages.add(eventImage);
     }

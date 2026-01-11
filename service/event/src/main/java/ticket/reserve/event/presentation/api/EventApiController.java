@@ -32,7 +32,7 @@ public class EventApiController {
 
     @PostMapping
     public ResponseEntity<EventDetailResponseDto> createEvent(@Valid @RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request, null, null));
+        return ResponseEntity.ok(eventService.createEvent(request, null));
     }
 
     @PutMapping("/{id}")

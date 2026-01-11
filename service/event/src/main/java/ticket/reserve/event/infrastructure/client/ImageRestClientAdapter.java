@@ -10,6 +10,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.event.application.dto.response.ImageResponseDto;
 import ticket.reserve.event.application.port.out.ImagePort;
+import ticket.reserve.global.exception.CustomException;
+import ticket.reserve.global.exception.ErrorCode;
 
 import java.io.IOException;
 
@@ -28,7 +30,7 @@ public class ImageRestClientAdapter implements ImagePort {
     }
 
     @Override
-    public ImageResponseDto uploadImage(MultipartFile file, String userId) {
+    public ImageResponseDto uploadImage(MultipartFile file) {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         try {
             ByteArrayResource contentsAsResource = new ByteArrayResource(file.getBytes()) {
@@ -39,7 +41,7 @@ public class ImageRestClientAdapter implements ImagePort {
             };
             body.add("file", contentsAsResource);
         } catch (IOException e) {
-            throw new RuntimeException("파일 변환 실패", e);
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
 
         return restClient.post()

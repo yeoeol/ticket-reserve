@@ -27,6 +27,7 @@ public class EventImage extends BaseTimeEntity {
     private Integer sortOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @Builder
