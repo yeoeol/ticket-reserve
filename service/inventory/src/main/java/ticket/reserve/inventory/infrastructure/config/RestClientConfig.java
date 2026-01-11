@@ -1,9 +1,9 @@
-package ticket.reserve.admin.infrastructure.config;
+package ticket.reserve.inventory.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
-import ticket.reserve.admin.infrastructure.client.interceptor.AuthenticationInterceptor;
+import ticket.reserve.inventory.infrastructure.client.interceptor.AuthenticationInterceptor;
 
 @Configuration
 public class RestClientConfig {

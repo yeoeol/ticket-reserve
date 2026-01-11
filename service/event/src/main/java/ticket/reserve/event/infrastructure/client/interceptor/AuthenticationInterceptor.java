@@ -1,4 +1,4 @@
-package ticket.reserve.admin.global.aop.interceptor;
+package ticket.reserve.event.infrastructure.client.interceptor;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
