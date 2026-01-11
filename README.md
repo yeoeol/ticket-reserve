@@ -101,3 +101,14 @@
 - 부하 테스트
 - 단위 테스트
 - 동시 요청 성능 분석(테스트 코드) - 낙관적/비관적/분산 락 비교
+
+---
+## 아키텍처
+<img width="895" height="498" alt="busking-draw_1" src="https://github.com/user-attachments/assets/11960ae7-2ae2-4c81-aa37-68319f83748e" />
+
+## ERD
+<img width="540" height="736" alt="busking-draw_2" src="https://github.com/user-attachments/assets/e9516510-a5ef-4b8b-a078-2d7c3f48f22c" />
+
+## 공연 생성, 좌석 선점 및 예매 시퀀스
+<img width="504" height="492" alt="busking-draw_3" src="https://github.com/user-attachments/assets/740e24cf-ec30-4afa-8e2e-1dc841943e57" />
+
