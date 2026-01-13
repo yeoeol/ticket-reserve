@@ -52,6 +52,7 @@ public class AzureImageServiceImpl implements ImageService {
         String uniqueFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         BlobClient blobClient = containerClient.getBlobClient(uniqueFileName);
 
+        // Azure 업로드
         try {
             BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(file.getContentType());
             blobClient.upload(file.getInputStream(), file.getSize(), true);
@@ -60,11 +61,13 @@ public class AzureImageServiceImpl implements ImageService {
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
 
-        String storedPath = blobClient.getBlobUrl();
+        // DB 저장
         try {
+            String storedPath = blobClient.getBlobUrl();
             Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
             return ImageResponseDto.from(savedImage);
         } catch (Exception e) {
+            log.error("Azure 이미지 업로드 실패 - 보상 트랜잭션 실행 : {}", uniqueFileName, e);
             deleteFromAzure(blobClient);
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
