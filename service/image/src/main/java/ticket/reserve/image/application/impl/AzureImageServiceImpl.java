@@ -56,12 +56,8 @@ public class AzureImageServiceImpl implements ImageService {
             BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(file.getContentType());
             blobClient.upload(file.getInputStream(), file.getSize(), true);
             blobClient.setHttpHeaders(headers);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
-        }
 
-        String storedPath = blobClient.getBlobUrl();
-        try {
+            String storedPath = blobClient.getBlobUrl();
             Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
             return ImageResponseDto.from(savedImage);
         } catch (Exception e) {
