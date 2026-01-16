@@ -29,6 +29,7 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
     public static final List<String> permitUris = List.of(
             // user-service
             "/", "/users/register", "/users/login",
+            "/api/users/register", "/api/users/login",
             // event-service
             "/events", "/events/*",
             // static resources

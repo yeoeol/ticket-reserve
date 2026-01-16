@@ -2,6 +2,7 @@ package ticket.reserve.event.presentation.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +31,13 @@ public class EventApiController {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @PostMapping
-    public ResponseEntity<EventDetailResponseDto> createEvent(@Valid @RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request, null));
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<EventDetailResponseDto> createEvent(
+//            @Valid @RequestBody EventRequestDto request,
+            @Valid @RequestPart(value = "request") EventRequestDto request,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        return ResponseEntity.ok(eventService.createEvent(request, file));
     }
 
     @PutMapping("/{id}")

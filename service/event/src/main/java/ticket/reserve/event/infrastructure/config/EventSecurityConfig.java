@@ -24,7 +24,7 @@ public class EventSecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/events/css/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/events", "/events/{id:\\d+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/{id:\\d+}", "/api/events/event-ids", "/events", "/events/{id:\\d+}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new HeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
