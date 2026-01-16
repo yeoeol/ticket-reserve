@@ -15,6 +15,7 @@ import ticket.reserve.tsid.IdGenerator;
 import ticket.reserve.tsid.TsidIdGenerator;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
+import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
@@ -121,7 +122,8 @@ class UserServiceTest {
                 .willReturn(expectedToken);
 
         //when
-        String generatedToken = userService.login(username, password);
+        UserLoginResponseDto responseDto = userService.login(username, password);
+        String generatedToken = responseDto.accessToken();
 
         //then
         assertThat(generatedToken).isEqualTo(expectedToken);

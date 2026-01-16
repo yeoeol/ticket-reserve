@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.UserService;
+import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.global.util.CookieUtil;
 
 @Controller
@@ -48,9 +49,9 @@ public class UserController {
             @RequestParam(value = "redirectUri", required = false) String redirectUri,
             HttpServletResponse response
     ) {
-        String token = userService.login(requestDto.username(), requestDto.password());
+        UserLoginResponseDto loginResponseDto = userService.login(requestDto.username(), requestDto.password());
 
-        Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie("accessToken", token, 60 * 60 * 24);// 1일
+        Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie("accessToken", loginResponseDto.accessToken(), 60 * 60 * 24);// 1일
         response.addCookie(accessTokenCookie);
 
         if (StringUtils.hasText(redirectUri)) {

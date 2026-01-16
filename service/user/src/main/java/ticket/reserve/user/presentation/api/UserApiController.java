@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.application.UserService;
@@ -32,13 +33,10 @@ public class UserApiController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
-        String token = userService.login(requestDto.username(), requestDto.password());
-
-        Map<String, String> response = new HashMap<>();
-        response.put("accessToken", token);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<UserLoginResponseDto> login(
+            @Valid @RequestBody UserLoginRequestDto requestDto
+    ) {
+        return ResponseEntity.ok(userService.login(requestDto.username(), requestDto.password()));
     }
 
     @PostMapping("/logout")
