@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.event.application.dto.response.EventDetailResponseDto;
 import ticket.reserve.event.application.dto.request.EventRequestDto;
-import ticket.reserve.event.application.dto.response.EventResponseDto;
 import ticket.reserve.event.application.dto.request.EventUpdateRequestDto;
 import ticket.reserve.event.application.EventService;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +31,12 @@ public class EventApiController {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @PostMapping
-    public ResponseEntity<EventDetailResponseDto> createEvent(@Valid @RequestBody EventRequestDto request) {
-        return ResponseEntity.ok(eventService.createEvent(request, null));
+    @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<EventDetailResponseDto> createEvent(
+            @Valid @RequestPart(value = "request") EventRequestDto request,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        return ResponseEntity.ok(eventService.createEvent(request, file));
     }
 
     @PutMapping("/{id}")

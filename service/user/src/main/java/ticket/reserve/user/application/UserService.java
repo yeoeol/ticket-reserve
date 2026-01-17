@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
@@ -47,7 +48,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String login(String username, String password) {
+    public UserLoginResponseDto login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN));
 
@@ -55,7 +56,9 @@ public class UserService {
 
         List<String> userRoles = user.getRoleNames();
 
-        return generateTokenPort.generateToken(user.getId(), userRoles);
+        String accessToken = generateTokenPort.generateToken(user.getId(), userRoles);
+
+        return UserLoginResponseDto.from(UserResponseDto.from(user), accessToken);
     }
 
     @Transactional(readOnly = true)
