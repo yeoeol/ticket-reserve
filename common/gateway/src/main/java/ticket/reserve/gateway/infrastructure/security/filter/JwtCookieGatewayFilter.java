@@ -79,7 +79,7 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
-    private String  extractToken(ServerHttpRequest request) {
+    private String extractToken(ServerHttpRequest request) {
         HttpCookie cookie = request.getCookies().getFirst("accessToken");
 
         return (cookie != null) ? cookie.getValue() : null;

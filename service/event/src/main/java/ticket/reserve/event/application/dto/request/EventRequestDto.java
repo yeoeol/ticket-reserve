@@ -2,6 +2,7 @@ package ticket.reserve.event.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import ticket.reserve.event.domain.event.Event;
 import ticket.reserve.tsid.IdGenerator;
@@ -23,6 +24,7 @@ public record EventRequestDto(
         LocalDateTime endTime,
 
         @NotNull(message = "좌석 수를 입력하세요.")
+        @PositiveOrZero(message = "좌석은 0 이상이어야 합니다.")
         Integer totalInventoryCount
 ) {
     public Event toEntity(IdGenerator idGenerator) {
