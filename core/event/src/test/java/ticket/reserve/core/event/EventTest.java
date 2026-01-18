@@ -1,4 +1,4 @@
-package ticket.reserve.common.event;
+package ticket.reserve.core.event;
 
 import org.junit.jupiter.api.Test;
 import ticket.reserve.core.event.Event;
