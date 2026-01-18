@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import ticket.reserve.inventory.domain.Inventory;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 public record InventoryRequestDto(
         @NotBlank(message = "좌석 이름은 필수입니다.")

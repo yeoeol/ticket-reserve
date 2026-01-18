@@ -18,7 +18,7 @@ import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.List;

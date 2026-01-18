@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.common.event.Event;
-import ticket.reserve.common.event.EventPayload;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
@@ -21,7 +21,7 @@ import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDt
 import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 

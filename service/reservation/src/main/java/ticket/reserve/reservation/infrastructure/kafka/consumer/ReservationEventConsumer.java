@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
-import ticket.reserve.common.event.Event;
-import ticket.reserve.common.event.EventPayload;
-import ticket.reserve.common.event.EventType;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
 import ticket.reserve.reservation.application.ReservationService;
 
 @Slf4j

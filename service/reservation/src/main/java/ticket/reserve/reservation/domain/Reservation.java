@@ -3,7 +3,7 @@ package ticket.reserve.reservation.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.reservation.domain.enums.ReservationStatus;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity
 @Getter

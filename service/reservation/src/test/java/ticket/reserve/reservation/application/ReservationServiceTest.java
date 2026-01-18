@@ -13,9 +13,8 @@ import ticket.reserve.reservation.application.dto.response.ReservationResponseDt
 import ticket.reserve.reservation.application.eventHandler.EventHandler;
 import ticket.reserve.reservation.application.port.out.InventoryPort;
 import ticket.reserve.reservation.domain.Reservation;
-import ticket.reserve.reservation.domain.enums.ReservationStatus;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 

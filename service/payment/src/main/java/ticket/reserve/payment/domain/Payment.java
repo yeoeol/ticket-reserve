@@ -2,7 +2,7 @@ package ticket.reserve.payment.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 

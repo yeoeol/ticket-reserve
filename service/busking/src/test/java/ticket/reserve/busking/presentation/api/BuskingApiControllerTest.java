@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
-import ticket.reserve.busking.domain.event.Busking;
+import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.global.exception.GlobalExceptionRestHandler;
 
 import java.time.LocalDateTime;

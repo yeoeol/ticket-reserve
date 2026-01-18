@@ -14,8 +14,8 @@ dependencies {
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    implementation project(':common:event')
-    implementation project(':common:global')
-    implementation project(':common:outbox-message-relay')
-    implementation project(':common:tsid')
+    implementation project(':core:event')
+    implementation project(':core:global')
+    implementation project(':core:outbox-message-relay')
+    implementation project(':core:tsid')
 }

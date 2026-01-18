@@ -17,6 +17,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    implementation project(':common:global')
-    implementation project(':common:tsid')
+    implementation project(':core:global')
+    implementation project(':core:tsid')
 }

@@ -3,9 +3,9 @@ package ticket.reserve.payment.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.common.event.EventType;
-import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
-import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.PaymentConfirmedEventPayload;
+import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
@@ -13,7 +13,7 @@ import ticket.reserve.payment.application.dto.response.TossResponseDto;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.domain.Payment;
 import ticket.reserve.payment.domain.repository.PaymentRepository;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Service
 @RequiredArgsConstructor

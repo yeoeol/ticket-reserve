@@ -2,7 +2,7 @@ package ticket.reserve.user.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.user.domain.BaseTimeEntity;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.userrole.UserRole;
