@@ -22,7 +22,7 @@ public class InventoryRestClientAdapter implements InventoryPort {
     }
 
     @Override
-    public Integer countsInventory(Long buskingId) {
+    public Integer countInventory(Long buskingId) {
         if (buskingId == null) {
             throw new CustomException(ErrorCode.BUSKING_NOT_FOUND);
         }

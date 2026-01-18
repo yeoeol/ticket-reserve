@@ -6,7 +6,7 @@ import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.tsid.IdGenerator;
 
 public record ReservationRequestDto(
-        @NotNull(message = "이벤트ID는 필수입니다.")
+        @NotNull(message = "버스킹ID는 필수입니다.")
         Long buskingId,
         @NotNull(message = "좌석ID는 필수입니다.")
         Long inventoryId,

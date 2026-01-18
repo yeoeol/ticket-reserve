@@ -64,13 +64,13 @@ public class BuskingService {
     @Transactional(readOnly = true)
     public List<BuskingResponseDto> getAll() {
         return buskingRepository.findAll().stream()
-                .map(e -> BuskingResponseDto.from(e, inventoryPort.countsInventory(e.getId())))
+                .map(e -> BuskingResponseDto.from(e, inventoryPort.countInventory(e.getId())))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public BuskingResponseDto getOne(Long buskingId) {
-        Integer availableInventoryCount = inventoryPort.countsInventory(buskingId);
+        Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
 
         return buskingRepository.findById(buskingId)
                 .map(e -> BuskingResponseDto.from(e, availableInventoryCount))

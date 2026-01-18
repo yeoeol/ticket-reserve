@@ -15,7 +15,7 @@ public record BuskingResponseDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        int availableInventory,
+        Integer availableInventory,
         Integer totalInventoryCount,
         List<String> imageUrls
 ) {

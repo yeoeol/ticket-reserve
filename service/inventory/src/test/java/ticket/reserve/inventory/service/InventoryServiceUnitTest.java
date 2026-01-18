@@ -107,7 +107,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.updateInventory(1234L, request);
+        inventoryService.updateInventory(1L, 1234L, request);
 
         //then
         assertThat(inventory.getInventoryName()).isEqualTo(request.inventoryName());
@@ -121,7 +121,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventoryV1(1234L);
+        inventoryService.holdInventoryV1(1L, 1234L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
@@ -135,7 +135,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1234L));
+        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1L, 1234L));
 
         //then
         assertThat(throwable)
@@ -164,7 +164,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventory(1234L);
+        inventoryService.holdInventory(1L, 1234L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);

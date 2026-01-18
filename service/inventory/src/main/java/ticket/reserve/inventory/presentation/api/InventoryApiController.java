@@ -30,12 +30,12 @@ public class InventoryApiController {
     // 좌석 선점 로직
     @PostMapping("/hold")
     public ResponseEntity<Void> holdInventory(@Valid @RequestBody InventoryHoldRequestDto request) {
-        inventoryService.holdInventory(request.inventoryId());
+        inventoryService.holdInventory(request.buskingId(), request.inventoryId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/counts")
-    public ResponseEntity<Integer> countsInventory(@RequestParam("id") Long buskingId) {
+    public ResponseEntity<Integer> countInventory(@RequestParam("id") Long buskingId) {
         return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(buskingId));
     }
 
@@ -50,14 +50,14 @@ public class InventoryApiController {
     @GetMapping("/{id}/{inventoryId}")
     public ResponseEntity<InventoryResponseDto> getInventory(@PathVariable("id") Long buskingId,
                                                              @PathVariable("inventoryId") Long inventoryId) {
-        return ResponseEntity.ok(inventoryService.getInventory(inventoryId));
+        return ResponseEntity.ok(inventoryService.getInventory(buskingId, inventoryId));
     }
 
     @PutMapping("/{id}/{inventoryId}")
     public ResponseEntity<Void> updateInventory(@PathVariable("id") Long buskingId,
                                                 @PathVariable("inventoryId") Long inventoryId,
                                                 @RequestBody InventoryUpdateRequestDto request) {
-        inventoryService.updateInventory(inventoryId, request);
+        inventoryService.updateInventory(buskingId, inventoryId, request);
         return ResponseEntity.ok().build();
     }
 

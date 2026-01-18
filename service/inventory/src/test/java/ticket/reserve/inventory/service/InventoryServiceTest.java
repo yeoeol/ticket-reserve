@@ -67,7 +67,7 @@ class InventoryServiceTest {
             executorService.submit(() -> {
                 try {
                     // 분산락 적용 메서드 호출
-                    inventoryService.holdInventory(inventory.getId());
+                    inventoryService.holdInventory(1L, inventory.getId());
                 } catch (Exception e) {
                     failCount.getAndIncrement();
                 } finally {
@@ -129,7 +129,7 @@ class InventoryServiceTest {
             executorService.submit(() -> {
                 try {
                     // 미적용 메서드 호출
-                    inventoryService.holdInventoryV1(inventory.getId());
+                    inventoryService.holdInventoryV1(1L, inventory.getId());
                 } catch (Exception e) {
                     failCount.getAndIncrement();
                 } finally {

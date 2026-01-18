@@ -13,7 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
-import ticket.reserve.busking.application.dto.response.EventResponseDto;
+import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.domain.event.Busking;
 import ticket.reserve.global.exception.GlobalExceptionRestHandler;
 
@@ -45,33 +45,33 @@ class BuskingApiControllerTest {
     void getEventsSuccess() throws Exception {
         given(buskingService.getAll())
                 .willReturn(List.of(
-                        EventResponseDto.from(createEvent(1L)),
-                        EventResponseDto.from(createEvent(2L))
+                        BuskingResponseDto.from(createBusking(123L), 0),
+                        BuskingResponseDto.from(createBusking(234L), 0)
                 ));
 
-        assertThat(mvc.get().uri("/api/events"))
+        assertThat(mvc.get().uri("/api/buskings"))
                 .hasStatusOk()
                 .bodyJson()
                 .hasPathSatisfying("$.size()", v -> v.assertThat().isEqualTo(2))
-                .hasPathSatisfying("$[0].id", v -> v.assertThat().isEqualTo(1))
-                .hasPathSatisfying("$[0].eventTitle", v -> v.assertThat().isEqualTo("testTitle1"))
-                .hasPathSatisfying("$[1].id", v -> v.assertThat().isEqualTo(2))
-                .hasPathSatisfying("$[1].eventTitle", v -> v.assertThat().isEqualTo("testTitle2"));
+                .hasPathSatisfying("$[0].id", v -> v.assertThat().isEqualTo(123))
+                .hasPathSatisfying("$[0].title", v -> v.assertThat().isEqualTo("testTitle123"))
+                .hasPathSatisfying("$[1].id", v -> v.assertThat().isEqualTo(234))
+                .hasPathSatisfying("$[1].title", v -> v.assertThat().isEqualTo("testTitle234"));
     }
 
     @Test
-    @DisplayName("이벤트 생성 실패 - POST /api/events 요청 정보 필드에 null이 들어있으면 예외가 발생한다")
+    @DisplayName("이벤트 생성 실패 - POST /api/buskings 요청 정보 필드에 null이 들어있으면 예외가 발생한다")
     void handleValidationException() throws Exception {
         //given
-        Busking event = createEvent(1L);
+        Busking busking = createBusking(1L);
         BuskingRequestDto invalidRequest = new BuskingRequestDto(
-                null, null, event.getLocation(),
-                event.getStartTime(), event.getEndTime(), 0
+                null, null, busking.getLocation(),
+                busking.getStartTime(), busking.getEndTime(), 0
         );
 
         //when & then
-        assertThat(mvc.post().uri("/api/events")
-                .contentType(MediaType.APPLICATION_JSON)
+        assertThat(mvc.post().uri("/api/buskings")
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .content(objectMapper.writeValueAsString(invalidRequest)))
                 .apply(print())
                 .hasStatus(HttpStatus.BAD_REQUEST)
@@ -83,10 +83,10 @@ class BuskingApiControllerTest {
                 .hasPathSatisfying("$.errors.size()", v -> v.assertThat()
                         .isEqualTo(2))
                 .hasPathSatisfying("$.errors[*].field", v -> v.assertThat()
-                        .asInstanceOf(LIST).containsExactlyInAnyOrder("eventTitle", "description"));
+                        .asInstanceOf(LIST).containsExactlyInAnyOrder("title", "description"));
     }
 
-    private Busking createEvent(Long id) {
+    private Busking createBusking(Long id) {
         String eventTitle = "testTitle"+id;
         String description = "testDescription"+id;
         LocalDateTime start = LocalDateTime.of(2030, 1, 1, 0, 0);

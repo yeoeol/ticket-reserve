@@ -42,11 +42,11 @@ class BuskingServiceTest {
     @Mock OutboxEventPublisher outboxEventPublisher;
     @Mock IdGenerator idGenerator;
 
-    private Busking event;
+    private Busking busking;
 
     @BeforeEach
     void setUp() {
-        event = Busking.create(
+        busking = Busking.create(
                 () -> 1234L,
                 "testTitle",
                 "testDesc",
@@ -63,12 +63,12 @@ class BuskingServiceTest {
         //given
         BuskingRequestDto request = new BuskingRequestDto(
                 "testTitle", "testDesc", "장소",
-                event.getStartTime(), event.getEndTime(), 0
+                busking.getStartTime(), busking.getEndTime(), 0
         );
 
         ArgumentCaptor<Busking> eventCaptor = ArgumentCaptor.forClass(Busking.class);
         given(buskingRepository.save(eventCaptor.capture()))
-                .willReturn(event);
+                .willReturn(busking);
 
         //when
         BuskingResponseDto response = buskingService.create(request, null);
@@ -76,13 +76,13 @@ class BuskingServiceTest {
         //then
         Busking savedEvent = eventCaptor.getValue();
 
-        assertThat(response.eventTitle()).isEqualTo(request.eventTitle());
+        assertThat(response.title()).isEqualTo(request.title());
         assertThat(response.description()).isEqualTo(request.description());
         assertThat(response.location()).isEqualTo(request.location());
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
 
-        assertThat(savedEvent.getTitle()).isEqualTo(request.eventTitle());
+        assertThat(savedEvent.getTitle()).isEqualTo(request.title());
         assertThat(savedEvent.getDescription()).isEqualTo(request.description());
         assertThat(savedEvent.getLocation()).isEqualTo(request.location());
         assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
@@ -100,18 +100,18 @@ class BuskingServiceTest {
                 LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
         );
         given(buskingRepository.findById(1234L))
-                .willReturn(Optional.of(event));
+                .willReturn(Optional.of(busking));
 
         //when
         buskingService.update(1234L, request);
 
         //then
-        assertThat(event.getTitle()).isEqualTo(request.eventTitle());
-        assertThat(event.getDescription()).isEqualTo(request.description());
-        assertThat(event.getLocation()).isEqualTo(request.location());
-        assertThat(event.getStartTime()).isEqualTo(request.startTime());
-        assertThat(event.getEndTime()).isEqualTo(request.endTime());
-        assertThat(event.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
+        assertThat(busking.getTitle()).isEqualTo(request.title());
+        assertThat(busking.getDescription()).isEqualTo(request.description());
+        assertThat(busking.getLocation()).isEqualTo(request.location());
+        assertThat(busking.getStartTime()).isEqualTo(request.startTime());
+        assertThat(busking.getEndTime()).isEqualTo(request.endTime());
+        assertThat(busking.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
     }
 
     @Test

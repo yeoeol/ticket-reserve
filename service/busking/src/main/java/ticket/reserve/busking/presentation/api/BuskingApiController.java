@@ -31,7 +31,7 @@ public class BuskingApiController {
         return ResponseEntity.ok(buskingService.getOne(id));
     }
 
-    @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BuskingResponseDto> create(
             @Valid @RequestPart(value = "request") BuskingRequestDto request,
             @RequestPart(value = "file", required = false) MultipartFile file

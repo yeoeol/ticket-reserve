@@ -48,8 +48,8 @@ public class InventoryService {
     }
 
     @Transactional
-    public void updateInventory(Long inventoryId, InventoryUpdateRequestDto request) {
-        Inventory inventory = getInventoryById(inventoryId);
+    public void updateInventory(Long buskingId, Long inventoryId, InventoryUpdateRequestDto request) {
+        Inventory inventory = getInventoryById(buskingId, inventoryId);
         inventory.update(request.inventoryName(), request.price());
     }
 
@@ -66,24 +66,24 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public CustomPageResponse<InventoryResponseDto> getInventoryPaging(Long buksingId, Pageable pageable) {
-        Page<Inventory> inventoryPage = inventoryRepository.findAllByBuskingId(buksingId, pageable);
+    public CustomPageResponse<InventoryResponseDto> getInventoryPaging(Long buskingId, Pageable pageable) {
+        Page<Inventory> inventoryPage = inventoryRepository.findAllByBuskingId(buskingId, pageable);
         Page<InventoryResponseDto> inventoryPageResponseDto = inventoryPage.map(InventoryResponseDto::from);
 
         return CustomPageResponse.from(inventoryPageResponseDto);
     }
 
     @Transactional(readOnly = true)
-    public InventoryResponseDto getInventory(Long inventoryId) {
-        Inventory inventory = getInventoryById(inventoryId);
+    public InventoryResponseDto getInventory(Long buskingId, Long inventoryId) {
+        Inventory inventory = getInventoryById(buskingId, inventoryId);
 
         return InventoryResponseDto.from(inventory);
     }
 
     // 락 미적용
     @Transactional
-    public void holdInventoryV1(Long inventoryId) {
-        Inventory inventory = getInventoryById(inventoryId);
+    public void holdInventoryV1(Long buskingId, Long inventoryId) {
+        Inventory inventory = getInventoryById(buskingId, inventoryId);
         inventory.hold();
     }
 
@@ -97,8 +97,8 @@ public class InventoryService {
 
     // Redisson 분산 락 적용
     @DistributedLock(key = "'INVENTORY_LOCK:' + #inventoryId")
-    public void holdInventory(Long inventoryId) {
-        Inventory inventory = getInventoryById(inventoryId);
+    public void holdInventory(Long buskingId, Long inventoryId) {
+        Inventory inventory = getInventoryById(buskingId, inventoryId);
         inventory.hold();
     }
 
@@ -121,8 +121,8 @@ public class InventoryService {
         eventHandler.handle(event);
     }
 
-    private Inventory getInventoryById(Long inventoryId) {
-        return inventoryRepository.findById(inventoryId)
+    private Inventory getInventoryById(Long buskingId, Long inventoryId) {
+        return inventoryRepository.findByIdAndBuskingId(inventoryId, buskingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVENTORY_NOT_FOUND));
     }
 

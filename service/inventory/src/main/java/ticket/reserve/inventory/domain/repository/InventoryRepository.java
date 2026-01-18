@@ -16,13 +16,15 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT i FROM Inventory i WHERE i.id = :inventoryId")
     Optional<Inventory> findByIdForUpdate(Long inventoryId);
 
-    List<Inventory> findAllByBuskingId(Long buksingId);
+    List<Inventory> findAllByBuskingId(Long buskingId);
 
-    Page<Inventory> findAllByBuskingId(Long buksingId, Pageable pageable);
+    Page<Inventory> findAllByBuskingId(Long buskingId, Pageable pageable);
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.buskingId = :buskingId AND i.status = 'AVAILABLE'")
     Integer countAvailableInventoryByBuskingId(Long buskingId);
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.buskingId = :buskingId")
     Integer countInventoryByBuskingId(Long buskingId);
+
+    Optional<Inventory> findByIdAndBuskingId(Long inventoryId, Long buskingId);
 }
