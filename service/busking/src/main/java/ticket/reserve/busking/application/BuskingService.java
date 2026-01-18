@@ -69,10 +69,10 @@ public class BuskingService {
     }
 
     @Transactional(readOnly = true)
-    public BuskingResponseDto getOne(Long eventId) {
-        Integer availableInventoryCount = inventoryPort.countsInventory(eventId);
+    public BuskingResponseDto getOne(Long buskingId) {
+        Integer availableInventoryCount = inventoryPort.countsInventory(buskingId);
 
-        return buskingRepository.findById(eventId)
+        return buskingRepository.findById(buskingId)
                 .map(e -> BuskingResponseDto.from(e, availableInventoryCount))
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
     }
@@ -95,6 +95,6 @@ public class BuskingService {
 
     @Transactional(readOnly = true)
     public List<Long> getIds() {
-        return buskingRepository.findEventIds();
+        return buskingRepository.findIds();
     }
 }

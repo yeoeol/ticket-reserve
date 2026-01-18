@@ -21,8 +21,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Page<Inventory> findAllByBuskingId(Long buksingId, Pageable pageable);
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.buskingId = :buskingId AND i.status = 'AVAILABLE'")
-    Integer countAvailableInventoryByEventId(Long buskingId);
+    Integer countAvailableInventoryByBuskingId(Long buskingId);
 
     @Query("SELECT count(*) FROM Inventory i WHERE i.buskingId = :buskingId")
-    Integer countInventoryByEventId(Long buskingId);
+    Integer countInventoryByBuskingId(Long buskingId);
 }

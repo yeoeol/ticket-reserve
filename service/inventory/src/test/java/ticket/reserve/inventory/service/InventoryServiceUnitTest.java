@@ -63,7 +63,7 @@ public class InventoryServiceUnitTest {
                 LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10, List.of()
         );
         given(buskingPort.getOne(1L)).willReturn(buskingResponseDto);
-        given(inventoryRepository.countInventoryByEventId(1L)).willReturn(0);
+        given(inventoryRepository.countInventoryByBuskingId(1L)).willReturn(0);
 
         //when
         inventoryService.createInventory(inventoryRequestDto);
@@ -84,7 +84,7 @@ public class InventoryServiceUnitTest {
                 LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10, List.of()
         );
         given(buskingPort.getOne(1L)).willReturn(buskingResponseDto);
-        given(inventoryRepository.countInventoryByEventId(1L)).willReturn(10);
+        given(inventoryRepository.countInventoryByBuskingId(1L)).willReturn(10);
 
         //when
         Throwable throwable = catchThrowable(() -> inventoryService.createInventory(inventoryRequestDto));

@@ -33,13 +33,13 @@ public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEven
         return EventType.EVENT_CREATED == event.getType();
     }
 
-    private void createInventoryAsTotalInventoryCount(Long eventId, Integer totalInventoryCount) {
+    private void createInventoryAsTotalInventoryCount(Long buskingId, Integer totalInventoryCount) {
         char prefix = 'A';
         int seatNumber = 1;
 
         for (int i = 1; i <= totalInventoryCount; i++) {
             String inventoryName = prefix + String.valueOf(seatNumber);
-            Inventory inventory = Inventory.create(idGenerator, eventId, inventoryName, 1000*i);
+            Inventory inventory = Inventory.create(idGenerator, buskingId, inventoryName, 1000*i);
 
             inventoryRepository.save(inventory);
             seatNumber++;

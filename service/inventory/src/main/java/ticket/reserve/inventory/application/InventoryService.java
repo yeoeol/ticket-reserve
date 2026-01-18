@@ -38,7 +38,7 @@ public class InventoryService {
     @Transactional
     public void createInventory(InventoryRequestDto request) {
         BuskingResponseDto eventResponseDto = buskingPort.getOne(request.buskingId());
-        Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.buskingId());
+        Integer eventInventoryCount = inventoryRepository.countInventoryByBuskingId(request.buskingId());
         if (eventResponseDto.totalInventoryCount() == eventInventoryCount) {
             throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
@@ -103,8 +103,8 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public Integer getAvailableInventoryCounts(Long eventId) {
-        return inventoryRepository.countAvailableInventoryByEventId(eventId);
+    public Integer getAvailableInventoryCounts(Long buskingId) {
+        return inventoryRepository.countAvailableInventoryByBuskingId(buskingId);
     }
 
     @Transactional

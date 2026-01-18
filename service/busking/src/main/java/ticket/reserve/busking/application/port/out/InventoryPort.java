@@ -1,5 +1,5 @@
 package ticket.reserve.busking.application.port.out;
 
 public interface InventoryPort {
-    Integer countsInventory(Long eventId);
+    Integer countsInventory(Long buskingId);
 }

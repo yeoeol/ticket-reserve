@@ -47,8 +47,8 @@ public class BuskingApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long eventId) {
-        buskingService.delete(eventId);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long buskingId) {
+        buskingService.delete(buskingId);
         return ResponseEntity.noContent().build();
     }
 
