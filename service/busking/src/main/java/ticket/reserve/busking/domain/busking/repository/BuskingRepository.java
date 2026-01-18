@@ -1,8 +1,8 @@
-package ticket.reserve.busking.domain.event.repository;
+package ticket.reserve.busking.domain.busking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ticket.reserve.busking.domain.event.Busking;
+import ticket.reserve.busking.domain.busking.Busking;
 
 import java.util.List;
 

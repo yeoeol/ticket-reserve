@@ -1,7 +1,7 @@
-package ticket.reserve.busking.domain.eventimage.repository;
+package ticket.reserve.busking.domain.buskingimage.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ticket.reserve.busking.domain.eventimage.BuskingImage;
+import ticket.reserve.busking.domain.buskingimage.BuskingImage;
 
 public interface BuskingImageRepository extends JpaRepository<BuskingImage, Long> {
 }

@@ -1,4 +1,4 @@
-package ticket.reserve.busking.domain.eventimage;
+package ticket.reserve.busking.domain.buskingimage;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticket.reserve.busking.domain.BaseTimeEntity;
-import ticket.reserve.busking.domain.event.Busking;
-import ticket.reserve.busking.domain.eventimage.enums.ImageType;
+import ticket.reserve.busking.domain.busking.Busking;
+import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity

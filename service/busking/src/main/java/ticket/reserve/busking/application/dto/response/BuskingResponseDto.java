@@ -1,8 +1,8 @@
 package ticket.reserve.busking.application.dto.response;
 
 import lombok.Builder;
-import ticket.reserve.busking.domain.event.Busking;
-import ticket.reserve.busking.domain.eventimage.BuskingImage;
+import ticket.reserve.busking.domain.busking.Busking;
+import ticket.reserve.busking.domain.buskingimage.BuskingImage;
 
 import java.time.LocalDateTime;
 import java.util.List;

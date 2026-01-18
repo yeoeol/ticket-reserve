@@ -1,10 +1,10 @@
-package ticket.reserve.busking.domain.event;
+package ticket.reserve.busking.domain.busking;
 
 import jakarta.persistence.*;
 import lombok.*;
 import ticket.reserve.busking.domain.BaseTimeEntity;
-import ticket.reserve.busking.domain.eventimage.BuskingImage;
-import ticket.reserve.busking.domain.eventimage.enums.ImageType;
+import ticket.reserve.busking.domain.buskingimage.BuskingImage;
+import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
