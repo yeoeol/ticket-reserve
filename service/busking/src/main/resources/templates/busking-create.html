@@ -9,7 +9,7 @@
 
 <div th:replace="~{layout/header::header}"></div>
 <main class="form-section">
-    <div class="event-title-header">
+    <div class="busking-title-header">
         <h1>버스킹 공연 등록</h1>
         <p class="event-meta">새로운 버스킹 공연 정보를 입력해주세요.</p>
     </div>
@@ -17,13 +17,18 @@
     <form action="/buskings" method="POST" enctype="multipart/form-data">
 
         <div class="form-group">
-            <label for="eventTitle">공연 제목</label>
-            <input type="text" id="eventTitle" name="eventTitle" placeholder="예: 홍대 버스킹 페스티벌" required>
+            <label for="title">공연 제목</label>
+            <input type="text" id="title" name="title" placeholder="예: 홍대 버스킹 페스티벌" required>
         </div>
 
         <div class="form-group">
             <label for="location">공연 장소</label>
             <input type="text" id="location" name="location" placeholder="예: 서울특별시 마포구 어울마당로" required>
+        </div>
+
+        <div class="form-group">
+            <label for="totalInventoryCount">좌석 수</label>
+            <input type="text" id="totalInventoryCount" name="totalInventoryCount" placeholder="예: 10" required>
         </div>
 
         <div style="display: flex; gap: 20px;">
