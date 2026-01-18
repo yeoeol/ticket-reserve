@@ -12,9 +12,9 @@ import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.InventoryService;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
-import ticket.reserve.inventory.application.dto.response.EventDetailResponseDto;
+import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
-import ticket.reserve.inventory.application.port.out.EventPort;
+import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
@@ -38,7 +38,8 @@ public class InventoryServiceUnitTest {
 
     @Mock InventoryRepository inventoryRepository;
     @Mock List<EventHandler> eventHandlers;
-    @Mock EventPort eventPort;
+    @Mock
+    BuskingPort buskingPort;
     @Mock IdGenerator idGenerator;
 
     private Inventory inventory;
@@ -57,12 +58,12 @@ public class InventoryServiceUnitTest {
         InventoryRequestDto inventoryRequestDto = new InventoryRequestDto(
                 "TEST_001", 1L, 1000
         );
-        EventDetailResponseDto eventDetailResponseDto = new EventDetailResponseDto(
+        BuskingResponseDto buskingResponseDto = new BuskingResponseDto(
                 1L, "testTitle", "testDesc", "테스트장소",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10, List.of()
         );
-        given(eventPort.getOne(1L)).willReturn(eventDetailResponseDto);
-        given(inventoryRepository.countInventoryByEventId(1L)).willReturn(0);
+        given(buskingPort.getOne(1L)).willReturn(buskingResponseDto);
+        given(inventoryRepository.countInventoryByBuskingId(1L)).willReturn(0);
 
         //when
         inventoryService.createInventory(inventoryRequestDto);
@@ -78,12 +79,12 @@ public class InventoryServiceUnitTest {
         InventoryRequestDto inventoryRequestDto = new InventoryRequestDto(
                 "TEST_001", 1L, 1000
         );
-        EventDetailResponseDto eventDetailResponseDto = new EventDetailResponseDto(
+        BuskingResponseDto buskingResponseDto = new BuskingResponseDto(
                 1L, "testTitle", "testDesc", "테스트장소",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10, 10, List.of()
         );
-        given(eventPort.getOne(1L)).willReturn(eventDetailResponseDto);
-        given(inventoryRepository.countInventoryByEventId(1L)).willReturn(10);
+        given(buskingPort.getOne(1L)).willReturn(buskingResponseDto);
+        given(inventoryRepository.countInventoryByBuskingId(1L)).willReturn(10);
 
         //when
         Throwable throwable = catchThrowable(() -> inventoryService.createInventory(inventoryRequestDto));
@@ -106,7 +107,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.updateInventory(1234L, request);
+        inventoryService.updateInventory(1L, 1234L, request);
 
         //then
         assertThat(inventory.getInventoryName()).isEqualTo(request.inventoryName());
@@ -120,7 +121,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventoryV1(1234L);
+        inventoryService.holdInventoryV1(1L, 1234L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
@@ -134,7 +135,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1234L));
+        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1L, 1234L));
 
         //then
         assertThat(throwable)
@@ -163,7 +164,7 @@ public class InventoryServiceUnitTest {
         given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventory(1234L);
+        inventoryService.holdInventory(1L, 1234L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);

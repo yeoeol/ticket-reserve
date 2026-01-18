@@ -47,10 +47,10 @@ public class ReservationExpiryService {
                     ReservationExpiredPayload.builder()
                             .reservationId(reservation.getId())
                             .inventoryId(reservation.getInventoryId())
-                            .eventId(reservation.getEventId())
+                            .buskingId(reservation.getBuskingId())
                             .userId(reservation.getUserId())
                             .build(),
-                    reservation.getEventId()
+                    reservation.getBuskingId()
             );
             log.error("예매 롤백 이벤트 발행 (reservationId : {})", reservation.getId());
         }

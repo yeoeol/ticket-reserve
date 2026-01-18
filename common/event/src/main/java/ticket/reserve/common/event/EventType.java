@@ -3,7 +3,7 @@ package ticket.reserve.common.event;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ticket.reserve.common.event.payload.EventCreatedEventPayload;
+import ticket.reserve.common.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.common.event.payload.PaymentConfirmedEventPayload;
 import ticket.reserve.common.event.payload.ReservationExpiredPayload;
 
@@ -13,7 +13,7 @@ import ticket.reserve.common.event.payload.ReservationExpiredPayload;
 public enum EventType {
 
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
-    EVENT_CREATED(EventCreatedEventPayload.class, Topic.TICKET_RESERVE_EVENT),
+    EVENT_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_EVENT),
     RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION)
     ;
 

@@ -15,36 +15,36 @@ public class QueueRedisRepository {
     private static final String ACTIVE_KEY = "queue:active:%d";
     private static final String WAITING_KEY = "queue:waiting:%d";
 
-    public void addToActiveQueue(Long eventId, String userId, long score) {
+    public void addToActiveQueue(Long buskingId, String userId, long score) {
         redisTemplate.opsForZSet()
-                .add(generateActiveKey(eventId), userId, score);
+                .add(generateActiveKey(buskingId), userId, score);
     }
 
-    public void addToWaitingQueue(Long eventId, String userId, long score) {
+    public void addToWaitingQueue(Long buskingId, String userId, long score) {
         redisTemplate.opsForZSet()
-                .add(generateWaitingKey(eventId), userId, score);
+                .add(generateWaitingKey(buskingId), userId, score);
     }
 
-    public Double getActiveScore(Long eventId, String userId) {
+    public Double getActiveScore(Long buskingId, String userId) {
         return redisTemplate.opsForZSet()
-                .score(generateActiveKey(eventId), userId);
+                .score(generateActiveKey(buskingId), userId);
     }
 
-    public Long getWaitingRank(Long eventId, String userId) {
+    public Long getWaitingRank(Long buskingId, String userId) {
         return redisTemplate.opsForZSet()
-                .rank(generateWaitingKey(eventId), userId);
+                .rank(generateWaitingKey(buskingId), userId);
     }
 
-    public void removeActiveBeforeExpiryTime(Long eventId, long currentTime) {
-        redisTemplate.opsForZSet().removeRangeByScore(generateActiveKey(eventId), 0, currentTime);
+    public void removeActiveBeforeExpiryTime(Long buskingId, long currentTime) {
+        redisTemplate.opsForZSet().removeRangeByScore(generateActiveKey(buskingId), 0, currentTime);
     }
 
-    public void removeToWaitingQueue(Long eventId, String userId) {
-        redisTemplate.opsForZSet().remove(generateWaitingKey(eventId), userId);
+    public void removeToWaitingQueue(Long buskingId, String userId) {
+        redisTemplate.opsForZSet().remove(generateWaitingKey(buskingId), userId);
     }
 
-    public Set<String> getOldestWaitingUsers(Long eventId, long count) {
-        return redisTemplate.opsForZSet().range(generateWaitingKey(eventId), 0, count-1);
+    public Set<String> getOldestWaitingUsers(Long buskingId, long count) {
+        return redisTemplate.opsForZSet().range(generateWaitingKey(buskingId), 0, count-1);
     }
 
 

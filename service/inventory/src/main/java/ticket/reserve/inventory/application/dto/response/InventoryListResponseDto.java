@@ -6,12 +6,12 @@ import java.util.List;
 
 @Builder
 public record InventoryListResponseDto(
-        EventDetailResponseDto event,
+        BuskingResponseDto busking,
         List<InventoryResponseDto> inventoryList
 ) {
-    public static InventoryListResponseDto of(EventDetailResponseDto event, List<InventoryResponseDto> inventoryList) {
+    public static InventoryListResponseDto of(BuskingResponseDto busking, List<InventoryResponseDto> inventoryList) {
         return InventoryListResponseDto.builder()
-                .event(event)
+                .busking(busking)
                 .inventoryList(inventoryList)
                 .build();
     }

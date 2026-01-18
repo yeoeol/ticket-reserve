@@ -6,7 +6,7 @@ import ticket.reserve.inventory.domain.Inventory;
 @Builder
 public record InventoryResponseDto(
         Long inventoryId,
-        Long eventId,
+        Long buskingId,
         String inventoryName,
         Integer price,
         String status
@@ -14,7 +14,7 @@ public record InventoryResponseDto(
     public static InventoryResponseDto from(Inventory inventory) {
         return InventoryResponseDto.builder()
                 .inventoryId(inventory.getId())
-                .eventId(inventory.getEventId())
+                .buskingId(inventory.getBuskingId())
                 .inventoryName(inventory.getInventoryName())
                 .price(inventory.getPrice())
                 .status(inventory.getStatus().name())

@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 public @interface AllowedUser {
 
     /**
-     * SpEL을 받을 속성 추가 (예: "#request.eventId")
+     * SpEL을 받을 속성 추가 (예: "#request.buskingId")
      */
-    String eventId() default "#request.eventId";
+    String buskingId() default "#request.buskingId";
 
     /**
      * SpEL을 받을 속성 추가 (예: "#userId")

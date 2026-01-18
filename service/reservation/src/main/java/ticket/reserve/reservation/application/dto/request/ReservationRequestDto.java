@@ -6,8 +6,8 @@ import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.tsid.IdGenerator;
 
 public record ReservationRequestDto(
-        @NotNull(message = "이벤트ID는 필수입니다.")
-        Long eventId,
+        @NotNull(message = "버스킹ID는 필수입니다.")
+        Long buskingId,
         @NotNull(message = "좌석ID는 필수입니다.")
         Long inventoryId,
         @NotNull(message = "가격은 필수입니다.")
@@ -16,7 +16,7 @@ public record ReservationRequestDto(
 ) {
     public Reservation toEntity(IdGenerator idGenerator, Long userId) {
         return Reservation.create(
-                idGenerator, userId, this.eventId, this.inventoryId, this.price
+                idGenerator, userId, this.buskingId, this.inventoryId, this.price
         );
     }
 }

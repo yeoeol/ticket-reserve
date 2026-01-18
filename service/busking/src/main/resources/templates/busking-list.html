@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localhost - Find a host</title>
+    <link th:href="@{/buskings/css/busking.css}" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{layout/header::header}"></div>
+<main>
+    <section class="hero">
+        <h1>공연 정보를 검색하세요</h1>
+
+        <form class="search-bar">
+            <div class="input-group">
+                <label for="title">공연명</label>
+                <input type="text" id="title" name="title"  placeholder="Search destinations">
+            </div>
+            <div class="input-group">
+                <label for="startTime">시작 시간</label>
+                <input type="text" id="startTime" name="startTime" placeholder="Add times" onfocus="(this.type='date')">
+            </div>
+            <div class="input-group">
+                <label for="endTime">종료 시간</label>
+                <input type="text" id="endTime" name="endTime" placeholder="Add times" onfocus="(this.type='date')">
+            </div>
+            <div class="input-group">
+                <label for="guest">Guest</label>
+                <input type="text" id="guest" placeholder="Add guests">
+            </div>
+            <button type="submit" class="search-button">🔍 Search</button>
+        </form>
+
+        <div style="margin-top: 30px; display: flex; justify-content: center;">
+            <a th:href="@{/buskings/new}" class="reserve-button"
+               style="width: auto; padding: 12px 30px; text-decoration: none; display: inline-block;">
+                ✨ 이벤트 만들기
+            </a>
+        </div>
+    </section>
+
+    <section class="listings-section">
+        <div class="listings-grid">
+            <div class="listing-card" th:each="busking : ${buskingList}">
+                <a class="listing-card" th:href="@{/buskings/{id}(id=${busking.id})}">
+
+                    <img th:src="${#lists.isEmpty(busking.imageUrls) ?
+                            'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDR8fGNvbmNlcnR8ZW58MHx8fHwxNzMwNTA0NjE5fDA&ixlib=rb-4.0.3&q=80&w=1080' : busking.imageUrls[0]}"
+                         alt="공연 포스터"
+                         style="width: 100%; border-radius: 12px; object-fit: cover;">
+
+                    <span class="like-button">♡</span>
+                    <div class="card-details">
+                        <div class="title-rating">
+                            <span th:text="'공연 이름 : ' + ${busking.title}">eventTitle</span>
+                            <span>⭐ 4.8</span>
+                        </div>
+                        <div class="location" th:text="'위치 : ' + ${busking.location}">Bridlepath, Ontario, Canada</div>
+                        <div class="startTime" th:text="'시작 시간 : ' + ${#temporals.format(busking.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</div>
+                        <div class="endTime" th:text="'종료 시간 : ' + ${#temporals.format(busking.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

@@ -46,7 +46,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    @DisplayName("예매 생성 성공 - 사용자ID, 이벤트ID, 좌석ID를 기반으로 예매 엔티티를 생성한다")
+    @DisplayName("예매 생성 성공 - 사용자ID, 버스킹ID, 좌석ID를 기반으로 예매 엔티티를 생성한다")
     void createReservationSuccess() {
         //given
         ReservationRequestDto request = new ReservationRequestDto(1L, 1L, 5000);

@@ -1,0 +1,37 @@
+package ticket.reserve.busking.application.dto.response;
+
+import lombok.Builder;
+import ticket.reserve.busking.domain.event.Busking;
+import ticket.reserve.busking.domain.eventimage.BuskingImage;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Builder
+public record BuskingResponseDto(
+        Long id,
+        String title,          // 공연 제목
+        String description,
+        String location,            // 장소
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        Integer availableInventory,
+        Integer totalInventoryCount,
+        List<String> imageUrls
+) {
+    public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount) {
+        return BuskingResponseDto.builder()
+                .id(busking.getId())
+                .title(busking.getTitle())
+                .description(busking.getDescription())
+                .location(busking.getLocation())
+                .startTime(busking.getStartTime())
+                .endTime(busking.getEndTime())
+                .availableInventory(availableInventoryCount)
+                .totalInventoryCount(busking.getTotalInventoryCount())
+                .imageUrls(busking.getBuskingImages().stream()
+                        .map(BuskingImage::getStoredPath)
+                        .toList()
+                ).build();
+    }
+}

@@ -18,7 +18,7 @@ eureka:
 endpoints:
   ticket-reserve-user-service:
     url: http://127.0.0.1:30000
-  ticket-reserve-event-service:
+  ticket-reserve-busking-service:
     url: http://127.0.0.1:30001
   ticket-reserve-inventory-service:
     url: http://127.0.0.1:30002

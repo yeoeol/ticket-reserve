@@ -1,0 +1,36 @@
+server:
+  port: 30001
+
+spring:
+  application:
+    name: busking-service
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ticket_events}
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  servlet:
+    multipart:
+      max-file-size: 5MB      # 파일 한 개당 최대 용량
+      max-request-size: 25MB  # 한 번의 요청에 담긴 총 용량 (최대 5장)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+
+endpoints:
+  ticket-reserve-inventory-service:
+    url: http://127.0.0.1:30002
+  ticket-reserve-image-service:
+    url: http://127.0.0.1:33333

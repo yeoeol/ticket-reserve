@@ -1,7 +1,7 @@
 package ticket.reserve.common.event;
 
 import org.junit.jupiter.api.Test;
-import ticket.reserve.common.event.payload.EventCreatedEventPayload;
+import ticket.reserve.common.event.payload.BuskingCreatedEventPayload;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,9 +13,9 @@ class EventTest {
     @Test
     void serde() {
         // given
-        EventCreatedEventPayload payload = EventCreatedEventPayload.builder()
-                .eventId(1L)
-                .eventTitle("titleTest")
+        BuskingCreatedEventPayload payload = BuskingCreatedEventPayload.builder()
+                .buskingId(1L)
+                .title("titleTest")
                 .description("descTest")
                 .location("한국")
                 .startTime(LocalDateTime.now())
@@ -39,9 +39,9 @@ class EventTest {
         assertThat(result.getType()).isEqualTo(event.getType());
         assertThat(result.getPayload()).isInstanceOf(event.getPayload().getClass());
 
-        EventCreatedEventPayload resultPayload = (EventCreatedEventPayload) result.getPayload();
-        assertThat(resultPayload.getEventId()).isEqualTo(payload.getEventId());
-        assertThat(resultPayload.getEventTitle()).isEqualTo(payload.getEventTitle());
+        BuskingCreatedEventPayload resultPayload = (BuskingCreatedEventPayload) result.getPayload();
+        assertThat(resultPayload.getBuskingId()).isEqualTo(payload.getBuskingId());
+        assertThat(resultPayload.getTitle()).isEqualTo(payload.getTitle());
         assertThat(resultPayload.getDescription()).isEqualTo(payload.getDescription());
         assertThat(resultPayload.getLocation()).isEqualTo(payload.getLocation());
         assertThat(resultPayload.getStartTime()).isEqualTo(payload.getStartTime());

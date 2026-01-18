@@ -70,9 +70,9 @@ class ReservationExpiryServiceTest {
                 .publish(any(), any(), anyLong());
     }
 
-    private Reservation createReservation(Long id, Long eventId) {
+    private Reservation createReservation(Long id, Long buskingId) {
         return Reservation.create(
-                () -> id, 1L, eventId, 50L, 5000
+                () -> id, 1L, buskingId, 50L, 5000
         );
     }
 }

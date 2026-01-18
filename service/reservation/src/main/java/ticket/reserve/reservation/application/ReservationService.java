@@ -30,11 +30,11 @@ public class ReservationService {
     private final List<EventHandler> eventHandlers;
     private final IdGenerator idGenerator;
 
-    @AllowedUser(eventId = "#request.eventId", userId = "#userId")
+    @AllowedUser(buskingId = "#request.buskingId", userId = "#userId")
     @Transactional
     public ReservationResponseDto createReservation(ReservationRequestDto request, Long userId) {
         try {
-            InventoryHoldRequestDto holdRequest = new InventoryHoldRequestDto(request.eventId(), request.inventoryId());
+            InventoryHoldRequestDto holdRequest = new InventoryHoldRequestDto(request.buskingId(), request.inventoryId());
             // 좌석 선점 로직
             inventoryPort.holdInventory(holdRequest);
         } catch (Exception e) {

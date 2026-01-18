@@ -13,19 +13,19 @@ public class ReservationApiController {
 
     private final QueueService queueService;
 
-    @PostMapping("/{eventId}/queue/register")
+    @PostMapping("/{id}/queue/register")
     public ResponseEntity<QueueStatusResponseDto> registerQueue(
-            @PathVariable("eventId") Long eventId,
+            @PathVariable("id") Long buskingId,
             @RequestHeader(value = "X-USER-ID", required = false, defaultValue = "0") String userId
     ) {
-        return ResponseEntity.ok(queueService.registerWaitingQueue(eventId, userId));
+        return ResponseEntity.ok(queueService.registerWaitingQueue(buskingId, userId));
     }
 
-    @GetMapping("/{eventId}/queue/rank")
+    @GetMapping("/{id}/queue/rank")
     public ResponseEntity<QueueStatusResponseDto> getRank(
-            @PathVariable("eventId") Long eventId,
+            @PathVariable("id") Long buskingId,
             @RequestHeader(value = "X-USER-ID", required = false, defaultValue = "0") String userId
     ) {
-        return ResponseEntity.ok(queueService.getQueueStatus(eventId, userId));
+        return ResponseEntity.ok(queueService.getQueueStatus(buskingId, userId));
     }
 }
