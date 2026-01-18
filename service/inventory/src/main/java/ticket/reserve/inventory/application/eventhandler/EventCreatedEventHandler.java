@@ -25,7 +25,7 @@ public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEven
         BuskingCreatedEventPayload payload = event.getPayload();
         createInventoryAsTotalInventoryCount(payload.getBuskingId(), payload.getTotalInventoryCount());
         log.info("[EventCreatedEventHandler.handle] 좌석 생성 완료 " +
-                "- eventId = {}, totalInventoryCount = {}", payload.getBuskingId(), payload.getTotalInventoryCount());
+                "- buskingId = {}, totalInventoryCount = {}", payload.getBuskingId(), payload.getTotalInventoryCount());
     }
 
     @Override

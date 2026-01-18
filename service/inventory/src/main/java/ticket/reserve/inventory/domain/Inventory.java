@@ -17,7 +17,7 @@ public class Inventory extends BaseTimeEntity {
     @Column(name = "inventory_id")
     private Long id;
 
-    private Long eventId;
+    private Long buskingId;
 
     private String inventoryName;
 
@@ -27,18 +27,18 @@ public class Inventory extends BaseTimeEntity {
     private InventoryStatus status;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Inventory(IdGenerator idGenerator, Long eventId, String inventoryName, Integer price) {
+    private Inventory(IdGenerator idGenerator, Long buskingId, String inventoryName, Integer price) {
         this.id = idGenerator.nextId();
-        this.eventId = eventId;
+        this.buskingId = buskingId;
         this.inventoryName = inventoryName;
         this.price = price;
         this.status = InventoryStatus.AVAILABLE;
     }
 
-    public static Inventory create(IdGenerator idGenerator, Long eventId, String inventoryName, Integer price) {
+    public static Inventory create(IdGenerator idGenerator, Long buskingId, String inventoryName, Integer price) {
         return Inventory.builder()
                 .idGenerator(idGenerator)
-                .eventId(eventId)
+                .buskingId(buskingId)
                 .inventoryName(inventoryName)
                 .price(price)
                 .build();

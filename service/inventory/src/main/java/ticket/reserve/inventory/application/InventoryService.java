@@ -13,12 +13,12 @@ import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
-import ticket.reserve.inventory.application.port.out.EventPort;
+import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.application.dto.response.InventoryListResponseDto;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.response.InventoryResponseDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
-import ticket.reserve.inventory.application.dto.response.EventDetailResponseDto;
+import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
 import ticket.reserve.tsid.IdGenerator;
@@ -32,13 +32,13 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final List<EventHandler> eventHandlers;
-    private final EventPort eventPort;
+    private final BuskingPort buskingPort;
     private final IdGenerator idGenerator;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
-        EventDetailResponseDto eventResponseDto = eventPort.getOne(request.eventId());
-        Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.eventId());
+        BuskingResponseDto eventResponseDto = buskingPort.getOne(request.buskingId());
+        Integer eventInventoryCount = inventoryRepository.countInventoryByEventId(request.buskingId());
         if (eventResponseDto.totalInventoryCount() == eventInventoryCount) {
             throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
@@ -54,9 +54,9 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public InventoryListResponseDto getInventories(Long eventId) {
-        EventDetailResponseDto responseDto = eventPort.getOne(eventId);
-        List<Inventory> inventoryList = inventoryRepository.findAllByEventId(eventId);
+    public InventoryListResponseDto getInventories(Long buskingId) {
+        BuskingResponseDto responseDto = buskingPort.getOne(buskingId);
+        List<Inventory> inventoryList = inventoryRepository.findAllByBuskingId(buskingId);
 
         List<InventoryResponseDto> responseDtoList = inventoryList.stream()
                 .map(InventoryResponseDto::from)
@@ -66,8 +66,8 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public CustomPageResponse<InventoryResponseDto> getInventoryPaging(Long eventId, Pageable pageable) {
-        Page<Inventory> inventoryPage = inventoryRepository.findAllByEventId(eventId, pageable);
+    public CustomPageResponse<InventoryResponseDto> getInventoryPaging(Long buksingId, Pageable pageable) {
+        Page<Inventory> inventoryPage = inventoryRepository.findAllByBuskingId(buksingId, pageable);
         Page<InventoryResponseDto> inventoryPageResponseDto = inventoryPage.map(InventoryResponseDto::from);
 
         return CustomPageResponse.from(inventoryPageResponseDto);

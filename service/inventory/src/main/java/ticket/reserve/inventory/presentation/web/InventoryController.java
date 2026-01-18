@@ -13,9 +13,9 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @GetMapping("/inventories/{eventId}")
-    public String getAll(@PathVariable Long eventId, Model model) {
-        InventoryListResponseDto inventoryList = inventoryService.getInventories(eventId);
+    @GetMapping("/inventories/{id}")
+    public String getAll(@PathVariable("id") Long buskingId, Model model) {
+        InventoryListResponseDto inventoryList = inventoryService.getInventories(buskingId);
         model.addAttribute("inventoryList", inventoryList);
 
         return "inventory-list";

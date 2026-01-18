@@ -35,34 +35,34 @@ public class InventoryApiController {
     }
 
     @GetMapping("/counts")
-    public ResponseEntity<Integer> countsInventory(@RequestParam("eventId") Long eventId) {
-        return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(eventId));
+    public ResponseEntity<Integer> countsInventory(@RequestParam("id") Long buskingId) {
+        return ResponseEntity.ok(inventoryService.getAvailableInventoryCounts(buskingId));
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/{id}")
     public ResponseEntity<CustomPageResponse<InventoryResponseDto>> getInventories(
-            @PathVariable Long eventId,
+            @PathVariable("id") Long buskingId,
             @RequestParam(value = "page", defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 10);
-        return ResponseEntity.ok(inventoryService.getInventoryPaging(eventId, pageable));
+        return ResponseEntity.ok(inventoryService.getInventoryPaging(buskingId, pageable));
     }
 
-    @GetMapping("/{eventId}/{inventoryId}")
-    public ResponseEntity<InventoryResponseDto> getInventory(@PathVariable("eventId") Long eventId,
+    @GetMapping("/{id}/{inventoryId}")
+    public ResponseEntity<InventoryResponseDto> getInventory(@PathVariable("id") Long buskingId,
                                                              @PathVariable("inventoryId") Long inventoryId) {
         return ResponseEntity.ok(inventoryService.getInventory(inventoryId));
     }
 
-    @PutMapping("/{eventId}/{inventoryId}")
-    public ResponseEntity<Void> updateInventory(@PathVariable("eventId") Long eventId,
+    @PutMapping("/{id}/{inventoryId}")
+    public ResponseEntity<Void> updateInventory(@PathVariable("id") Long buskingId,
                                                 @PathVariable("inventoryId") Long inventoryId,
                                                 @RequestBody InventoryUpdateRequestDto request) {
         inventoryService.updateInventory(inventoryId, request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{eventId}/{inventoryId}")
-    public ResponseEntity<Void> deleteInventory(@PathVariable("eventId") Long eventId,
+    @DeleteMapping("/{id}/{inventoryId}")
+    public ResponseEntity<Void> deleteInventory(@PathVariable("id") Long buskingId,
                                                 @PathVariable("inventoryId") Long inventoryId) {
         inventoryService.deleteInventory(inventoryId);
         return ResponseEntity.ok().build();

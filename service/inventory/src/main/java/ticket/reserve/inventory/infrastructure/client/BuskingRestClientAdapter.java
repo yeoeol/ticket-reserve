@@ -5,32 +5,32 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.inventory.application.dto.response.EventDetailResponseDto;
-import ticket.reserve.inventory.application.port.out.EventPort;
+import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
+import ticket.reserve.inventory.application.port.out.BuskingPort;
 
 @Component
-public class EventRestClientAdapter implements EventPort {
+public class BuskingRestClientAdapter implements BuskingPort {
 
     private final RestClient restClient;
 
-    public EventRestClientAdapter(
+    public BuskingRestClientAdapter(
             RestClient.Builder restClientBuilder,
-            @Value("${endpoints.ticket-reserve-event-service.url}") String eventServiceUrl
+            @Value("${endpoints.ticket-reserve-busking-service.url}") String buskingServiceUrl
     ) {
         this.restClient = restClientBuilder
-                .baseUrl(eventServiceUrl)
+                .baseUrl(buskingServiceUrl)
                 .build();
     }
 
     @Override
-    public EventDetailResponseDto getOne(Long eventId) {
-        if (eventId == null) {
+    public BuskingResponseDto getOne(Long buskingId) {
+        if (buskingId == null) {
             throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
         }
 
         return restClient.get()
-                .uri("/api/buskings/{eventId}", eventId)
+                .uri("/api/buskings/{id}", buskingId)
                 .retrieve()
-                .body(EventDetailResponseDto.class);
+                .body(BuskingResponseDto.class);
     }
 }

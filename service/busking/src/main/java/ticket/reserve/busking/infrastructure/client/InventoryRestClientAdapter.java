@@ -22,13 +22,13 @@ public class InventoryRestClientAdapter implements InventoryPort {
     }
 
     @Override
-    public Integer countsInventory(Long eventId) {
-        if (eventId == null) {
+    public Integer countsInventory(Long buskingId) {
+        if (buskingId == null) {
             throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
         }
 
         Integer count = restClient.get()
-                .uri("/api/inventories/counts?eventId={eventId}", eventId)
+                .uri("/api/inventories/counts?id={id}", buskingId)
                 .retrieve()
                 .body(Integer.class);
 
