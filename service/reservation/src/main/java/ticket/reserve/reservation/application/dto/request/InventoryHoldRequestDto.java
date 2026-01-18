@@ -1,7 +1,7 @@
 package ticket.reserve.reservation.application.dto.request;
 
 public record InventoryHoldRequestDto(
-        Long eventId,
+        Long buskingId,
         Long inventoryId
 ) {
 }

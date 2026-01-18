@@ -4,29 +4,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ticket.reserve.reservation.application.port.out.EventPort;
+import ticket.reserve.reservation.application.port.out.BuskingPort;
 
 import java.util.List;
 
 @Component
-public class EventRestClientAdapter implements EventPort {
+public class BuskingRestClientAdapter implements BuskingPort {
 
     private final RestClient restClient;
 
-    public EventRestClientAdapter(
+    public BuskingRestClientAdapter(
             RestClient.Builder restClientBuilder,
-            @Value("${endpoints.ticket-reserve-event-service.url}") String eventServiceUrl
+            @Value("${endpoints.ticket-reserve-busking-service.url}") String buskingServiceUrl
     ) {
         this.restClient = restClientBuilder
-                .baseUrl(eventServiceUrl)
+                .baseUrl(buskingServiceUrl)
                 .build();
     }
 
     @Override
-    public List<Long> getEventIds() {
+    public List<Long> getIds() {
         return restClient.get()
                 .uri("/api/buskings/ids")
                 .retrieve()
-                .body(new ParameterizedTypeReference<List<Long>>() {});
+                .body(new ParameterizedTypeReference<>() {});
     }
 }

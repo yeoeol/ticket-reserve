@@ -29,15 +29,15 @@ public class QueueInterceptorAop {
         Object[] args = joinPoint.getArgs();
         AllowedUser allowedUser = method.getAnnotation(AllowedUser.class);
 
-        Long eventId = (Long) CustomSpringELParser.getDynamicValue(
-                parameterNames, args, allowedUser.eventId()
+        Long buskingId = (Long) CustomSpringELParser.getDynamicValue(
+                parameterNames, args, allowedUser.buskingId()
         );
         Long userId = (Long) CustomSpringELParser.getDynamicValue(
                 parameterNames, args, allowedUser.userId()
         );
 
         // Active queue에 있는지 확인
-        if (!queueService.isAllowed(eventId, userId)) {
+        if (!queueService.isAllowed(buskingId, userId)) {
             throw new CustomException(ErrorCode.NOT_ALLOWED);
         }
     }

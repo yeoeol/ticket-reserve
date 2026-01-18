@@ -16,7 +16,7 @@ public class Reservation extends BaseTimeEntity {
     private Long id;
 
     private Long userId;
-    private Long eventId;
+    private Long buskingId;
     private Long inventoryId;
     private Integer price;
 
@@ -24,20 +24,20 @@ public class Reservation extends BaseTimeEntity {
     private ReservationStatus status;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Reservation(IdGenerator idGenerator, Long userId, Long eventId, Long inventoryId, Integer price) {
+    private Reservation(IdGenerator idGenerator, Long userId, Long buskingId, Long inventoryId, Integer price) {
         this.id = idGenerator.nextId();
         this.userId = userId;
-        this.eventId = eventId;
+        this.buskingId = buskingId;
         this.inventoryId = inventoryId;
         this.price = price;
         this.status = ReservationStatus.PENDING;
     }
 
-    public static Reservation create(IdGenerator idGenerator, Long userId, Long eventId, Long inventoryId, Integer price) {
+    public static Reservation create(IdGenerator idGenerator, Long userId, Long buskingId, Long inventoryId, Integer price) {
         return Reservation.builder()
                 .idGenerator(idGenerator)
                 .userId(userId)
-                .eventId(eventId)
+                .buskingId(buskingId)
                 .inventoryId(inventoryId)
                 .price(price)
                 .build();
