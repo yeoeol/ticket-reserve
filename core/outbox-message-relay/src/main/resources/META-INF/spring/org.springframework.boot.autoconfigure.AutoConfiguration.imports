@@ -1,1 +1,1 @@
-ticket.reserve.core.outboxmessagerelay.MessageRelayConfig
+ticket.reserve.core.outboxmessagerelay.OutboxModuleConfig

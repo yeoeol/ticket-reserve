@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaAuditing
-@EntityScan(basePackages = "ticket.reserve")
-@EnableJpaRepositories(basePackages = "ticket.reserve")
+@EntityScan(basePackages = "ticket.reserve.busking")
+@EnableJpaRepositories(basePackages = "ticket.reserve.busking")
 public class JpaConfig {
 }

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EntityScan(basePackages = {"ticket.reserve"})
-@EnableJpaRepositories(basePackages = "ticket.reserve")
+@EntityScan(basePackages = "ticket.reserve.payment")
+@EnableJpaRepositories(basePackages = "ticket.reserve.payment")
 public class JpaConfig {
 }

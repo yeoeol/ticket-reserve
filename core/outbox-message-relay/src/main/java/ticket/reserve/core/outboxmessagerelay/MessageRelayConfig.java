@@ -16,9 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-@EnableAsync
 @Configuration
-@ComponentScan("ticket.reserve.common.outboxmessagerelay")
+@EnableAsync
 @EnableScheduling
 public class MessageRelayConfig {
 
