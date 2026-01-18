@@ -2,7 +2,7 @@ package ticket.reserve.user.domain.role;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity
 @Getter

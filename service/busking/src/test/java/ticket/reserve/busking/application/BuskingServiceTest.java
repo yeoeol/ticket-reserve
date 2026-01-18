@@ -9,7 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
@@ -18,7 +18,7 @@ import ticket.reserve.busking.domain.event.Busking;
 import ticket.reserve.busking.domain.event.repository.BuskingRepository;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

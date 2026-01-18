@@ -5,7 +5,7 @@ import lombok.*;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity
 @Getter

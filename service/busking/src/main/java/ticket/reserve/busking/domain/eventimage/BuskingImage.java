@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import ticket.reserve.busking.domain.BaseTimeEntity;
 import ticket.reserve.busking.domain.event.Busking;
 import ticket.reserve.busking.domain.eventimage.enums.ImageType;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity
 @Getter

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;

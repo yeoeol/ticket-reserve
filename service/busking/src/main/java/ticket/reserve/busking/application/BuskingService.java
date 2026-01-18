@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ticket.reserve.common.event.EventType;
-import ticket.reserve.common.event.payload.BuskingCreatedEventPayload;
-import ticket.reserve.common.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
@@ -18,7 +18,7 @@ import ticket.reserve.busking.domain.event.repository.BuskingRepository;
 import ticket.reserve.busking.domain.eventimage.enums.ImageType;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 

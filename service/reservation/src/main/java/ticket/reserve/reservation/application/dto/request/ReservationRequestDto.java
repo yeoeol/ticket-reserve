@@ -3,7 +3,7 @@ package ticket.reserve.reservation.application.dto.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import ticket.reserve.reservation.domain.Reservation;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 public record ReservationRequestDto(
         @NotNull(message = "버스킹ID는 필수입니다.")

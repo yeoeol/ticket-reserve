@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.common.event.Event;
-import ticket.reserve.common.event.EventType;
-import ticket.reserve.common.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Slf4j
 @Component

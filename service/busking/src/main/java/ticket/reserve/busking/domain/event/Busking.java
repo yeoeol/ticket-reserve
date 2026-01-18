@@ -5,7 +5,7 @@ import lombok.*;
 import ticket.reserve.busking.domain.BaseTimeEntity;
 import ticket.reserve.busking.domain.eventimage.BuskingImage;
 import ticket.reserve.busking.domain.eventimage.enums.ImageType;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

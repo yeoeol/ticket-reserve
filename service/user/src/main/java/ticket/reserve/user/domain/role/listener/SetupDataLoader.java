@@ -6,7 +6,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;

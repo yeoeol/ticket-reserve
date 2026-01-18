@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.common.event.Event;
-import ticket.reserve.common.event.EventPayload;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.global.exception.CustomException;
 import ticket.reserve.global.exception.ErrorCode;
 import ticket.reserve.reservation.application.eventHandler.EventHandler;
@@ -16,7 +16,7 @@ import ticket.reserve.reservation.application.dto.response.ReservationResponseDt
 import ticket.reserve.reservation.domain.Reservation;
 import ticket.reserve.reservation.domain.repository.ReservationRepository;
 import ticket.reserve.reservation.global.annotation.AllowedUser;
-import ticket.reserve.tsid.IdGenerator;
+import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 
