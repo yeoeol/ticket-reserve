@@ -24,7 +24,7 @@ public class BuskingController {
         List<BuskingResponseDto> buskingList = buskingService.getAll();
         model.addAttribute("buskingList", buskingList);
 
-        return "event-list";
+        return "busking-list";
     }
 
     @GetMapping("/{id}")
@@ -37,12 +37,12 @@ public class BuskingController {
         model.addAttribute("busking", busking);
         model.addAttribute("isAuthenticated", userId != null);
 
-        return "event-detail";
+        return "busking-detail";
     }
 
     @GetMapping("/new")
     public String createPage() {
-        return "event-create";
+        return "busking-create";
     }
 
     @PostMapping
