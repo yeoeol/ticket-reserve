@@ -47,7 +47,7 @@ public class ReservationExpiryService {
                     ReservationExpiredPayload.builder()
                             .reservationId(reservation.getId())
                             .inventoryId(reservation.getInventoryId())
-                            .eventId(reservation.getEventId())
+                            .buskingId(reservation.getEventId())
                             .userId(reservation.getUserId())
                             .build(),
                     reservation.getEventId()

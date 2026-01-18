@@ -13,6 +13,6 @@ import ticket.reserve.common.event.EventPayload;
 public class ReservationExpiredPayload implements EventPayload {
     private Long reservationId;
     private Long inventoryId;
-    private Long eventId;
+    private Long buskingId;
     private Long userId;
 }

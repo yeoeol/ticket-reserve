@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.common.event.Event;
 import ticket.reserve.common.event.EventType;
-import ticket.reserve.common.event.payload.EventCreatedEventPayload;
+import ticket.reserve.common.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
 import ticket.reserve.tsid.IdGenerator;
@@ -14,22 +14,22 @@ import ticket.reserve.tsid.IdGenerator;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventCreatedEventHandler implements EventHandler<EventCreatedEventPayload> {
+public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
     private final InventoryRepository inventoryRepository;
     private final IdGenerator idGenerator;
 
     @Override
     @Transactional
-    public void handle(Event<EventCreatedEventPayload> event) {
-        EventCreatedEventPayload payload = event.getPayload();
-        createInventoryAsTotalInventoryCount(payload.getEventId(), payload.getTotalInventoryCount());
+    public void handle(Event<BuskingCreatedEventPayload> event) {
+        BuskingCreatedEventPayload payload = event.getPayload();
+        createInventoryAsTotalInventoryCount(payload.getBuskingId(), payload.getTotalInventoryCount());
         log.info("[EventCreatedEventHandler.handle] 좌석 생성 완료 " +
-                "- eventId = {}, totalInventoryCount = {}", payload.getEventId(), payload.getTotalInventoryCount());
+                "- eventId = {}, totalInventoryCount = {}", payload.getBuskingId(), payload.getTotalInventoryCount());
     }
 
     @Override
-    public boolean supports(Event<EventCreatedEventPayload> event) {
+    public boolean supports(Event<BuskingCreatedEventPayload> event) {
         return EventType.EVENT_CREATED == event.getType();
     }
 
