@@ -74,13 +74,13 @@ public class BuskingService {
 
         return buskingRepository.findById(buskingId)
                 .map(e -> BuskingResponseDto.from(e, availableInventoryCount))
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
     }
 
     @Transactional
     public void update(Long id, BuskingUpdateRequestDto request) {
         Busking event = buskingRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
 
         event.update(
                 request.title(), request.description(), request.location(),

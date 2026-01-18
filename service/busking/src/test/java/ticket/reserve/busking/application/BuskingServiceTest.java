@@ -131,8 +131,8 @@ class BuskingServiceTest {
         //then
         assertThat(throwable)
                 .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.EVENT_NOT_FOUND.getMessage())
-                .extracting("errorCode").isEqualTo(ErrorCode.EVENT_NOT_FOUND);
+                .hasMessage(ErrorCode.BUSKING_NOT_FOUND.getMessage())
+                .extracting("errorCode").isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
     }
 
 }

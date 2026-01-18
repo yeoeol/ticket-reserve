@@ -25,7 +25,7 @@ public class BuskingRestClientAdapter implements BuskingPort {
     @Override
     public BuskingResponseDto getOne(Long buskingId) {
         if (buskingId == null) {
-            throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
+            throw new CustomException(ErrorCode.BUSKING_NOT_FOUND);
         }
 
         return restClient.get()
