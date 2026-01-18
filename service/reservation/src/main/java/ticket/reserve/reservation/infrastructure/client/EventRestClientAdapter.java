@@ -25,7 +25,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public List<Long> getEventIds() {
         return restClient.get()
-                .uri("/api/events/event-ids")
+                .uri("/api/buskings/ids")
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<Long>>() {});
     }

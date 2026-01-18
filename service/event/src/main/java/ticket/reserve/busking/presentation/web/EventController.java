@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/events")
+@RequestMapping("/buskings")
 public class EventController {
 
     private final EventService eventService;

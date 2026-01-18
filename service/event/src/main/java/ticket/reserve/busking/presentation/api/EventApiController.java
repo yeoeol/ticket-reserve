@@ -16,7 +16,7 @@ import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/events")
+@RequestMapping("/api/buskings")
 public class EventApiController {
 
     private final EventService eventService;
@@ -52,7 +52,7 @@ public class EventApiController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/event-ids")
+    @GetMapping("/ids")
     public ResponseEntity<List<Long>> getEventIds() {
         return ResponseEntity.ok(eventService.getEventIds());
     }

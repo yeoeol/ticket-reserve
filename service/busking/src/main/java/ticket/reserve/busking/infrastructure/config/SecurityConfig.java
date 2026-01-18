@@ -23,8 +23,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/events/css/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/{id:\\d+}", "/api/events/event-ids", "/events", "/events/{id:\\d+}").permitAll()
+                        .requestMatchers("/buskings/css/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/buskings", "/api/buskings/{id:\\d+}", "/api/buskings/ids", "/buskings", "/buskings/{id:\\d+}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new HeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

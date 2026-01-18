@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>버스킹 공연 등록 | Busking Station</title>
-    <link th:href="@{/events/css/event.css}" rel="stylesheet">
+    <link th:href="@{/buskings/css/busking.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
         <p class="event-meta">새로운 버스킹 공연 정보를 입력해주세요.</p>
     </div>
 
-    <form action="/events" method="POST" enctype="multipart/form-data">
+    <form action="/buskings" method="POST" enctype="multipart/form-data">
 
         <div class="form-group">
             <label for="eventTitle">공연 제목</label>

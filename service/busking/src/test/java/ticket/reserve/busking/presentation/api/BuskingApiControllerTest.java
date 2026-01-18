@@ -43,7 +43,7 @@ class BuskingApiControllerTest {
     @Test
     @DisplayName("이벤트 조회 컨트롤러 성공 - GET /api/events 호출 시 이벤트 리스트를 조회한다")
     void getEventsSuccess() throws Exception {
-        given(buskingService.getAllEvents())
+        given(buskingService.getAll())
                 .willReturn(List.of(
                         EventResponseDto.from(createEvent(1L)),
                         EventResponseDto.from(createEvent(2L))

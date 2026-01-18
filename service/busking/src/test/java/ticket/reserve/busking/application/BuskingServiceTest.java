@@ -59,7 +59,7 @@ class BuskingServiceTest {
 
     @Test
     @DisplayName("이벤트 생성 성공 - 요청 정보를 기반으로 이벤트를 생성한다")
-    void createEventSuccess() {
+    void createSuccess() {
         //given
         BuskingRequestDto request = new BuskingRequestDto(
                 "testTitle", "testDesc", "장소",
@@ -71,7 +71,7 @@ class BuskingServiceTest {
                 .willReturn(event);
 
         //when
-        BuskingResponseDto response = buskingService.createEvent(request, null);
+        BuskingResponseDto response = buskingService.create(request, null);
 
         //then
         Busking savedEvent = eventCaptor.getValue();
@@ -93,7 +93,7 @@ class BuskingServiceTest {
 
     @Test
     @DisplayName("이벤트 수정 성공 - 수정 정보를 기반으로 이벤트 엔티티를 수정한다")
-    void updateEventSuccess() {
+    void updateSuccess() {
         //given
         BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
                 "updateEventTitle", "updateDesc", "테스트장소",
@@ -103,7 +103,7 @@ class BuskingServiceTest {
                 .willReturn(Optional.of(event));
 
         //when
-        buskingService.updateEvent(1234L, request);
+        buskingService.update(1234L, request);
 
         //then
         assertThat(event.getTitle()).isEqualTo(request.eventTitle());
@@ -116,7 +116,7 @@ class BuskingServiceTest {
 
     @Test
     @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
-    void updateEventFail_EventNotFound() {
+    void updateEventFail_NotFound() {
         //given
         BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
                 "updateEventTitle", "updateDesc", "테스트장소",
@@ -126,7 +126,7 @@ class BuskingServiceTest {
                 .willReturn(Optional.empty());
 
         //when
-        Throwable throwable = catchThrowable(() -> buskingService.updateEvent(9999L, request));
+        Throwable throwable = catchThrowable(() -> buskingService.update(9999L, request));
 
         //then
         assertThat(throwable)

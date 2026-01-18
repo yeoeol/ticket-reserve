@@ -29,7 +29,7 @@ public class EventRestClientAdapter implements EventPort {
         }
 
         return restClient.get()
-                .uri("/api/events/{eventId}", eventId)
+                .uri("/api/buskings/{eventId}", eventId)
                 .retrieve()
                 .body(EventDetailResponseDto.class);
     }

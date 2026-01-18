@@ -24,8 +24,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     public static final List<String> permitUris = List.of(
             // user-service
             "/users", "/users/register", "/users/login",
-            // event-service
-            "/events/**",
+            // busking-service
+            "/buskings/**",
             // static resources
             "/users/css/**"
     );

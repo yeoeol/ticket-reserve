@@ -16,44 +16,44 @@ import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/events")
+@RequestMapping("/api/buskings")
 public class BuskingApiController {
 
     private final BuskingService buskingService;
 
     @GetMapping
-    public ResponseEntity<List<BuskingResponseDto>> getEvents() {
-        return ResponseEntity.ok(buskingService.getAllEvents());
+    public ResponseEntity<List<BuskingResponseDto>> getAll() {
+        return ResponseEntity.ok(buskingService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BuskingResponseDto> getEvent(@PathVariable Long id) {
-        return ResponseEntity.ok(buskingService.getEvent(id));
+    public ResponseEntity<BuskingResponseDto> get(@PathVariable Long id) {
+        return ResponseEntity.ok(buskingService.getOne(id));
     }
 
     @PostMapping(consumes = {APPLICATION_JSON_VALUE, MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<BuskingResponseDto> createEvent(
+    public ResponseEntity<BuskingResponseDto> create(
             @Valid @RequestPart(value = "request") BuskingRequestDto request,
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        return ResponseEntity.ok(buskingService.createEvent(request, file));
+        return ResponseEntity.ok(buskingService.create(request, file));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEvent(@PathVariable("id") Long eventId,
+    public ResponseEntity<Void> update(@PathVariable("id") Long buskingId,
                                             @RequestBody BuskingUpdateRequestDto request) {
-        buskingService.updateEvent(eventId, request);
+        buskingService.update(buskingId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable("id") Long eventId) {
-        buskingService.deleteEvent(eventId);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long eventId) {
+        buskingService.delete(eventId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/event-ids")
-    public ResponseEntity<List<Long>> getEventIds() {
-        return ResponseEntity.ok(buskingService.getEventIds());
+    @GetMapping("/ids")
+    public ResponseEntity<List<Long>> getIds() {
+        return ResponseEntity.ok(buskingService.getIds());
     }
 }

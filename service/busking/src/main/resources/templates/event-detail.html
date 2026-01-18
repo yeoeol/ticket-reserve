@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>localhost - Event Details</title>
-    <link th:href="@{/events/css/event.css}" rel="stylesheet">
+    <link th:href="@{/buskings/css/busking.css}" rel="stylesheet">
 </head>
 <body>
 
 <div th:replace="~{layout/header::header}"></div>
 <main>
-    <div class="detail-container" th:object="${event}">
+    <div class="detail-container" th:object="${busking}">
 
         <section class="event-title-header">
-            <h1 th:text="*{eventTitle}">공연 이름 예시 (예: 락 페스티벌)</h1>
+            <h1 th:text="*{title}">공연 이름 예시 (예: 락 페스티벌)</h1>
             <div class="event-meta">
                 <span>⭐ 4.8</span>
                 <span th:text="'· ' + *{location}">· 위치: 서울시 강남구</span>
@@ -23,13 +23,13 @@
         <section class="event-content">
 
             <section class="event-image">
-                <div th:each="url : ${event.imageUrls}" class="image-wrapper" style="margin-bottom: 10px;">
+                <div th:each="url : ${busking.imageUrls}" class="image-wrapper" style="margin-bottom: 10px;">
                     <img th:src="${url}"
                          alt="공연 포스터"
                          style="width: 100%; border-radius: 12px; object-fit: cover;">
                 </div>
 
-                <div th:if="${#lists.isEmpty(event.imageUrls)}">
+                <div th:if="${#lists.isEmpty(busking.imageUrls)}">
                     <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjU2NHwwfDF8c2VhcmNofDR8fGNvbmNlcnR8ZW58MHx8fHwxNzMwNTA0NjE5fDA&ixlib=rb-4.0.3&q=80&w=1080" alt="기본 포스터" style="width: 100%; border-radius: 12px;">
                 </div>
             </section>
@@ -40,12 +40,12 @@
 
                     <div class="info-item">
                         <strong>시작 시간</strong>
-                        <span th:text="${#temporals.format(event.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</span>
+                        <span th:text="${#temporals.format(busking.startTime, 'yyyy년 MM월 dd일 HH:mm')}">시작 시간</span>
                     </div>
 
                     <div class="info-item">
                         <strong>종료 시간</strong>
-                        <span th:text="${#temporals.format(event.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</span>
+                        <span th:text="${#temporals.format(busking.endTime, 'yyyy년 MM월 dd일 HH:mm')}">종료 시간</span>
                     </div>
 
                     <div class="info-item">
@@ -61,7 +61,7 @@
 
         <section class="event-description">
             <h2>공연 소개</h2>
-            <p th:text="${event.description}">
+            <p th:text="${busking.description}">
                 이곳에 공연에 대한 상세 설명이 들어갑니다.
             </p>
         </section>
@@ -90,7 +90,7 @@
 </style>
 
 <script th:inline="javascript">
-    const eventId = '[[${event.id}]]';
+    const buskingId = '[[${busking.id}]]';
     const isAuthenticated = [[${isAuthenticated}]];
 
     function startReservation() {
@@ -103,13 +103,13 @@
         }
 
         // 대기열 등록 요청 (POST)
-        fetch(`/api/reservations/${eventId}/queue/register`, {
+        fetch(`/api/reservations/${buskingId}/queue/register`, {
             method: 'POST'
         })
             .then(res => res.json())
             .then(data => {
                 if (data.status === "ACTIVE") {
-                    goToInventoryPage(eventId);
+                    goToInventoryPage(buskingId);
                 } else {
                     // 대기 상태 진입 -> 모달 띄우고 폴링 시작
                     showQueueModal(data.rank);
@@ -127,12 +127,12 @@
     function startPolling() {
         // 3초마다 내 순번 확인 (GET)
         pollingInterval = setInterval(() => {
-            fetch(`/api/reservations/${eventId}/queue/rank`)
+            fetch(`/api/reservations/${buskingId}/queue/rank`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === "ACTIVE") {
                         clearInterval(pollingInterval); // 폴링 중단
-                        goToInventoryPage(eventId);
+                        goToInventoryPage(buskingId);
                     } else {
                         // 아직 대기 중 -> 화면에 순번 업데이트
                         updateQueueRank(data.rank);
@@ -144,9 +144,9 @@
         }, 3000); // 3000ms = 3초
     }
 
-    function goToInventoryPage(eventId) {
+    function goToInventoryPage(buskingId) {
         // 좌석 선택 페이지로 이동
-        window.location.href = `/inventories/${eventId}`;
+        window.location.href = `/inventories/${buskingId}`;
     }
 
     function showQueueModal(rank) {

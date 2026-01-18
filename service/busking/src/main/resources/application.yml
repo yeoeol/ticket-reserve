@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: event-service
+    name: busking-service
 
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/ticket_events}

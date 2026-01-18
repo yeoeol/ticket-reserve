@@ -14,43 +14,43 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/events")
+@RequestMapping("/buskings")
 public class BuskingController {
 
     private final BuskingService buskingService;
 
     @GetMapping
     public String getAll(Model model) {
-        List<BuskingResponseDto> eventList = buskingService.getAllEvents();
-        model.addAttribute("eventList", eventList);
+        List<BuskingResponseDto> buskingList = buskingService.getAll();
+        model.addAttribute("buskingList", buskingList);
 
         return "event-list";
     }
 
     @GetMapping("/{id}")
     public String getOne(
-            @PathVariable("id") Long eventId,
+            @PathVariable("id") Long buskingId,
             @AuthenticationPrincipal String userId,
             Model model
     ) {
-        BuskingResponseDto event = buskingService.getEvent(eventId);
-        model.addAttribute("event", event);
+        BuskingResponseDto busking = buskingService.getOne(buskingId);
+        model.addAttribute("busking", busking);
         model.addAttribute("isAuthenticated", userId != null);
 
         return "event-detail";
     }
 
     @GetMapping("/new")
-    public String createEventPage() {
+    public String createPage() {
         return "event-create";
     }
 
     @PostMapping
-    public String createEvent(
+    public String create(
             BuskingRequestDto request,
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        BuskingResponseDto response = buskingService.createEvent(request, file);
-        return "redirect:/events/%d".formatted(response.id());
+        BuskingResponseDto response = buskingService.create(request, file);
+        return "redirect:/buskings/%d".formatted(response.id());
     }
 }

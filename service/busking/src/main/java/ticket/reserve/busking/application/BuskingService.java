@@ -33,7 +33,7 @@ public class BuskingService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public BuskingResponseDto createEvent(BuskingRequestDto request, MultipartFile file) {
+    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
         if (file != null && !file.isEmpty()) {
             ImageResponseDto imageResponse = imagePort.uploadImage(file);
@@ -62,14 +62,14 @@ public class BuskingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BuskingResponseDto> getAllEvents() {
+    public List<BuskingResponseDto> getAll() {
         return buskingRepository.findAll().stream()
                 .map(e -> BuskingResponseDto.from(e, inventoryPort.countsInventory(e.getId())))
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public BuskingResponseDto getEvent(Long eventId) {
+    public BuskingResponseDto getOne(Long eventId) {
         Integer availableInventoryCount = inventoryPort.countsInventory(eventId);
 
         return buskingRepository.findById(eventId)
@@ -78,7 +78,7 @@ public class BuskingService {
     }
 
     @Transactional
-    public void updateEvent(Long id, BuskingUpdateRequestDto request) {
+    public void update(Long id, BuskingUpdateRequestDto request) {
         Busking event = buskingRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
@@ -89,12 +89,12 @@ public class BuskingService {
     }
 
     @Transactional
-    public void deleteEvent(Long id) {
+    public void delete(Long id) {
         buskingRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Long> getEventIds() {
+    public List<Long> getIds() {
         return buskingRepository.findEventIds();
     }
 }

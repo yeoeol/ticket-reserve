@@ -28,7 +28,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public List<EventDetailResponseDto> getEvents() {
         return restClient.get()
-                .uri("/api/events")
+                .uri("/api/buskings")
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
     }
@@ -36,7 +36,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public EventDetailResponseDto getEvent(Long eventId) {
         return restClient.get()
-                .uri("/api/events/{eventId}", eventId)
+                .uri("/api/buskings/{eventId}", eventId)
                 .retrieve()
                 .body(EventDetailResponseDto.class);
     }
@@ -44,7 +44,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public EventDetailResponseDto createEvent(EventRequestDto request) {
         return restClient.post()
-                .uri("/api/events")
+                .uri("/api/buskings")
                 .body(request)
                 .retrieve()
                 .body(EventDetailResponseDto.class);
@@ -53,7 +53,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public void updateEvent(Long eventId, EventUpdateRequestDto request) {
         restClient.put()
-                .uri("/api/events/{eventId}", eventId)
+                .uri("/api/buskings/{eventId}", eventId)
                 .body(request)
                 .retrieve()
                 .toBodilessEntity();
@@ -62,7 +62,7 @@ public class EventRestClientAdapter implements EventPort {
     @Override
     public void deleteEvent(Long eventId) {
         restClient.delete()
-                .uri("/api/events/{eventId}", eventId)
+                .uri("/api/buskings/{eventId}", eventId)
                 .retrieve()
                 .toBodilessEntity();
     }
