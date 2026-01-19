@@ -4,7 +4,6 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    implementation 'org.springframework.cloud:spring-cloud-config-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     implementation 'com.azure.spring:spring-cloud-azure-starter-storage-blob:6.1.0'

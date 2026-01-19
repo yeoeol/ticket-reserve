@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
 
 spring:
   application:
@@ -40,6 +40,11 @@ spring:
               uri: lb://IMAGE-SERVICE
               predicates:
                 - Path=/api/images/**
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 eureka:
   client:
