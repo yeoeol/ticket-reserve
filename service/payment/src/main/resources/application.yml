@@ -31,3 +31,4 @@ payment:
   secret-key: ${PAYMENT_SECRET_KEY:test_sk_LkKEypNArWY0gB5nqpxe3lmeaxYG}
   base-url: https://api.tosspayments.com
   confirm-endpoint: /confirm
+  gateway-url: ${GATEWAY_URL:http://localhost:8080}

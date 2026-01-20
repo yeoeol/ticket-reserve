@@ -35,6 +35,7 @@ public class PaymentController {
         model.addAttribute("orderId", orderId);
         model.addAttribute("orderName", "티켓 예매");
         model.addAttribute("clientKey", paymentPropertiesPort.getClientKey());
+        model.addAttribute("gatewayUrl", paymentPropertiesPort.getGatewayUrl());
 
         paymentService.createPayment(orderId, request.userId(), request.reservationId(), request.inventoryId());
         return "payment";

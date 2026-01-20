@@ -16,6 +16,7 @@ public class PaymentProperties implements PaymentPropertiesPort {
     private String secretKey;
     private String baseUrl;
     private String confirmEndpoint;
+    private String gatewayUrl;
 
     public String getConfirmUrl() {
         return baseUrl+confirmEndpoint;
