@@ -1,4 +1,4 @@
-package ticket.reserve.global.exception;
+package ticket.reserve.core.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
