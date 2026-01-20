@@ -39,7 +39,7 @@ public class InventoryService {
     public void createInventory(InventoryRequestDto request) {
         BuskingResponseDto eventResponseDto = buskingPort.getOne(request.buskingId());
         Integer eventInventoryCount = inventoryRepository.countInventoryByBuskingId(request.buskingId());
-        if (eventResponseDto.totalInventoryCount() == eventInventoryCount) {
+        if (eventResponseDto.totalInventoryCount().equals(eventInventoryCount)) {
             throw new CustomException(ErrorCode.INVENTORY_EXCEED);
         }
 

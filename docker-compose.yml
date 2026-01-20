@@ -1,0 +1,225 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tr-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_APP_USER}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD}
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      timeout: 5s
+      retries: 10
+      interval: 5s
+    networks:
+      - tr-network
+
+  redis:
+    image: redis:alpine
+    container_name: tr-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - tr-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: tr-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - tr-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: tr-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - tr-network
+
+  # 토픽 자동 생성을 위한 설정 컨테이너
+  kafka-setup:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: tr-kafka-setup
+    depends_on:
+      - kafka
+    networks:
+      - tr-network
+    entrypoint: [ "sh", "-c", "
+      echo 'Waiting for Kafka to be ready...';
+      cub kafka-ready -b kafka:29092 1 30;
+      echo 'Creating topics...';
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-admin;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-event;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-inventory;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-payment;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-reservation;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-user;
+      echo 'Successfully created topics';
+      " ]
+
+  registry:
+    build:
+      context: ./platform/registry
+    container_name: tr-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - tr-network
+
+  gateway-platform:
+    build:
+      context: ./platform/gateway
+    container_name: tr-gateway-platform
+    env_file:
+      - ./.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      registry:
+        condition: service_started
+    networks:
+      - tr-network
+
+  user-service:
+    build:
+      context: ./service/user
+    container_name: tr-user-service
+    env_file:
+      - ./.env
+    ports:
+      - "30000:30000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  busking-service:
+    build:
+      context: ./service/busking
+    container_name: tr-busking-service
+    env_file:
+      - ./.env
+    ports:
+      - "30001:30001"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      kafka-setup:
+        condition: service_started
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  inventory-service:
+    build:
+      context: ./service/inventory
+    container_name: tr-inventory-service
+    env_file:
+      - ./.env
+    ports:
+      - "30002:30002"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      kafka-setup:
+        condition: service_started
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  reservation-service:
+    build:
+      context: ./service/reservation
+    container_name: tr-reservation-service
+    env_file:
+      - ./.env
+    ports:
+      - "30003:30003"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      kafka-setup:
+        condition: service_started
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  payment-service:
+    build:
+      context: ./service/payment
+    container_name: tr-payment-service
+    env_file:
+      - ./.env
+    ports:
+      - "30004:30004"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka-setup:
+        condition: service_started
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  image-service:
+    build:
+      context: ./service/image
+    container_name: tr-image-service
+    env_file:
+      - ./.env
+    ports:
+      - "33333:33333"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+networks:
+  tr-network:
+    driver: bridge

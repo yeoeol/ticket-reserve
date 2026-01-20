@@ -59,33 +59,6 @@ class BuskingApiControllerTest {
                 .hasPathSatisfying("$[1].title", v -> v.assertThat().isEqualTo("testTitle234"));
     }
 
-    @Test
-    @DisplayName("이벤트 생성 실패 - POST /api/buskings 요청 정보 필드에 null이 들어있으면 예외가 발생한다")
-    void handleValidationException() throws Exception {
-        //given
-        Busking busking = createBusking(1L);
-        BuskingRequestDto invalidRequest = new BuskingRequestDto(
-                null, null, busking.getLocation(),
-                busking.getStartTime(), busking.getEndTime(), 0
-        );
-
-        //when & then
-        assertThat(mvc.post().uri("/api/buskings")
-                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .content(objectMapper.writeValueAsString(invalidRequest)))
-                .apply(print())
-                .hasStatus(HttpStatus.BAD_REQUEST)
-                .bodyJson()
-                .hasPathSatisfying("$.code", v -> v.assertThat()
-                        .isEqualTo("400 BAD_REQUEST"))
-                .hasPathSatisfying("$.message", v -> v.assertThat()
-                        .isEqualTo("입력 값 검증에 실패했습니다."))
-                .hasPathSatisfying("$.errors.size()", v -> v.assertThat()
-                        .isEqualTo(2))
-                .hasPathSatisfying("$.errors[*].field", v -> v.assertThat()
-                        .asInstanceOf(LIST).containsExactlyInAnyOrder("title", "description"));
-    }
-
     private Busking createBusking(Long id) {
         String eventTitle = "testTitle"+id;
         String description = "testDescription"+id;

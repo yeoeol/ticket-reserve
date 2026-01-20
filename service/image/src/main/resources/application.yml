@@ -6,10 +6,17 @@ spring:
     name: image-service
 
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/images}
+    url: ${IMAGE_DB_URL:jdbc:mysql://localhost:3306/images}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${IMAGE_DB_USERNAME:root}
+    password: ${IMAGE_DB_PASSWORD}
 
-  config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: create
 
   cloud:
     azure:
