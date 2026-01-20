@@ -1,23 +1,4 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: tr-mysql
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_APP_USER}
-      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD}
-    volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      timeout: 5s
-      retries: 10
-      interval: 5s
-    networks:
-      - tr-network
-
   redis:
     image: redis:alpine
     container_name: tr-redis
@@ -74,8 +55,7 @@ services:
       " ]
 
   registry:
-    build:
-      context: ./platform/registry
+    image: ${DOCKERHUB_USERNAME}/tr-registry:latest
     container_name: tr-registry
     ports:
       - "8761:8761"
@@ -83,8 +63,7 @@ services:
       - tr-network
 
   gateway-platform:
-    build:
-      context: ./platform/gateway
+    image: ${DOCKERHUB_USERNAME}/tr-gateway:latest
     container_name: tr-gateway-platform
     env_file:
       - ./.env
@@ -97,16 +76,13 @@ services:
       - tr-network
 
   user-service:
-    build:
-      context: ./service/user
+    image: ${DOCKERHUB_USERNAME}/tr-user:latest
     container_name: tr-user-service
     env_file:
       - ./.env
     ports:
       - "30000:30000"
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_started
       registry:
@@ -117,16 +93,13 @@ services:
       - tr-network
 
   busking-service:
-    build:
-      context: ./service/busking
+    image: ${DOCKERHUB_USERNAME}/tr-busking:latest
     container_name: tr-busking-service
     env_file:
       - ./.env
     ports:
       - "30001:30001"
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_started
       kafka-setup:
@@ -139,16 +112,13 @@ services:
       - tr-network
 
   inventory-service:
-    build:
-      context: ./service/inventory
+    image: ${DOCKERHUB_USERNAME}/tr-inventory:latest
     container_name: tr-inventory-service
     env_file:
       - ./.env
     ports:
       - "30002:30002"
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_started
       kafka-setup:
@@ -161,16 +131,13 @@ services:
       - tr-network
 
   reservation-service:
-    build:
-      context: ./service/reservation
+    image: ${DOCKERHUB_USERNAME}/tr-reservation:latest
     container_name: tr-reservation-service
     env_file:
       - ./.env
     ports:
       - "30003:30003"
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_started
       kafka-setup:
@@ -183,16 +150,13 @@ services:
       - tr-network
 
   payment-service:
-    build:
-      context: ./service/payment
+    image: ${DOCKERHUB_USERNAME}/tr-payment:latest
     container_name: tr-payment-service
     env_file:
       - ./.env
     ports:
       - "30004:30004"
     depends_on:
-      mysql:
-        condition: service_healthy
       kafka-setup:
         condition: service_started
       registry:
@@ -203,16 +167,13 @@ services:
       - tr-network
 
   image-service:
-    build:
-      context: ./service/image
+    image: ${DOCKERHUB_USERNAME}/tr-image:latest
     container_name: tr-image-service
     env_file:
       - ./.env
     ports:
       - "33333:33333"
     depends_on:
-      mysql:
-        condition: service_healthy
       registry:
         condition: service_started
       gateway-platform:

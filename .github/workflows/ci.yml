@@ -33,3 +33,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          SERVICE_NAME=$(echo ${{ matrix.service }} | cut -d':' -f2)
+          SERVICE_PATH=$(echo ${{ matrix.service }} | tr ':' '/')
+          
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tr-$SERVICE_NAME:latest $SERVICE_PATH
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tr-$SERVICE_NAME:latest
