@@ -21,12 +21,12 @@ jobs:
       - name: Build Microservices with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew :service:user:build \
-                    :service:busking:build \
-                    :service:inventory:build \
-                    :service:reservation:build \
-                    :service:payment:build \
-                    :service:image:build \
-                    :platform:gateway:build \
-                    :platform:registry:build \
+          ./gradlew :service:user:bootJar \
+                    :service:busking:bootJar \
+                    :service:inventory:bootJar \
+                    :service:reservation:bootJar \
+                    :service:payment:bootJar \
+                    :service:image:bootJar \
+                    :platform:gateway:bootJar \
+                    :platform:registry:bootJar \
                     -x test
