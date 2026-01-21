@@ -5,20 +5,28 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.InventoryService;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.*;
 
 @Slf4j
 @SpringBootTest
@@ -29,6 +37,9 @@ class InventoryServiceTest {
 
     @Autowired
     InventoryRepository inventoryRepository;
+
+    @Autowired
+    InboxRepository inboxRepository;
 
     Inventory inventory = null;
     final int numberOfThreads = 100;
@@ -147,6 +158,39 @@ class InventoryServiceTest {
         assertThat(failCount.get()).isNotEqualTo(numberOfThreads-1);
 
         printLog(failCount, persistedInventory);
+    }
+
+    @Test
+    @DisplayName("카프카 중복 이벤트 동시성100개 테스트")
+    void 카프카_중복_이벤트_동시성100명_테스트() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+
+        Event<EventPayload> event = createEvent();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            executorService.submit(() -> {
+                inventoryService.handleEvent(event);
+                latch.countDown();
+            });
+        }
+        latch.await();
+
+        verify(inboxRepository, times(1)).save(any());
+    }
+
+    private static Event<EventPayload> createEvent() {
+        return Event.of(1234L, EventType.EVENT_CREATED,
+                BuskingCreatedEventPayload.builder()
+                        .buskingId(1L)
+                        .title("testTitle")
+                        .description("testDesc")
+                        .location("testLoc")
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .totalInventoryCount(10)
+                        .build()
+        );
     }
 
     private void printLog(AtomicInteger failCount, Inventory persistedInventory) {
