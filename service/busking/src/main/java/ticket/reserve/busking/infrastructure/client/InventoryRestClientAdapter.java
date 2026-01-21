@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ticket.reserve.busking.application.port.out.InventoryPort;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 
 @Component
 public class InventoryRestClientAdapter implements InventoryPort {

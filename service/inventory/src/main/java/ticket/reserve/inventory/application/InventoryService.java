@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
+import ticket.reserve.core.inbox.Inbox;
+import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
@@ -34,6 +36,7 @@ public class InventoryService {
     private final List<EventHandler> eventHandlers;
     private final BuskingPort buskingPort;
     private final IdGenerator idGenerator;
+    private final InboxRepository inboxRepository;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
@@ -112,13 +115,20 @@ public class InventoryService {
         inventoryRepository.deleteById(inventoryId);
     }
 
+    @Transactional
     public void handleEvent(Event<EventPayload> event) {
+        if (inboxRepository.findByEventId(event.getEventId()).isPresent()) {
+            return;
+        }
+
         EventHandler<EventPayload> eventHandler = findEventHandler(event);
         if (eventHandler == null) {
             return;
         }
 
         eventHandler.handle(event);
+
+        inboxRepository.save(Inbox.create(idGenerator, event.getEventId(), event.getType()));
     }
 
     private Inventory getInventoryById(Long buskingId, Long inventoryId) {

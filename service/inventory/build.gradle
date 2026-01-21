@@ -17,5 +17,6 @@ dependencies {
 
     implementation project(':core:event')
     implementation project(':core:global')
+    implementation project(':core:inbox')
     implementation project(':core:tsid')
 }

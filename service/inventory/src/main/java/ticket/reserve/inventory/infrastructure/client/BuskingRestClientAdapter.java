@@ -3,8 +3,8 @@ package ticket.reserve.inventory.infrastructure.client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
 import ticket.reserve.inventory.application.port.out.BuskingPort;
 

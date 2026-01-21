@@ -20,7 +20,6 @@ public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEven
     private final IdGenerator idGenerator;
 
     @Override
-    @Transactional
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
         createInventoryAsTotalInventoryCount(payload.getBuskingId(), payload.getTotalInventoryCount());

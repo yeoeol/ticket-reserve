@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.PaymentConfirmedEventPayload;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
 
@@ -20,7 +20,6 @@ public class PaymentConfirmedEventHandler implements EventHandler<PaymentConfirm
     private final InventoryRepository inventoryRepository;
 
     @Override
-    @Transactional
     public void handle(Event<PaymentConfirmedEventPayload> event) {
         PaymentConfirmedEventPayload payload = event.getPayload();
         confirmInventory(payload.getInventoryId());

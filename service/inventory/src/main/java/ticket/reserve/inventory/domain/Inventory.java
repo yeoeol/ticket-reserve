@@ -2,8 +2,8 @@ package ticket.reserve.inventory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.enums.InventoryStatus;
 import ticket.reserve.core.tsid.IdGenerator;
 

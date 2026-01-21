@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.ReservationExpiredPayload;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.inventory.domain.Inventory;
 import ticket.reserve.inventory.domain.repository.InventoryRepository;
 
@@ -21,7 +21,6 @@ public class ReservationExpiredEventHandler implements EventHandler<ReservationE
     private final InventoryRepository inventoryRepository;
 
     @Override
-    @Transactional
     public void handle(Event<ReservationExpiredPayload> event) {
         ReservationExpiredPayload payload = event.getPayload();
         releaseInventory(payload.getInventoryId());

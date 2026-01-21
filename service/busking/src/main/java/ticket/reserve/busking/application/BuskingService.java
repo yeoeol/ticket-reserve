@@ -16,8 +16,8 @@ import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
