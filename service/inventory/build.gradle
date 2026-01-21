@@ -12,10 +12,13 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    testImplementation 'com.h2database:h2'
+
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation project(':core:event')
     implementation project(':core:global')
+    implementation project(':core:inbox')
     implementation project(':core:tsid')
 }

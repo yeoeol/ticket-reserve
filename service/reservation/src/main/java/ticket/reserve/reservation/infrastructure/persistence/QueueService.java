@@ -3,8 +3,8 @@ package ticket.reserve.reservation.infrastructure.persistence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.reservation.application.dto.response.QueueStatusResponseDto;
 import ticket.reserve.reservation.application.port.out.BuskingPort;
 

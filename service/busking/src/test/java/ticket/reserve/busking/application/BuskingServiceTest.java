@@ -16,8 +16,8 @@ import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;

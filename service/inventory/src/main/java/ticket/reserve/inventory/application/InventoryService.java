@@ -2,14 +2,17 @@ package ticket.reserve.inventory.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
+import ticket.reserve.core.inbox.Inbox;
+import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.dto.response.CustomPageResponse;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.global.annotation.DistributedLock;
@@ -34,6 +37,7 @@ public class InventoryService {
     private final List<EventHandler> eventHandlers;
     private final BuskingPort buskingPort;
     private final IdGenerator idGenerator;
+    private final InboxRepository inboxRepository;
 
     @Transactional
     public void createInventory(InventoryRequestDto request) {
@@ -112,13 +116,23 @@ public class InventoryService {
         inventoryRepository.deleteById(inventoryId);
     }
 
+    @Transactional
     public void handleEvent(Event<EventPayload> event) {
+        if (inboxRepository.existsByEventId(event.getEventId())) {
+            return;
+        }
+
         EventHandler<EventPayload> eventHandler = findEventHandler(event);
         if (eventHandler == null) {
             return;
         }
 
-        eventHandler.handle(event);
+        try {
+            eventHandler.handle(event);
+            inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
+        } catch (DataIntegrityViolationException e) {
+            log.warn("[InventoryService.handleEvent] 중복 이벤트 감지: {}", event.getEventId());
+        }
     }
 
     private Inventory getInventoryById(Long buskingId, Long inventoryId) {

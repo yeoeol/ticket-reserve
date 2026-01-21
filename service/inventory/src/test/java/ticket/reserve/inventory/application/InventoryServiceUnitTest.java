@@ -1,4 +1,4 @@
-package ticket.reserve.inventory.service;
+package ticket.reserve.inventory.application;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,12 +7,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ticket.reserve.global.exception.CustomException;
-import ticket.reserve.global.exception.ErrorCode;
-import ticket.reserve.inventory.application.InventoryService;
+import org.springframework.test.util.ReflectionTestUtils;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
+import ticket.reserve.core.inbox.Inbox;
+import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
 import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
+import ticket.reserve.inventory.application.eventhandler.EventCreatedEventHandler;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.domain.Inventory;
@@ -37,9 +44,9 @@ public class InventoryServiceUnitTest {
     InventoryService inventoryService;
 
     @Mock InventoryRepository inventoryRepository;
+    @Mock InboxRepository inboxRepository;
     @Mock List<EventHandler> eventHandlers;
-    @Mock
-    BuskingPort buskingPort;
+    @Mock BuskingPort buskingPort;
     @Mock IdGenerator idGenerator;
 
     private Inventory inventory;
@@ -49,6 +56,8 @@ public class InventoryServiceUnitTest {
         inventory = Inventory.create(
                 () -> 1L, 1L, "TEST_001", 1000
         );
+        EventCreatedEventHandler handler = new EventCreatedEventHandler(inventoryRepository, idGenerator);
+        ReflectionTestUtils.setField(inventoryService, "eventHandlers", List.of(handler));
     }
 
     @Test
@@ -104,10 +113,10 @@ public class InventoryServiceUnitTest {
         InventoryUpdateRequestDto request = new InventoryUpdateRequestDto(
                 "TEST_FAIL", 1000000
         );
-        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+        given(inventoryRepository.findByIdAndBuskingId(1L, 1L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.updateInventory(1L, 1234L, request);
+        inventoryService.updateInventory(1L, 1L, request);
 
         //then
         assertThat(inventory.getInventoryName()).isEqualTo(request.inventoryName());
@@ -118,10 +127,10 @@ public class InventoryServiceUnitTest {
     @DisplayName("좌석 선점 V1 성공(락 적용X) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
     void holdInventoryV1Success() {
         //given
-        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+        given(inventoryRepository.findByIdAndBuskingId(1L, 1L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventoryV1(1L, 1234L);
+        inventoryService.holdInventoryV1(1L,1L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
@@ -132,10 +141,10 @@ public class InventoryServiceUnitTest {
     void holdInventoryV1Fail_InventoryHoldFail() {
         //given
         inventory.hold();   // 좌석을 선점 상태로 변경해주기 위해 먼저 호출
-        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+        given(inventoryRepository.findByIdAndBuskingId(1L, 1L)).willReturn(Optional.of(inventory));
 
         //when
-        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1L, 1234L));
+        Throwable throwable = catchThrowable(() -> inventoryService.holdInventoryV1(1L, 1L));
 
         //then
         assertThat(throwable)
@@ -161,12 +170,54 @@ public class InventoryServiceUnitTest {
     @DisplayName("좌석 선점 성공(분산 락) - 좌석 선점 메서드를 호출하여 좌석 상태가 PENDING 으로 변경된다")
     void holdInventoryDistributedLockSuccess() {
         //given
-        given(inventoryRepository.findById(1234L)).willReturn(Optional.of(inventory));
+        given(inventoryRepository.findByIdAndBuskingId(1L, 1L)).willReturn(Optional.of(inventory));
 
         //when
-        inventoryService.holdInventory(1L, 1234L);
+        inventoryService.holdInventory(1L, 1L);
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
+    }
+
+    @Test
+    @DisplayName("이벤트 수신 시 정확히 한 번 소비 로직이 수행된다")
+    void handle_Event_OnceProcess() {
+        //given
+        Event<EventPayload> event = createEvent();
+        given(inboxRepository.existsByEventId(event.getEventId())).willReturn(false);
+
+        //when
+        inventoryService.handleEvent(event);
+
+        //then
+        verify(inboxRepository, times(1)).saveAndFlush(any(Inbox.class));
+    }
+
+    @Test
+    @DisplayName("이벤트 중복 수신 시 save가 호출되지 않는다")
+    void handle_Event_DuplicateProcess() {
+        //given
+        Event<EventPayload> event = createEvent();
+        given(inboxRepository.existsByEventId(event.getEventId())).willReturn(true);
+
+        //when
+        inventoryService.handleEvent(event);
+
+        //then
+        verify(inboxRepository, never()).saveAndFlush(any());
+    }
+
+    private static Event<EventPayload> createEvent() {
+        return Event.of(1234L, EventType.EVENT_CREATED,
+                BuskingCreatedEventPayload.builder()
+                        .buskingId(1L)
+                        .title("testTitle")
+                        .description("testDesc")
+                        .location("testLoc")
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .totalInventoryCount(10)
+                        .build()
+        );
     }
 }

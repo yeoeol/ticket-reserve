@@ -7,10 +7,12 @@ include 'service'
 include 'platform:gateway'
 include 'platform:registry'
 include 'platform:configserver'
+
 include 'core:event'
 include 'core:global'
 include 'core:data-serializer'
 include 'core:outbox-message-relay'
+include 'core:inbox'
 include 'core:tsid'
 
 include 'service:user'
