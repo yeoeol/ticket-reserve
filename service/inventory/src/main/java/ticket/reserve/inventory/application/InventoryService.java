@@ -2,6 +2,7 @@ package ticket.reserve.inventory.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -117,7 +118,7 @@ public class InventoryService {
 
     @Transactional
     public void handleEvent(Event<EventPayload> event) {
-        if (inboxRepository.findByEventId(event.getEventId()).isPresent()) {
+        if (inboxRepository.existsByEventId(event.getEventId())) {
             return;
         }
 
@@ -126,9 +127,12 @@ public class InventoryService {
             return;
         }
 
-        eventHandler.handle(event);
-
-        inboxRepository.save(Inbox.create(idGenerator, event.getEventId(), event.getType()));
+        try {
+            eventHandler.handle(event);
+            inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
+        } catch (DataIntegrityViolationException e) {
+            log.warn("[InventoryService.handleEvent] 중복 이벤트 감지: {}", event.getEventId());
+        }
     }
 
     private Inventory getInventoryById(Long buskingId, Long inventoryId) {

@@ -6,17 +6,17 @@ spring:
     name: inventory-service
 
   datasource:
-    url: ${INVENTORY_DB_URL:jdbc:mysql://localhost:3306/ticket_inventories}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${INVENTORY_DB_USERNAME:root}
-    password: ${INVENTORY_DB_PASSWORD}
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
 
   data:
     redis:

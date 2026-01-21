@@ -27,4 +27,9 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Integer countInventoryByBuskingId(Long buskingId);
 
     Optional<Inventory> findByIdAndBuskingId(Long inventoryId, Long buskingId);
+
+    List<Inventory> findByBuskingId(Long buskingId);
+
+
+    void deleteAllByBuskingId(Long buskingId);
 }
