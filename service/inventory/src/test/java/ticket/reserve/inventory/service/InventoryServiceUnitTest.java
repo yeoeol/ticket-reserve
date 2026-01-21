@@ -7,12 +7,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import ticket.reserve.core.event.Event;
+import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
+import ticket.reserve.core.inbox.Inbox;
+import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.InventoryService;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
 import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
+import ticket.reserve.inventory.application.eventhandler.EventCreatedEventHandler;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.domain.Inventory;
@@ -37,9 +45,9 @@ public class InventoryServiceUnitTest {
     InventoryService inventoryService;
 
     @Mock InventoryRepository inventoryRepository;
+    @Mock InboxRepository inboxRepository;
     @Mock List<EventHandler> eventHandlers;
-    @Mock
-    BuskingPort buskingPort;
+    @Mock BuskingPort buskingPort;
     @Mock IdGenerator idGenerator;
 
     private Inventory inventory;
@@ -49,6 +57,8 @@ public class InventoryServiceUnitTest {
         inventory = Inventory.create(
                 () -> 1L, 1L, "TEST_001", 1000
         );
+        EventCreatedEventHandler handler = new EventCreatedEventHandler(inventoryRepository, idGenerator);
+        ReflectionTestUtils.setField(inventoryService, "eventHandlers", List.of(handler));
     }
 
     @Test
@@ -168,5 +178,47 @@ public class InventoryServiceUnitTest {
 
         //then
         assertThat(inventory.getStatus()).isEqualTo(InventoryStatus.PENDING);
+    }
+
+    @Test
+    @DisplayName("이벤트 수신 시 정확히 한 번 소비 로직이 수행된다")
+    void handle_Event_OnceProcess() {
+        //given
+        Event<EventPayload> event = createEvent();
+        given(inboxRepository.findByEventId(event.getEventId())).willReturn(Optional.empty());
+
+        //when
+        inventoryService.handleEvent(event);
+
+        //then
+        verify(inboxRepository, times(1)).save(any(Inbox.class));
+    }
+
+    @Test
+    @DisplayName("이벤트 중복 수신 시 save가 호출되지 않는다")
+    void handle_Event_DuplicateProcess() {
+        //given
+        Event<EventPayload> event = createEvent();
+        given(inboxRepository.findByEventId(event.getEventId())).willReturn(Optional.of(mock(Inbox.class)));
+
+        //when
+        inventoryService.handleEvent(event);
+
+        //then
+        verify(inboxRepository, never()).save(any());
+    }
+
+    private static Event<EventPayload> createEvent() {
+        return Event.of(1234L, EventType.EVENT_CREATED,
+                BuskingCreatedEventPayload.builder()
+                        .buskingId(1L)
+                        .title("testTitle")
+                        .description("testDesc")
+                        .location("testLoc")
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .totalInventoryCount(10)
+                        .build()
+        );
     }
 }
