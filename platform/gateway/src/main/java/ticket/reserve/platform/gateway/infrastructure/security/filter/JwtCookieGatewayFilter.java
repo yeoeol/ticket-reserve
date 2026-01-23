@@ -32,6 +32,7 @@ public class JwtCookieGatewayFilter extends AbstractGatewayFilterFactory<Object>
             "/api/users/register", "/api/users/login",
             // busking-service
             "/buskings", "/buskings/*",
+            "/api/buskings", "/api/buskings/*",
             // static resources
             "/users/css/**", "/buskings/css/**", "/inventories/css/**",
             "/admin/images/**"
