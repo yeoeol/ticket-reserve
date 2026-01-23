@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.BuskingService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.MediaType.*;
@@ -20,10 +22,16 @@ import static org.springframework.http.MediaType.*;
 public class BuskingApiController {
 
     private final BuskingService buskingService;
+    private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<List<BuskingResponseDto>> getAll() {
-        return ResponseEntity.ok(buskingService.getAll());
+    public ResponseEntity<List<BuskingResponseDto>> getAll(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "location", required = false) String location,
+            @RequestParam(value = "startTime", required = false) LocalDateTime startTime,
+            @RequestParam(value = "endTime", required = false) LocalDateTime endTime
+    ) {
+        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime));
     }
 
     @GetMapping("/{id}")
