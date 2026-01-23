@@ -1,5 +1,6 @@
 package ticket.reserve.busking.application.dto.response;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.buskingimage.BuskingImage;
@@ -33,5 +34,9 @@ public record BuskingResponseDto(
                         .map(BuskingImage::getStoredPath)
                         .toList()
                 ).build();
+    }
+
+    @QueryProjection
+    public BuskingResponseDto {
     }
 }
