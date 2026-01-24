@@ -1,7 +1,7 @@
 package ticket.reserve.notification.application.dto.request;
 
 import lombok.Builder;
-import ticket.reserve.notification.domain.Notification;
+import ticket.reserve.notification.domain.notification.Notification;
 
 @Builder
 public record NotificationRetryDto(

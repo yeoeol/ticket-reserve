@@ -7,7 +7,7 @@ import ticket.reserve.notification.application.dto.request.NotificationRequestDt
 import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
 import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
 import ticket.reserve.notification.application.port.out.SenderPort;
-import ticket.reserve.notification.domain.Notification;
+import ticket.reserve.notification.domain.notification.Notification;
 
 @Service
 @RequiredArgsConstructor

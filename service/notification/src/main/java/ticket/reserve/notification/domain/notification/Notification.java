@@ -1,4 +1,4 @@
-package ticket.reserve.notification.domain;
+package ticket.reserve.notification.domain.notification;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.notification.domain.BaseTimeEntity;
 
 @Entity
 @Getter

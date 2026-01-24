@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.dataserializer.DataSerializer;
 import ticket.reserve.notification.application.NotificationService;
 import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
-import ticket.reserve.notification.domain.Notification;
+import ticket.reserve.notification.domain.notification.Notification;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

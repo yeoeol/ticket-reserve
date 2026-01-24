@@ -9,8 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import ticket.reserve.core.dataserializer.DataSerializer;
 import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
-import ticket.reserve.notification.domain.Notification;
-import ticket.reserve.notification.domain.repository.NotificationRepository;
+import ticket.reserve.notification.domain.notification.Notification;
+import ticket.reserve.notification.domain.notification.repository.NotificationRepository;
 
 import java.util.List;
 

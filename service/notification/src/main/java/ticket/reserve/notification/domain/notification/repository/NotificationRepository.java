@@ -1,7 +1,7 @@
-package ticket.reserve.notification.domain.repository;
+package ticket.reserve.notification.domain.notification.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ticket.reserve.notification.domain.Notification;
+import ticket.reserve.notification.domain.notification.Notification;
 
 import java.util.List;
 
