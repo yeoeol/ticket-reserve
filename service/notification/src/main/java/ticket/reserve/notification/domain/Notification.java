@@ -19,7 +19,7 @@ public class Notification extends BaseTimeEntity {
     private Long id;
 
     private String title;
-    private String content;
+    private String message;
 
     private Long buskingId;
 
