@@ -26,7 +26,7 @@ class NotificationFailedRedisRepositoryTest {
     void redis_zset_save_test() {
         //given
         NotificationRetryDto retryDto = new NotificationRetryDto(
-                "제목", "내용", 1234L, 1L, System.currentTimeMillis()
+                "제목", "내용", 1234L, 1L
         );
 
         //when

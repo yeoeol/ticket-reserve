@@ -8,8 +8,7 @@ public record NotificationRetryDto(
         String title,
         String message,
         Long receiverId,
-        Long buskingId,
-        long timestamp
+        Long buskingId
 ) {
     public static NotificationRetryDto from(Notification notification) {
         return NotificationRetryDto.builder()
@@ -17,7 +16,6 @@ public record NotificationRetryDto(
                 .message(notification.getMessage())
                 .receiverId(notification.getReceiverId())
                 .buskingId(notification.getBuskingId())
-                .timestamp(System.currentTimeMillis())
                 .build();
     }
 }
