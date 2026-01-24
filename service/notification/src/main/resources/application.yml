@@ -37,3 +37,7 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+
+firebase:
+  service-account:
+    path: "/firebase/service-account.json"

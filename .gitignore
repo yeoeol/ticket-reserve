@@ -26,6 +26,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 platform/configserver/src/main/resources/application.yml
+service/notification/src/main/resources/firebase/service-account.json
 .env
 
 ### NetBeans ###
