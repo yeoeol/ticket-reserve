@@ -5,15 +5,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import ticket.reserve.core.dataserializer.DataSerializer;
 import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
+import ticket.reserve.notification.application.port.out.RedisPort;
 
 @Repository
 @RequiredArgsConstructor
-public class NotificationFailedRedisRepository {
+public class NotificationFailedRedisRepository implements RedisPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
     private static final String FAIL_KEY = "notify:retry:%d";
 
+    @Override
     public void addToFailQueue(NotificationRetryDto retryDto) {
         String jsonValue = DataSerializer.serialize(retryDto);
 
