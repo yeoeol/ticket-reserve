@@ -17,12 +17,14 @@ public class NotificationService {
     private final SenderPort senderPort;
     private final RedisService redisService;
     private final NotificationCrudService notificationCrudService;
+    private final FcmTokenService fcmTokenService;
 
     public NotificationResponseDto createAndSend(NotificationRequestDto request) {
         Notification notification = request.toEntity(idGenerator);
 
+        String fcmToken = fcmTokenService.getTokenByUserId(request.receiverId());
         try {
-            senderPort.send(notification);
+            senderPort.send(notification, fcmToken);
             notificationCrudService.save(notification);
         } catch (Exception e) {
             redisService.addFailedNotification(NotificationRetryDto.from(notification));

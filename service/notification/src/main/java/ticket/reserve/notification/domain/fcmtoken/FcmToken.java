@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ticket.reserve.core.tsid.IdGenerator;
 
 @Entity
 @Getter
@@ -22,4 +24,19 @@ public class FcmToken {
 
     @Column(unique = true)
     private String fcmToken;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private FcmToken(IdGenerator idGenerator, Long userId, String fcmToken) {
+        this.id = idGenerator.nextId();
+        this.userId = userId;
+        this.fcmToken = fcmToken;
+    }
+
+    public static FcmToken create(IdGenerator idGenerator, Long userId, String fcmToken) {
+        return FcmToken.builder()
+                .idGenerator(idGenerator)
+                .userId(userId)
+                .fcmToken(fcmToken)
+                .build();
+    }
 }

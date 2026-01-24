@@ -42,14 +42,14 @@ public class NotificationServiceTest {
     void createAndSendNotification_success() {
         //given: userId가 1234인 사용자에게 1번 게시글에 대한 알림 발송
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
-        given(senderPort.send(any())).willReturn(new NotificationResult(true, null));
+        given(senderPort.send(any(), any())).willReturn(new NotificationResult(true, null));
 
         //when
         NotificationResponseDto response = notificationService.createAndSend(request);
 
         //then
         assertThat(response.message()).isEqualTo("아이유 버스킹이 광화문에서 진행됩니다!");
-        verify(senderPort, times(1)).send(any(Notification.class));
+        verify(senderPort, times(1)).send(any(Notification.class), anyString());
         verify(notificationCrudService, times(1)).save(any(Notification.class));
         verify(redisService, never()).addFailedNotification(any());
     }
@@ -59,7 +59,7 @@ public class NotificationServiceTest {
     void send_fail_noSaveDB_saveRedis() {
         //given
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
-        doThrow(new RuntimeException("API 에러")).when(senderPort).send(any());
+        doThrow(new RuntimeException("API 에러")).when(senderPort).send(any(), any());
 
         //when
         notificationService.createAndSend(request);
