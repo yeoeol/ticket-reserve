@@ -37,11 +37,16 @@ public class NotificationServiceTest {
     @Mock
     private NotificationCrudService notificationCrudService;
 
+    @Mock
+    private FcmTokenService fcmTokenService;
+
+
     @Test
     @DisplayName("알림 생성 요청을 받으면 DB에 저장하고 저장된 객체를 반환한다")
     void createAndSendNotification_success() {
         //given: userId가 1234인 사용자에게 1번 게시글에 대한 알림 발송
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
+        given(fcmTokenService.getTokenByUserId(1234L)).willReturn("testFcmToken");
         given(senderPort.send(any(), any())).willReturn(new NotificationResult(true, null));
 
         //when
