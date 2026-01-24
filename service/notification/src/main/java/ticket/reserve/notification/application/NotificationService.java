@@ -26,7 +26,7 @@ public class NotificationService {
         try {
             NotificationResult result = senderPort.send(notification);
         } catch (Exception e) {
-            return null;
+
         }
         return NotificationResponseDto.from(notification);
     }
