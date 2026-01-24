@@ -6,10 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.stereotype.Component;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
+import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
+import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.Notification;
 import ticket.reserve.notification.domain.repository.NotificationRepository;
+import ticket.reserve.notification.application.dto.response.NotificationResult;
+import ticket.reserve.notification.infrastructure.sender.NotificationSender;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +47,7 @@ public class NotificationServiceTest {
         NotificationResponseDto response = notificationService.create(request);
 
         //then
-        assertThat(response.getMessage()).isEqualTo("아이유 버스킹이 광화문에서 진행됩니다!");
+        assertThat(response.message()).isEqualTo("아이유 버스킹이 광화문에서 진행됩니다!");
         verify(notificationRepository, times(1)).save(any());
     }
 }

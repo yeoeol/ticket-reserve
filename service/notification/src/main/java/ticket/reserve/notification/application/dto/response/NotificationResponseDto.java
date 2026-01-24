@@ -1,0 +1,24 @@
+package ticket.reserve.notification.application.dto.response;
+
+import lombok.Builder;
+import ticket.reserve.notification.domain.Notification;
+
+@Builder
+public record NotificationResponseDto(
+        Long notificationId,
+        String title,
+        String message,
+        Long buskingId,
+        Long receiverId
+) {
+    public static NotificationResponseDto from(Notification notification) {
+        return NotificationResponseDto
+                .builder()
+                .notificationId(notification.getId())
+                .title(notification.getTitle())
+                .message(notification.getMessage())
+                .buskingId(notification.getBuskingId())
+                .receiverId(notification.getReceiverId())
+                .build();
+    }
+}
