@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,5 +41,9 @@ public class FcmToken extends BaseTimeEntity {
                 .userId(userId)
                 .fcmToken(fcmToken)
                 .build();
+    }
+
+    public void updateFcmToken(String newFcmToken) {
+        this.fcmToken = newFcmToken;
     }
 }

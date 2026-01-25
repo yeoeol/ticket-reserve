@@ -18,7 +18,7 @@ public class FcmApiController {
 
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody FcmTokenRequestDto request) {
-        fcmTokenService.save(request);
+        fcmTokenService.saveOrUpdate(request);
         return ResponseEntity.noContent().build();
     }
 

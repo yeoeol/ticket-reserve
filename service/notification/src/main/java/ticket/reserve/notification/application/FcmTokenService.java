@@ -10,6 +10,8 @@ import ticket.reserve.notification.application.dto.request.FcmTokenRequestDto;
 import ticket.reserve.notification.domain.fcmtoken.FcmToken;
 import ticket.reserve.notification.domain.fcmtoken.repository.FcmTokenRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class FcmTokenService {
@@ -18,7 +20,13 @@ public class FcmTokenService {
     private final FcmTokenRepository fcmTokenRepository;
 
     @Transactional
-    public void save(FcmTokenRequestDto request) {
+    public void saveOrUpdate(FcmTokenRequestDto request) {
+        Optional<FcmToken> optionalFcmToken = fcmTokenRepository.findByUserId(request.userId());
+        if (optionalFcmToken.isPresent()) {
+            optionalFcmToken.get().updateFcmToken(request.fcmToken());
+            return;
+        }
+
         FcmToken fcmToken = request.toEntity(idGenerator);
         fcmTokenRepository.save(fcmToken);
     }
