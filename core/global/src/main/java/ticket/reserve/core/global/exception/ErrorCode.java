@@ -44,7 +44,7 @@ public enum ErrorCode {
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "IMAGE005", "파일명이 유효하지 않습니다."),
 
     // NOTIFICATION-SERVICE
-    NOT_FOUND_FCM_TOKEN(HttpStatus.BAD_REQUEST, "NOTIFICATION001", "사용자 기기 FCM_TOKEN을 찾을 수 없습니다."),
+    NOT_FOUND_FCM_TOKEN(HttpStatus.NOT_FOUND, "NOTIFICATION001", "사용자 기기 FCM_TOKEN을 찾을 수 없습니다."),
 
     ;
     private final HttpStatus httpStatus;

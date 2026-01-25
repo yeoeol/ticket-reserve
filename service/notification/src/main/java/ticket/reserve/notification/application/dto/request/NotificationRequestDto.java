@@ -11,12 +11,12 @@ public record NotificationRequestDto(
         Long buskingId,
         Long receiverId
 ) {
-    public static NotificationRequestDto from(Notification notification) {
+    public static NotificationRequestDto from(NotificationRetryDto retryDto) {
         return NotificationRequestDto.builder()
-                .title(notification.getTitle())
-                .message(notification.getMessage())
-                .buskingId(notification.getBuskingId())
-                .receiverId(notification.getReceiverId())
+                .title(retryDto.title())
+                .message(retryDto.message())
+                .buskingId(retryDto.buskingId())
+                .receiverId(retryDto.receiverId())
                 .build();
     }
 

@@ -9,9 +9,10 @@ public record NotificationResponseDto(
         String title,
         String message,
         Long buskingId,
-        Long receiverId
+        Long receiverId,
+        NotificationResult result
 ) {
-    public static NotificationResponseDto from(Notification notification) {
+    public static NotificationResponseDto from(Notification notification, NotificationResult result) {
         return NotificationResponseDto
                 .builder()
                 .notificationId(notification.getId())
@@ -19,6 +20,7 @@ public record NotificationResponseDto(
                 .message(notification.getMessage())
                 .buskingId(notification.getBuskingId())
                 .receiverId(notification.getReceiverId())
+                .result(result)
                 .build();
     }
 }

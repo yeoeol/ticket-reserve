@@ -20,6 +20,7 @@ public class FcmToken {
     @Column(name = "fcm_token_id")
     private Long id;
 
+    @Column(unique = true)
     private Long userId;
 
     @Column(unique = true)

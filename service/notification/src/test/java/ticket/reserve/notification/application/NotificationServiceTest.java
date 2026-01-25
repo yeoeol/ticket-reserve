@@ -47,13 +47,15 @@ public class NotificationServiceTest {
         //given: userId가 1234인 사용자에게 1번 게시글에 대한 알림 발송
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
         given(fcmTokenService.getTokenByUserId(1234L)).willReturn("testFcmToken");
-        given(senderPort.send(any(), any())).willReturn(new NotificationResult(true, null));
+        given(senderPort.send(any(), any())).willReturn(NotificationResult.successResult());
 
         //when
         NotificationResponseDto response = notificationService.createAndSend(request);
 
         //then
         assertThat(response.message()).isEqualTo("아이유 버스킹이 광화문에서 진행됩니다!");
+        assertThat(response.result().isSuccess()).isTrue();
+        assertThat(response.result().errorCode()).isNull();
         verify(senderPort, times(1)).send(any(Notification.class), anyString());
         verify(notificationCrudService, times(1)).save(any(Notification.class));
         verify(redisService, never()).addFailedNotification(any());
@@ -64,12 +66,16 @@ public class NotificationServiceTest {
     void send_fail_noSaveDB_saveRedis() {
         //given
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
-        doThrow(new RuntimeException("API 에러")).when(senderPort).send(any(), any());
+        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(senderPort.send(any(), any()))
+                .willReturn(NotificationResult.failResult(500));
 
         //when
-        notificationService.createAndSend(request);
+        NotificationResponseDto response = notificationService.createAndSend(request);
 
         //then
+        assertThat(response.result().isSuccess()).isFalse();
+        assertThat(response.result().errorCode()).isEqualTo(500);
         verify(notificationCrudService, never()).save(any());
         verify(redisService, times(1))
                 .addFailedNotification(any(NotificationRetryDto.class));
