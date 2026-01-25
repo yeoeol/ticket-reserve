@@ -40,6 +40,10 @@ spring:
               uri: lb://IMAGE-SERVICE
               predicates:
                 - Path=/api/images/**
+            - id: notification-service
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/notifications/**, /api/fcm/**
 
   data:
     redis:

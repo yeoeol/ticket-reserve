@@ -20,7 +20,7 @@ public class FcmNotificationSender implements NotificationSender {
 
     @Override
     public NotificationResult send(Notification notification, String fcmToken) {
-        return send(createMessage(notification.getTitle(), notification.getMessage(), fcmToken));
+        return send(createMessage(notification.getTitle(), notification.getMessage(), notification.getBuskingId(), fcmToken));
     }
 
     private NotificationResult send(Message message) {
@@ -34,10 +34,11 @@ public class FcmNotificationSender implements NotificationSender {
         }
     }
 
-    private Message createMessage(String title, String message, String fcmToken) {
+    private Message createMessage(String title, String message, Long buskingId, String fcmToken) {
         return Message.builder()
                 .putData("title", title)
                 .putData("message", message)
+                .putData("buskingId", String.valueOf(buskingId))
                 .setToken(fcmToken)
                 .build();
     }
