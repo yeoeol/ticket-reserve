@@ -16,11 +16,11 @@ public class NotificationFailedRedisRepository implements RedisPort {
     private static final String FAIL_KEY = "notify:retry:%d";
 
     @Override
-    public void addToFailQueue(NotificationRetryDto retryDto) {
+    public void addToFailQueue(NotificationRetryDto retryDto, long delaySeconds) {
         String jsonValue = DataSerializer.serialize(retryDto);
 
-        // Score: 현재 시간 + 300초
-        long retryTimestamp = System.currentTimeMillis() / 1000 + 300;
+        // Score: 현재 시간 + delaySeconds
+        long retryTimestamp = System.currentTimeMillis() / 1000 + delaySeconds;
 
         redisTemplate.opsForZSet().add(
                 generateFailKey(retryDto.receiverId()),

@@ -22,6 +22,8 @@ public class NotificationService {
     private final NotificationCrudService notificationCrudService;
     private final FcmTokenService fcmTokenService;
 
+    private static final int MAX_RETRY_COUNT = 5;
+
     public NotificationResponseDto createAndSend(NotificationRequestDto request) {
         Notification notification = request.toEntity(idGenerator);
 
@@ -32,10 +34,30 @@ public class NotificationService {
             notificationCrudService.save(notification);
         }
         else {
-            redisService.addFailedNotification(NotificationRetryDto.from(notification));
-            log.warn("[NotificationService.createAndSend] 알림 전송 실패, 재시도 큐에 추가: receiverId={}, title={}, errorCode={}",
-                    notification.getReceiverId(), notification.getTitle(), result.errorCode());
+            NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
+            handleFailure(nextRetryDto);
         }
         return NotificationResponseDto.from(notification, result);
+    }
+
+    private void handleFailure(NotificationRetryDto retryDto) {
+        int currentRetryCount = retryDto.retryCount();
+
+        if (currentRetryCount >= MAX_RETRY_COUNT) {
+            log.error("[NotificationService.createAndSend.handleFailure] 최대 재시도 횟수 초과: receiverId={}, title={}",
+                    retryDto.receiverId(), retryDto.title()
+            );
+            // TODO : 알림 발송 5회 실패한 DLQ(Dead Letter Queue) 구현
+            return;
+        }
+
+        // 지수 백오프: 2^n * 60초 (1분 -> 2분 -> 4분 -> 8분 -> 16분)
+        long nextDelaySeconds = (long) Math.pow(2, currentRetryCount) * 60;
+
+        redisService.addFailedNotification(retryDto, nextDelaySeconds);
+        log.warn("[NotificationService.createAndSend.handleFailure] " +
+                        "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: receiverId={}, title={}",
+                currentRetryCount+1, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.receiverId(), retryDto.title()
+        );
     }
 }

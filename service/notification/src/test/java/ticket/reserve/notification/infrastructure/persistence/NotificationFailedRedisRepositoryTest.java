@@ -28,11 +28,11 @@ class NotificationFailedRedisRepositoryTest {
 
         //given
         NotificationRetryDto retryDto = new NotificationRetryDto(
-                "제목", "내용", 1234L, 1L
+                "제목", "내용", 1234L, 1L, 0
         );
 
         //when
-        redisRepository.addToFailQueue(retryDto);
+        redisRepository.addToFailQueue(retryDto, 300);
 
         //then
         Set<String> results = redisTemplate.opsForZSet().range("notify:retry:1234", 0, -1);

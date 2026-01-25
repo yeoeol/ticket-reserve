@@ -11,7 +11,7 @@ public class RedisService {
 
     private final RedisPort redisPort;
 
-    public void addFailedNotification(NotificationRetryDto retryDto) {
-        redisPort.addToFailQueue(retryDto);
+    public void addFailedNotification(NotificationRetryDto retryDto, long delaySeconds) {
+        redisPort.addToFailQueue(retryDto, delaySeconds);
     }
 }

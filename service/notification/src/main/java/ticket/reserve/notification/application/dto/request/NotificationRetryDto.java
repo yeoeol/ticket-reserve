@@ -8,14 +8,16 @@ public record NotificationRetryDto(
         String title,
         String message,
         Long receiverId,
-        Long buskingId
+        Long buskingId,
+        int retryCount
 ) {
-    public static NotificationRetryDto from(Notification notification) {
+    public static NotificationRetryDto from(Notification notification, int currentRetryCount) {
         return NotificationRetryDto.builder()
                 .title(notification.getTitle())
                 .message(notification.getMessage())
                 .receiverId(notification.getReceiverId())
                 .buskingId(notification.getBuskingId())
+                .retryCount(currentRetryCount)
                 .build();
     }
 }

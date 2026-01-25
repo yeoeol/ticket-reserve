@@ -58,7 +58,7 @@ class NotificationSchedulerUnitTest {
 
     private static NotificationRetryDto createNotificationRetry(String title, String message, Long receiverId, Long buskingId) {
         return new NotificationRetryDto(
-                title, message, receiverId, buskingId
+                title, message, receiverId, buskingId, 0
         );
     }
 }

@@ -45,7 +45,7 @@ public class NotificationServiceTest {
     @DisplayName("알림 생성 요청을 받으면 DB에 저장하고 저장된 객체를 반환한다")
     void createAndSendNotification_success() {
         //given: userId가 1234인 사용자에게 1번 게시글에 대한 알림 발송
-        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
+        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 0);
         given(fcmTokenService.getTokenByUserId(1234L)).willReturn("testFcmToken");
         given(senderPort.send(any(), any())).willReturn(NotificationResult.successResult());
 
@@ -58,14 +58,14 @@ public class NotificationServiceTest {
         assertThat(response.result().errorCode()).isNull();
         verify(senderPort, times(1)).send(any(Notification.class), anyString());
         verify(notificationCrudService, times(1)).save(any(Notification.class));
-        verify(redisService, never()).addFailedNotification(any());
+        verify(redisService, never()).addFailedNotification(any(), anyLong());
     }
 
     @Test
     @DisplayName("알림 발송 실패 시 DB에 저장되지 않고 Redis에 기록되어야 한다")
     void send_fail_noSaveDB_saveRedis() {
         //given
-        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L);
+        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 0);
         given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
         given(senderPort.send(any(), any()))
                 .willReturn(NotificationResult.failResult(500));
@@ -78,6 +78,6 @@ public class NotificationServiceTest {
         assertThat(response.result().errorCode()).isEqualTo(500);
         verify(notificationCrudService, never()).save(any());
         verify(redisService, times(1))
-                .addFailedNotification(any(NotificationRetryDto.class));
+                .addFailedNotification(any(NotificationRetryDto.class), anyLong());
     }
 }
