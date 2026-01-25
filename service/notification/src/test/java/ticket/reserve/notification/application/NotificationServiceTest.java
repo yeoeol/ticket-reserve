@@ -3,6 +3,7 @@ package ticket.reserve.notification.application;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,6 +41,7 @@ public class NotificationServiceTest {
     @Mock
     private FcmTokenService fcmTokenService;
 
+    private static final int MAX_RETRY_COUNT = 5;
 
     @Test
     @DisplayName("알림 생성 요청을 받으면 DB에 저장하고 저장된 객체를 반환한다")
@@ -79,5 +81,76 @@ public class NotificationServiceTest {
         verify(notificationCrudService, never()).save(any());
         verify(redisService, times(1))
                 .addFailedNotification(any(NotificationRetryDto.class), anyLong());
+    }
+
+    @Test
+    @DisplayName("알림 발송 최대 재시도 횟수 미만일 시 Redis에 기록되고 재시도 횟수가 1 증가한다")
+    void send_retry_saveRedis_increse_retryCount() {
+        //given
+        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 1);
+        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(senderPort.send(any(), any()))
+                .willReturn(NotificationResult.failResult(500));
+
+        //when
+        NotificationResponseDto response1 = notificationService.createAndSend(request);
+
+        //then
+        assertThat(response1.result().isSuccess()).isFalse();
+        assertThat(response1.result().errorCode()).isEqualTo(500);
+        verify(notificationCrudService, never()).save(any());
+        verify(redisService, times(1))
+                .addFailedNotification(any(NotificationRetryDto.class), anyLong());
+    }
+
+    @Test
+    @DisplayName("알림 발송 최대 재시도 횟수 이상일 시 ReidService를 호출하지 않고 로그 출력 후 즉시 종료된다")
+    void send_max_retry() {
+        //given
+        NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, MAX_RETRY_COUNT-1);
+        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(senderPort.send(any(), any()))
+                .willReturn(NotificationResult.failResult(500));
+
+        //when
+        NotificationResponseDto response = notificationService.createAndSend(request);
+
+        //then
+        assertThat(response.result().isSuccess()).isFalse();
+        assertThat(response.result().errorCode()).isEqualTo(500);
+        verify(notificationCrudService, never()).save(any());
+        verify(redisService, never()).addFailedNotification(any(), anyLong());
+    }
+
+    @Test
+    @DisplayName("알림 발송 알림 발송 실패 시 retryCount가 1 증가하여 Redis에 저장되어야 한다")
+    void should_incerease_retryCount_onFailure() {
+        //given
+        long receiverId = 1234L;
+        NotificationRequestDto request = new NotificationRequestDto(
+                "제목", "내용", 1L, receiverId, 1
+        );
+
+        given(fcmTokenService.getTokenByUserId(receiverId)).willReturn("testFcmToken");
+        given(senderPort.send(any(), any()))
+                .willReturn(NotificationResult.failResult(500));
+
+        ArgumentCaptor<NotificationRetryDto> retryDtoCaptor = ArgumentCaptor.forClass(NotificationRetryDto.class);
+        ArgumentCaptor<Long> delayCaptor = ArgumentCaptor.forClass(Long.class);
+
+        //when
+        notificationService.createAndSend(request);
+
+        //then
+        verify(redisService, times(1))
+                .addFailedNotification(retryDtoCaptor.capture(), delayCaptor.capture());
+        verify(notificationCrudService, never()).save(any());
+
+        NotificationRetryDto capturedRetryDto = retryDtoCaptor.getValue();
+        assertThat(capturedRetryDto.retryCount()).isEqualTo(request.retryCount()+1);
+        assertThat(capturedRetryDto.receiverId()).isEqualTo(receiverId);
+
+        assertThat(delayCaptor.getValue())
+                .isEqualTo((long) Math.pow(2, request.retryCount()+1) * 60);
     }
 }

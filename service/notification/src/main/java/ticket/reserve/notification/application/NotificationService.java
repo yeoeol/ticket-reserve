@@ -57,7 +57,7 @@ public class NotificationService {
         redisService.addFailedNotification(retryDto, nextDelaySeconds);
         log.warn("[NotificationService.createAndSend.handleFailure] " +
                         "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: receiverId={}, title={}",
-                currentRetryCount+1, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.receiverId(), retryDto.title()
+                currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.receiverId(), retryDto.title()
         );
     }
 }
