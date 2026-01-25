@@ -1,5 +1,6 @@
 package ticket.reserve.notification.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class FcmApiController {
     private final FcmTokenService fcmTokenService;
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody FcmTokenRequestDto request) {
+    public ResponseEntity<Void> save(@Valid @RequestBody FcmTokenRequestDto request) {
         fcmTokenService.saveOrUpdate(request);
         return ResponseEntity.noContent().build();
     }

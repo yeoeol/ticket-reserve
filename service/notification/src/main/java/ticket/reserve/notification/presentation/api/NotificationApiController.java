@@ -1,5 +1,6 @@
 package ticket.reserve.notification.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class NotificationApiController {
     private final NotificationService notificationService;
 
     @PostMapping("/send")
-    public ResponseEntity<NotificationResponseDto> send(@RequestBody NotificationRequestDto request) {
+    public ResponseEntity<NotificationResponseDto> send(@Valid @RequestBody NotificationRequestDto request) {
         return ResponseEntity.ok(notificationService.createAndSend(request));
     }
 }

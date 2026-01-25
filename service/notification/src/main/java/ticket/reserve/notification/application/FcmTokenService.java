@@ -1,6 +1,7 @@
 package ticket.reserve.notification.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.global.exception.CustomException;
@@ -21,14 +22,18 @@ public class FcmTokenService {
 
     @Transactional
     public void saveOrUpdate(FcmTokenRequestDto request) {
-        Optional<FcmToken> optionalFcmToken = fcmTokenRepository.findByUserId(request.userId());
-        if (optionalFcmToken.isPresent()) {
-            optionalFcmToken.get().updateFcmToken(request.fcmToken());
-            return;
-        }
-
-        FcmToken fcmToken = request.toEntity(idGenerator);
-        fcmTokenRepository.save(fcmToken);
+        fcmTokenRepository.findByUserId(request.userId())
+            .ifPresentOrElse(
+                fcmToken -> fcmToken.updateFcmToken(request.fcmToken()),
+                () -> {
+                    try {
+                        fcmTokenRepository.save(request.toEntity(idGenerator));
+                    } catch (DataIntegrityViolationException e) {
+                        fcmTokenRepository.findByUserId(request.userId())
+                                .ifPresent(token -> token.updateFcmToken(request.fcmToken()));
+                    }
+                }
+            );
     }
 
     @Transactional(readOnly = true)
