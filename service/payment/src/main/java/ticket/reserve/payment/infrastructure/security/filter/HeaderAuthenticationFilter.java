@@ -24,6 +24,8 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
         if (userId != null && userRoles != null) {
             List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
+                    .map(String::trim)
+                    .filter(role -> !role.isEmpty())
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
             UsernamePasswordAuthenticationToken authenticationToken =
