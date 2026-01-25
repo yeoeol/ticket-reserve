@@ -41,6 +41,10 @@ public class NotificationScheduler {
                String key = new String(cursor.next());
                Set<String> failedNotifications = redisTemplate.opsForZSet().rangeByScore(key, 0, now);
 
+               if (failedNotifications == null || failedNotifications.isEmpty()) {
+                   continue;
+               }
+
                for (String failedNotificationJson : failedNotifications) {
                    NotificationRetryDto retryDto = DataSerializer.deserialize(failedNotificationJson, NotificationRetryDto.class);
 

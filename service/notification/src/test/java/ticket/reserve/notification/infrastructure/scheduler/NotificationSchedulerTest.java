@@ -42,20 +42,21 @@ class NotificationSchedulerTest {
     @Test
     @DisplayName("재알림 스케줄링 실행 성공 시 Redis에서 데이터가 삭제되고 DB에 저장된다")
     void test() {
+        long nowSeconds = System.currentTimeMillis() / 1000;
         //given
         NotificationRetryDto retryDto =
                 createNotificationRetry("제목", "내용", 1234L, 1L);
         redisTemplate.opsForZSet().add(
                 FAIL_KEY.formatted(1234L),
                 DataSerializer.serialize(retryDto),
-                (double) System.currentTimeMillis() /1000-300
+                nowSeconds - 300
         );
         NotificationRetryDto retryDto2 =
                 createNotificationRetry("제목2", "내용2", 1234L, 1L);
         redisTemplate.opsForZSet().add(
                 FAIL_KEY.formatted(1234L),
                 DataSerializer.serialize(retryDto2),
-                (double) System.currentTimeMillis() /1000-400
+                nowSeconds - 400
         );
 
         //when
@@ -66,7 +67,7 @@ class NotificationSchedulerTest {
         Long count = redisTemplate.opsForZSet().count(
                 FAIL_KEY.formatted(1234L),
                 0,
-                (double) System.currentTimeMillis() / 1000
+                nowSeconds
         );
         assertThat(count).isEqualTo(0);
         assertThat(notificationList).hasSize(2);

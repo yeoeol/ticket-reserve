@@ -9,21 +9,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.notification.domain.BaseTimeEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "fcm_token")
-public class FcmToken {
+public class FcmToken extends BaseTimeEntity {
 
     @Id
     @Column(name = "fcm_token_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private Long userId;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String fcmToken;
 
     @Builder(access = AccessLevel.PRIVATE)

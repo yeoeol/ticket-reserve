@@ -52,7 +52,7 @@ public class NotificationService {
         }
 
         // 지수 백오프: 2^n * 60초 (1분 -> 2분 -> 4분 -> 8분 -> 16분)
-        long nextDelaySeconds = (long) Math.pow(2, currentRetryCount) * 60;
+        long nextDelaySeconds = (long) Math.pow(2, Math.max(0, currentRetryCount-1)) * 60;
 
         redisService.addFailedNotification(retryDto, nextDelaySeconds);
         log.warn("[NotificationService.createAndSend.handleFailure] " +
