@@ -2,6 +2,7 @@ package ticket.reserve.busking.domain.busking;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 import ticket.reserve.busking.domain.BaseTimeEntity;
 import ticket.reserve.busking.domain.buskingimage.BuskingImage;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
@@ -30,11 +31,14 @@ public class Busking extends BaseTimeEntity {
 
     private Integer totalInventoryCount;             // 총 좌석 수
 
+    @Column(columnDefinition = "POINT SRID 4326")
+    private Point coordinate;
+
     @OneToMany(mappedBy = "busking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BuskingImage> buskingImages = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Busking(IdGenerator idGenerator, String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
+    private Busking(IdGenerator idGenerator, String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount, Point coordinate) {
         this.id = idGenerator.nextId();
         this.title = title;
         this.description = description;
@@ -42,9 +46,14 @@ public class Busking extends BaseTimeEntity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalInventoryCount = totalInventoryCount;
+        this.coordinate = coordinate;
     }
 
-    public static Busking create(IdGenerator idGenerator, String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount) {
+    public static Busking create(
+            IdGenerator idGenerator, String title, String description,
+            String location, LocalDateTime startTime, LocalDateTime endTime,
+            Integer totalInventoryCount, Point coordinate
+    ) {
         return Busking.builder()
                 .idGenerator(idGenerator)
                 .title(title)
@@ -53,6 +62,7 @@ public class Busking extends BaseTimeEntity {
                 .startTime(startTime)
                 .endTime(endTime)
                 .totalInventoryCount(totalInventoryCount)
+                .coordinate(coordinate)
                 .build();
     }
 

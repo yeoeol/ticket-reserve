@@ -2,6 +2,7 @@ package ticket.reserve.user.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.user.domain.BaseTimeEntity;
 import ticket.reserve.user.domain.role.Role;
@@ -33,6 +34,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
 
+    @Column(columnDefinition = "POINT SRID 4326")
+    private Point location;
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(IdGenerator idGenerator, String username, String password, String email) {
         this.id = idGenerator.nextId();
@@ -53,6 +57,10 @@ public class User extends BaseTimeEntity {
     public void update(String username, String email) {
         this.username = username;
         this.email = email;
+    }
+
+    public void updateLocation(Point location) {
+        this.location = location;
     }
 
     public void addRole(IdGenerator idGenerator, Role role) {

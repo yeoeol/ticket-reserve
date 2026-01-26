@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.core.tsid.IdGenerator;
 
@@ -25,17 +29,20 @@ public record BuskingRequestDto(
 
         @NotNull(message = "좌석 수를 입력하세요.")
         @PositiveOrZero(message = "좌석은 0 이상이어야 합니다.")
-        Integer totalInventoryCount
+        Integer totalInventoryCount,
+
+        @NotNull(message = "위도 값은 필수입니다.")
+        Double latitude,
+        @NotNull(message = "경도 값은 필수입니다.")
+        Double longitude
 ) {
     public Busking toEntity(IdGenerator idGenerator) {
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point coordinate = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+
         return Busking.create(
-                idGenerator,
-                this.title,
-                this.description,
-                this.location,
-                this.startTime,
-                this.endTime,
-                this.totalInventoryCount
+                idGenerator, this.title, this.description, this.location,
+                this.startTime, this.endTime, this.totalInventoryCount, coordinate
         );
     }
 }
