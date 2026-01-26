@@ -14,6 +14,8 @@ public class RedisTokenAdapter implements TokenStorePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    private static final String GEO_KEY = "user:location";
+
     @Override
     public void addBlackList(String token, long ttl) {
         redisTemplate.opsForValue().set("BL:"+token, "logout", ttl, TimeUnit.MILLISECONDS);
@@ -23,7 +25,7 @@ public class RedisTokenAdapter implements TokenStorePort {
     public void addLocation(Long userId, Double latitude, Double longitude) {
         String userIdString = String.valueOf(userId);
 
-        redisTemplate.opsForGeo().add("user:locations", new Point(longitude, latitude), userIdString);
+        redisTemplate.opsForGeo().add(GEO_KEY, new Point(longitude, latitude), userIdString);
         redisTemplate.opsForValue().set("user:active:" + userIdString, "active", 30, TimeUnit.MINUTES);
     }
 }

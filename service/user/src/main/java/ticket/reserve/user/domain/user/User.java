@@ -31,11 +31,11 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRole> userRoles = new HashSet<>();
-
     @Column(columnDefinition = "POINT SRID 4326")
     private Point location;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private User(IdGenerator idGenerator, String username, String password, String email) {
