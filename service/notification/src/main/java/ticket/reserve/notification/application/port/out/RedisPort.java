@@ -7,7 +7,7 @@ import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
 public interface RedisPort {
     void addToFailQueue(NotificationRetryDto retryDto, long delaySeconds);
 
-    GeoResults<RedisGeoCommands.GeoLocation<String>> searchByGeo(Double buskingLng, Double buskingLat, double radiusKm);
+    GeoResults<RedisGeoCommands.GeoLocation<String>> search(Double buskingLng, Double buskingLat, double radiusKm);
 
     boolean hasKey(Long userId);
 }

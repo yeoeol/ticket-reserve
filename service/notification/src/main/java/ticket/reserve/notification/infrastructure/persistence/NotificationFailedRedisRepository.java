@@ -35,7 +35,7 @@ public class NotificationFailedRedisRepository implements RedisPort {
     }
 
     @Override
-    public GeoResults<RedisGeoCommands.GeoLocation<String>> searchByGeo(Double buskingLng, Double buskingLat, double radiusKm) {
+    public GeoResults<RedisGeoCommands.GeoLocation<String>> search(Double buskingLng, Double buskingLat, double radiusKm) {
         return redisTemplate.opsForGeo().search(
                 "user:locations",
                 GeoReference.fromCoordinate(buskingLng, buskingLat),

@@ -21,10 +21,11 @@ public class RedisService {
 
     public List<Long> findNearbyActiveUsers(Double buskingLng, Double buskingLat, double radiusKm) {
         GeoResults<RedisGeoCommands.GeoLocation<String>> results =
-                redisPort.searchByGeo(buskingLng, buskingLat, radiusKm);
+                redisPort.search(buskingLng, buskingLat, radiusKm);
 
         if (results == null) return List.of();
 
+        // 반경 radius km 이내 활성화된 사용자 필터링
         return results.getContent().stream()
                 .map(res -> Long.valueOf(res.getContent().getName()))
                 .filter(redisPort::hasKey)
