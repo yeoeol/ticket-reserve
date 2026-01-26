@@ -71,7 +71,7 @@ class BuskingServiceTest {
                 .willReturn(busking);
 
         //when
-        BuskingResponseDto response = buskingService.create(request, null, null);
+        BuskingResponseDto response = buskingService.create(request, null);
 
         //then
         Busking savedEvent = eventCaptor.getValue();

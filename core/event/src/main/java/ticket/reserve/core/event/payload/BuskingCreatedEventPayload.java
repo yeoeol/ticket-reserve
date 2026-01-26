@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BuskingCreatedEventPayload implements EventPayload {
 
-    private Long userId;
     private Long buskingId;
     private String title;
     private String description;

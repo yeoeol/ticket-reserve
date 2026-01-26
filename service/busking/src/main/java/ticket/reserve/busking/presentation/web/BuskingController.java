@@ -48,10 +48,9 @@ public class BuskingController {
     @PostMapping
     public String create(
             BuskingRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal String userId
+            @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        BuskingResponseDto response = buskingService.create(request, file, Long.valueOf(userId));
+        BuskingResponseDto response = buskingService.create(request, file);
         return "redirect:/buskings/%d".formatted(response.id());
     }
 }
