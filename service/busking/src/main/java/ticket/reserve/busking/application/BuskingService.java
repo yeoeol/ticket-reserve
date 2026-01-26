@@ -33,7 +33,7 @@ public class BuskingService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
+    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file, Long userId) {
         Busking busking = request.toEntity(idGenerator);
         if (file != null && !file.isEmpty()) {
             ImageResponseDto imageResponse = imagePort.uploadImage(file);
@@ -45,8 +45,9 @@ public class BuskingService {
 
         Busking savedBusking = buskingRepository.save(busking);
         outboxEventPublisher.publish(
-                EventType.EVENT_CREATED,
+                EventType.BUSKING_CREATED,
                 BuskingCreatedEventPayload.builder()
+                        .userId(userId)
                         .buskingId(busking.getId())
                         .title(busking.getTitle())
                         .description(busking.getDescription())

@@ -28,7 +28,7 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
 
     @Override
     public boolean supports(Event<BuskingCreatedEventPayload> event) {
-        return EventType.EVENT_CREATED == event.getType();
+        return EventType.BUSKING_CREATED == event.getType();
     }
 
     private void createInventoryAsTotalInventoryCount(Long buskingId, Integer totalInventoryCount) {

@@ -13,7 +13,7 @@ import ticket.reserve.core.event.payload.ReservationExpiredPayload;
 public enum EventType {
 
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
-    EVENT_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
+    BUSKING_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
     RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION)
     ;
 

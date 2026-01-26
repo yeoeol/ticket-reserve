@@ -1,9 +1,6 @@
 package ticket.reserve.core.event;
 
 import org.junit.jupiter.api.Test;
-import ticket.reserve.core.event.Event;
-import ticket.reserve.core.event.EventPayload;
-import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 
 import java.time.Duration;
@@ -28,7 +25,7 @@ class EventTest {
 
         Event<EventPayload> event = Event.of(
                 1234L,
-                EventType.EVENT_CREATED,
+                EventType.BUSKING_CREATED,
                 payload
         );
         String json = event.toJson();

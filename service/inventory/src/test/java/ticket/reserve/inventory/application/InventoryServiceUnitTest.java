@@ -208,7 +208,7 @@ public class InventoryServiceUnitTest {
     }
 
     private static Event<EventPayload> createEvent() {
-        return Event.of(1234L, EventType.EVENT_CREATED,
+        return Event.of(1234L, EventType.BUSKING_CREATED,
                 BuskingCreatedEventPayload.builder()
                         .buskingId(1L)
                         .title("testTitle")

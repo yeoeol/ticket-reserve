@@ -3,6 +3,7 @@ package ticket.reserve.busking.presentation.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.SearchService;
@@ -42,9 +43,10 @@ public class BuskingApiController {
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BuskingResponseDto> create(
             @Valid @RequestPart(value = "request") BuskingRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal String userId
     ) {
-        return ResponseEntity.ok(buskingService.create(request, file));
+        return ResponseEntity.ok(buskingService.create(request, file, Long.valueOf(userId)));
     }
 
     @PutMapping("/{id}")
