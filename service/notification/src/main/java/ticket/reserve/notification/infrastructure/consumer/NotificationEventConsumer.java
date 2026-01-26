@@ -1,4 +1,4 @@
-package ticket.reserve.inventory.infrastructure.kafka.consumer;
+package ticket.reserve.notification.infrastructure.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,26 +8,24 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.inventory.application.InventoryService;
+import ticket.reserve.notification.application.EventHandlerService;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class InventoryEventConsumer {
+public class NotificationEventConsumer {
 
-    private final InventoryService inventoryService;
+    private final EventHandlerService eventHandlerService;
 
     @KafkaListener(topics = {
-            EventType.Topic.TICKET_RESERVE_BUSKING,
-            EventType.Topic.TICKET_RESERVE_PAYMENT,
-            EventType.Topic.TICKET_RESERVE_RESERVATION
+            EventType.Topic.TICKET_RESERVE_BUSKING
     })
     public void listen(String message, Acknowledgment ack) {
-        log.info("[InventoryEventConsumer.listen] 이벤트 수신: message = {}", message);
+        log.info("[NotificationEventConsumer.listen] 이벤트 수신: message = {}", message);
 
         Event<EventPayload> event = Event.fromJson(message);
         if (event != null) {
-            inventoryService.handleEvent(event);
+            eventHandlerService.handleEvent(event);
         }
         ack.acknowledge();
     }

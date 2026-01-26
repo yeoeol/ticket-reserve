@@ -18,6 +18,17 @@ public record NotificationRequestDto(
         Long receiverId,
         int retryCount
 ) {
+    public static NotificationRequestDto notifyBuskingCreated(String title, String location, Long buskingId, Long receiverId) {
+        String message = location + " : 새로운 버스킹이 등록되었습니다.";
+        return NotificationRequestDto.builder()
+                .title(title)
+                .message(message)
+                .buskingId(buskingId)
+                .receiverId(receiverId)
+                .retryCount(0)
+                .build();
+    }
+
     public static NotificationRequestDto from(NotificationRetryDto retryDto) {
         return NotificationRequestDto.builder()
                 .title(retryDto.title())

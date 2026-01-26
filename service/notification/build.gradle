@@ -4,6 +4,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     implementation 'com.google.firebase:firebase-admin:9.7.0'
@@ -18,7 +19,9 @@ dependencies {
 
     testImplementation 'com.h2database:h2'
 
+    implementation project(':core:event')
     implementation project(':core:data-serializer')
     implementation project(':core:global')
+    implementation project(':core:inbox')
     implementation project(':core:tsid')
 }

@@ -45,7 +45,7 @@ public class BuskingService {
 
         Busking savedBusking = buskingRepository.save(busking);
         outboxEventPublisher.publish(
-                EventType.EVENT_CREATED,
+                EventType.BUSKING_CREATED,
                 BuskingCreatedEventPayload.builder()
                         .buskingId(busking.getId())
                         .title(busking.getTitle())
