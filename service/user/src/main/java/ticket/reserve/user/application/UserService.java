@@ -1,6 +1,10 @@
 package ticket.reserve.user.application;
 
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +99,10 @@ public class UserService {
                 tokenStorePort.addBlackList(accessToken, remainingTime);
             }
         }
+    }
 
+    public void updateLocation(Long userId, Double latitude, Double longitude) {
+        tokenStorePort.addLocation(userId, latitude, longitude);
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {
