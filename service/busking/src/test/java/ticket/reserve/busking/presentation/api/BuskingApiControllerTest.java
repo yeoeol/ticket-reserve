@@ -3,6 +3,10 @@ package ticket.reserve.busking.presentation.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -59,6 +63,10 @@ class BuskingApiControllerTest {
         String eventTitle = "testTitle"+id;
         String description = "testDescription"+id;
         LocalDateTime start = LocalDateTime.of(2030, 1, 1, 0, 0);
+
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point coordinate = geometryFactory.createPoint(new Coordinate(0, 0));
+
         return Busking.create(
                 () -> id,
                 eventTitle,
@@ -66,7 +74,8 @@ class BuskingApiControllerTest {
                 "test",
                 start,
                 start.plusDays(1),
-                10
+                10,
+                coordinate
         );
     }
 }

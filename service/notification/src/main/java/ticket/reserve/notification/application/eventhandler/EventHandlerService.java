@@ -1,4 +1,4 @@
-package ticket.reserve.notification.application;
+package ticket.reserve.notification.application.eventhandler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.core.inbox.Inbox;
 import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.core.tsid.IdGenerator;
-import ticket.reserve.notification.application.eventhandler.EventHandler;
 
 import java.util.List;
 

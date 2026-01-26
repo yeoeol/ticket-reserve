@@ -47,13 +47,15 @@ public class BuskingService {
         outboxEventPublisher.publish(
                 EventType.BUSKING_CREATED,
                 BuskingCreatedEventPayload.builder()
-                        .buskingId(busking.getId())
-                        .title(busking.getTitle())
-                        .description(busking.getDescription())
-                        .location(busking.getLocation())
-                        .startTime(busking.getStartTime())
-                        .endTime(busking.getEndTime())
-                        .totalInventoryCount(busking.getTotalInventoryCount())
+                        .buskingId(savedBusking.getId())
+                        .title(savedBusking.getTitle())
+                        .description(savedBusking.getDescription())
+                        .location(savedBusking.getLocation())
+                        .startTime(savedBusking.getStartTime())
+                        .endTime(savedBusking.getEndTime())
+                        .totalInventoryCount(savedBusking.getTotalInventoryCount())
+                        .latitude(savedBusking.getCoordinate().getY())
+                        .longitude(savedBusking.getCoordinate().getX())
                         .build(),
                 savedBusking.getId()
         );
