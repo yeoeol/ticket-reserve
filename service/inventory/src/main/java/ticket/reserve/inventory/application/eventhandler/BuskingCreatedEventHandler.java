@@ -3,7 +3,6 @@ package ticket.reserve.inventory.application.eventhandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
@@ -14,7 +13,7 @@ import ticket.reserve.core.tsid.IdGenerator;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
+public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
     private final InventoryRepository inventoryRepository;
     private final IdGenerator idGenerator;
@@ -23,7 +22,7 @@ public class EventCreatedEventHandler implements EventHandler<BuskingCreatedEven
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
         createInventoryAsTotalInventoryCount(payload.getBuskingId(), payload.getTotalInventoryCount());
-        log.info("[EventCreatedEventHandler.handle] 좌석 생성 완료 " +
+        log.info("[BuskingCreatedEventHandler.handle] 좌석 생성 완료 " +
                 "- buskingId = {}, totalInventoryCount = {}", payload.getBuskingId(), payload.getTotalInventoryCount());
     }
 

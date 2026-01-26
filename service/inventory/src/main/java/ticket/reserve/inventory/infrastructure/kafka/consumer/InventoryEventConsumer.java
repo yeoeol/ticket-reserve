@@ -18,7 +18,7 @@ public class InventoryEventConsumer {
     private final InventoryService inventoryService;
 
     @KafkaListener(topics = {
-            EventType.Topic.TICKET_RESERVE_EVENT,
+            EventType.Topic.TICKET_RESERVE_BUSKING,
             EventType.Topic.TICKET_RESERVE_PAYMENT,
             EventType.Topic.TICKET_RESERVE_RESERVATION
     })

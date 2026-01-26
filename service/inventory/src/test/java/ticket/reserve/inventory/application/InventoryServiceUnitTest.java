@@ -19,7 +19,7 @@ import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.inventory.application.dto.request.InventoryRequestDto;
 import ticket.reserve.inventory.application.dto.request.InventoryUpdateRequestDto;
 import ticket.reserve.inventory.application.dto.response.BuskingResponseDto;
-import ticket.reserve.inventory.application.eventhandler.EventCreatedEventHandler;
+import ticket.reserve.inventory.application.eventhandler.BuskingCreatedEventHandler;
 import ticket.reserve.inventory.application.eventhandler.EventHandler;
 import ticket.reserve.inventory.application.port.out.BuskingPort;
 import ticket.reserve.inventory.domain.Inventory;
@@ -56,7 +56,7 @@ public class InventoryServiceUnitTest {
         inventory = Inventory.create(
                 () -> 1L, 1L, "TEST_001", 1000
         );
-        EventCreatedEventHandler handler = new EventCreatedEventHandler(inventoryRepository, idGenerator);
+        BuskingCreatedEventHandler handler = new BuskingCreatedEventHandler(inventoryRepository, idGenerator);
         ReflectionTestUtils.setField(inventoryService, "eventHandlers", List.of(handler));
     }
 
