@@ -1,6 +1,6 @@
 package ticket.reserve.notification.infrastructure.scheduler;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -15,13 +15,22 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@RequiredArgsConstructor
 public class NotificationScheduler {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final NotificationService notificationService;
+    private final String FAIL_KEY_PATTERN;
 
-    private static final String FAIL_KEY_PATTERN = "notify:retry:*";
+    public NotificationScheduler(
+            RedisTemplate<String, String> redisTemplate,
+            NotificationService notificationService,
+            @Value("${app.redis.fail-key:notify:retry}") String failKey
+    ) {
+        this.redisTemplate = redisTemplate;
+        this.notificationService = notificationService;
+        this.FAIL_KEY_PATTERN = failKey + ":*";
+    }
+
 
     @Scheduled(initialDelay = 10, fixedDelay = 60, timeUnit = TimeUnit.SECONDS)
     public void retryFailedNotifications() {

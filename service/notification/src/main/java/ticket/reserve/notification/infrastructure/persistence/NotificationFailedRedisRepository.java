@@ -1,6 +1,7 @@
 package ticket.reserve.notification.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -18,7 +19,14 @@ public class NotificationFailedRedisRepository implements RedisPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final String FAIL_KEY = "notify:retry:%d";
+    @Value("${app.redis.fail-key:notify:retry}")
+    private String failKey;
+
+    @Value("${app.redis.geo-key:user:locations}")
+    private String geoKey;
+
+    @Value("${app.redis.active-user-key:user:active}")
+    private String activeUserKey;
 
     @Override
     public void addToFailQueue(NotificationRetryDto retryDto, long delaySeconds) {
@@ -37,7 +45,7 @@ public class NotificationFailedRedisRepository implements RedisPort {
     @Override
     public GeoResults<RedisGeoCommands.GeoLocation<String>> search(Double buskingLng, Double buskingLat, double radiusKm) {
         return redisTemplate.opsForGeo().search(
-                "user:locations",
+                geoKey,
                 GeoReference.fromCoordinate(buskingLng, buskingLat),
                 new Distance(radiusKm, Metrics.KILOMETERS)
         );
@@ -45,10 +53,10 @@ public class NotificationFailedRedisRepository implements RedisPort {
 
     @Override
     public boolean hasKey(Long userId) {
-        return redisTemplate.hasKey("user:active:" + userId);
+        return redisTemplate.hasKey(activeUserKey + ":" + userId);
     }
 
     private String generateFailKey(Long id) {
-        return FAIL_KEY.formatted(id);
+        return failKey + ":" + id;
     }
 }
