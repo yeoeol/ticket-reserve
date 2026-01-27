@@ -21,4 +21,6 @@ public class BuskingCreatedEventPayload implements EventPayload {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer totalInventoryCount;
+    private Double latitude;
+    private Double longitude;
 }

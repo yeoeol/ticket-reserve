@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.notification.application.EventHandlerService;
+import ticket.reserve.notification.application.eventhandler.EventHandlerService;
 
 @Slf4j
 @Component

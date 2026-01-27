@@ -7,6 +7,7 @@ import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.notification.application.NotificationService;
+import ticket.reserve.notification.application.RedisService;
 import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
 import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
 
@@ -18,12 +19,18 @@ import java.util.List;
 public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
     private final NotificationService notificationService;
+    private final RedisService redisService;
+
+    private static final double radiusKm = 5; // 반경 5km
 
     @Override
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
 
-        List<Long> receiverIds = findNearByUserIds();
+        List<Long> receiverIds = redisService.findNearbyActiveUsers(
+                payload.getLongitude(), payload.getLatitude(), radiusKm
+        );
+
         int failCount = 0;
         for (Long receiverId : receiverIds) {
             NotificationResponseDto response = notificationService.createAndSend(
@@ -39,10 +46,5 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
     @Override
     public boolean supports(Event<BuskingCreatedEventPayload> event) {
         return EventType.BUSKING_CREATED == event.getType();
-    }
-
-    private List<Long> findNearByUserIds() {
-        // TODO : 버스킹 장소 주변 사용자 ID 조회
-        return List.of(803522828039717047L);
     }
 }

@@ -4,6 +4,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -69,9 +73,12 @@ class SearchRepositoryImplTest {
             String title, String description, String location,
             LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount
     ) {
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point coordinate = geometryFactory.createPoint(new Coordinate(0, 0));
+
         return Busking.create(
                 idGenerator, title, description, location,
-                startTime, endTime, totalInventoryCount
+                startTime, endTime, totalInventoryCount, coordinate
         );
     }
 

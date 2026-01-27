@@ -5,6 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,6 +50,9 @@ class BuskingServiceTest {
 
     @BeforeEach
     void setUp() {
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point coordinate = geometryFactory.createPoint(new Coordinate(0, 0));
+
         busking = Busking.create(
                 () -> 1234L,
                 "testTitle",
@@ -53,7 +60,8 @@ class BuskingServiceTest {
                 "장소",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
-                10
+                10,
+                coordinate
         );
     }
 
@@ -63,7 +71,7 @@ class BuskingServiceTest {
         //given
         BuskingRequestDto request = new BuskingRequestDto(
                 "testTitle", "testDesc", "장소",
-                busking.getStartTime(), busking.getEndTime(), 0
+                busking.getStartTime(), busking.getEndTime(), 0, 0.0, 0.0
         );
 
         ArgumentCaptor<Busking> eventCaptor = ArgumentCaptor.forClass(Busking.class);

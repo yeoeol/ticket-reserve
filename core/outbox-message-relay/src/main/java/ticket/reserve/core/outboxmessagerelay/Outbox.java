@@ -21,6 +21,8 @@ public class Outbox {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
     private Long partitionKey;
+
+    @Column(length = 500)
     private String payload;
     private LocalDateTime createdAt;
 

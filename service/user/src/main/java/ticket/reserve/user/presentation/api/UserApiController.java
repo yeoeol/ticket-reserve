@@ -3,7 +3,9 @@ package ticket.reserve.user.presentation.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.user.application.dto.request.LocationRequestDto;
 import ticket.reserve.user.application.dto.request.UserLoginRequestDto;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
@@ -59,5 +61,14 @@ public class UserApiController {
     @PostMapping
     public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserUpdateRequestDto request) {
         return ResponseEntity.ok(userService.updateUser(request));
+    }
+
+    @PutMapping("/location")
+    public ResponseEntity<Void> updateLocation(
+            @Valid @RequestBody LocationRequestDto request,
+            @AuthenticationPrincipal String userId
+    ) {
+        userService.updateLocation(Long.valueOf(userId), request.latitude(), request.longitude());
+        return ResponseEntity.noContent().build();
     }
 }
