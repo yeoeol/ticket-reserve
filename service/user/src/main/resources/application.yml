@@ -26,6 +26,10 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
 
+app:
+  redis:
+    geo-key: "user:locations"
+
 eureka:
   client:
     service-url:

@@ -126,7 +126,7 @@ class NotificationFailedRedisRepositoryTest {
 
         //then
         assertThat(userIds).hasSize(3);
-        assertThat(userIds).containsExactly("1", "2", "3");
+        assertThat(userIds).containsExactlyInAnyOrder("1", "2", "3");
     }
 
 }

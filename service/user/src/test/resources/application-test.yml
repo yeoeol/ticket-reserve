@@ -15,7 +15,7 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
 
     properties:
       hibernate:
@@ -30,7 +30,7 @@ app:
   scheduling:
     enable: false
   redis:
-    geo-key: "user:location:test"
+    geo-key: "user:locations:test"
 
 eureka:
   client:
