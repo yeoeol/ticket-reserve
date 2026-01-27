@@ -15,6 +15,7 @@ import ticket.reserve.user.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
@@ -35,7 +36,7 @@ public class LocationSyncScheduler {
         Set<String> userIds = redisTemplate.opsForZSet().range(GEO_KEY, 0, -1);
         if (userIds == null || userIds.isEmpty()) return;
 
-        int updateCount = 0;
+        AtomicInteger updateCount = new AtomicInteger();
         for (String userIdStr : userIds) {
 
             List<Point> positions = redisTemplate.opsForGeo().position(GEO_KEY, userIdStr);
@@ -43,15 +44,16 @@ public class LocationSyncScheduler {
                 Point pos = positions.getFirst();
                 Long userId = Long.valueOf(userIdStr);
 
+                // TODO : Bulk 업데이트 쿼리로 수정
                 userRepository.findById(userId).ifPresent(user -> {
                     org.locationtech.jts.geom.Point point = geometryFactory.createPoint(
                             new Coordinate(pos.getX(), pos.getY())
                     );
                     user.updateLocation(point);
+                    updateCount.incrementAndGet();
                 });
-                updateCount++;
             }
         }
-        log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] 백업 완료: 총 {}명의 위치 정보 동기화", updateCount);
+        log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] 백업 완료: 총 {}명의 위치 정보 동기화", updateCount.get());
     }
 }

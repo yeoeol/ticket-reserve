@@ -65,7 +65,7 @@ public class UserApiController {
 
     @PutMapping("/location")
     public ResponseEntity<Void> updateLocation(
-            @RequestBody LocationRequestDto request,
+            @Valid @RequestBody LocationRequestDto request,
             @AuthenticationPrincipal String userId
     ) {
         userService.updateLocation(Long.valueOf(userId), request.latitude(), request.longitude());
