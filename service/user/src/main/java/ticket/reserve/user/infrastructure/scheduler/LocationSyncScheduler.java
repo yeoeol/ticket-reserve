@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,20 +27,21 @@ public class LocationSyncScheduler {
     private final UserRepository userRepository;
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    private static final String GEO_KEY = "user:location";
+    @Value("${app.redis.geo-key:user:location}")
+    private String geoKey;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
     @Transactional
     public void syncLocationFromRedisToDB() {
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] Redis 위치 데이터 MySQL 백업 시작");
 
-        Set<String> userIds = redisTemplate.opsForZSet().range(GEO_KEY, 0, -1);
+        Set<String> userIds = redisTemplate.opsForZSet().range(geoKey, 0, -1);
         if (userIds == null || userIds.isEmpty()) return;
 
         AtomicInteger updateCount = new AtomicInteger();
         for (String userIdStr : userIds) {
 
-            List<Point> positions = redisTemplate.opsForGeo().position(GEO_KEY, userIdStr);
+            List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdStr);
             if (positions != null && !positions.isEmpty()) {
                 Point pos = positions.getFirst();
                 Long userId = Long.valueOf(userIdStr);
