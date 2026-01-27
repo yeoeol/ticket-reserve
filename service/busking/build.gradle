@@ -15,6 +15,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.locationtech.jts:jts-core:1.20.0'
+    implementation 'org.hibernate.orm:hibernate-spatial'
 
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
