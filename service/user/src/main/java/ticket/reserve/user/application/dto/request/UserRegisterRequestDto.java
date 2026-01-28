@@ -4,11 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserRegisterRequestDto(
-        @NotBlank(message = "ID는 필수입니다.")
+        @NotBlank(message = "{user.username.not_blank}")
         String username,
-        @NotBlank(message = "비밀번호는 필수입니다.")
+        @NotBlank(message = "{user.password.not_blank}")
         String password,
-        @Email(message = "이메일은 필수입니다.")
+        @Email(message = "{user.email.valid}")
         String email
 ) {
 }
