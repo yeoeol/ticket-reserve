@@ -6,16 +6,16 @@ spring:
     name: user-service
 
   datasource:
-    url: ${USER_DB_URL:jdbc:mysql://localhost:3306/ticket_users?rewriteBatchStatements=true}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${USER_DB_USERNAME:root}
-    password: ${USER_DB_PASSWORD}
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
 
   jpa:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
 
     properties:
       hibernate:
@@ -27,11 +27,10 @@ spring:
       port: ${REDIS_PORT:6379}
 
 app:
+  scheduling:
+    enable: false
   redis:
-    geo-key: "user:locations"
-    active-user-key: "user:active"
-  jdbc:
-    batch-size: 100
+    geo-key: "user:locations:test"
 
 eureka:
   client:

@@ -22,6 +22,12 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
 
+app:
+  redis:
+    fail-key: "notify:retry:test"
+    geo-key: "user:locations:test"
+    active-user-key: "user:active:test"
+
 eureka:
   client:
     service-url:

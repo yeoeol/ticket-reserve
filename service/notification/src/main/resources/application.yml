@@ -32,6 +32,12 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       enable-auto-commit: false
 
+app:
+  redis:
+    fail-key: "notify:retry"
+    geo-key: "user:locations"
+    active-user-key: "user:active"
+
 eureka:
   client:
     service-url:

@@ -1,6 +1,7 @@
 package ticket.reserve.user.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,11 @@ public class RedisTokenAdapter implements TokenStorePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final String GEO_KEY = "user:location";
+    @Value("${app.redis.geo-key:user:locations}")
+    private String geoKey;
+
+    @Value("${app.redis.active-user-key:user:active}")
+    private String activeUserKey;
 
     @Override
     public void addBlackList(String token, long ttl) {
@@ -25,7 +30,7 @@ public class RedisTokenAdapter implements TokenStorePort {
     public void addLocation(Long userId, Double latitude, Double longitude) {
         String userIdString = String.valueOf(userId);
 
-        redisTemplate.opsForGeo().add(GEO_KEY, new Point(longitude, latitude), userIdString);
-        redisTemplate.opsForValue().set("user:active:" + userIdString, "active", 30, TimeUnit.MINUTES);
+        redisTemplate.opsForGeo().add(geoKey, new Point(longitude, latitude), userIdString);
+        redisTemplate.opsForValue().set(activeUserKey + ":" + userIdString, "active", 30, TimeUnit.MINUTES);
     }
 }
