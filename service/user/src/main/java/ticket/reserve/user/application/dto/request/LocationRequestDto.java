@@ -5,11 +5,14 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 public record LocationRequestDto(
-        @NotNull(message = "위도 값은 필수입니다. (-90.0 ~ 90.0)")
-        @DecimalMin("-90.0") @DecimalMax("90.0")
+        @NotNull(message = "{location.latitude.not_null}")
+        @DecimalMin(value = "-90.0", message = "{location.latitude.range}")
+        @DecimalMax(value = "90.0", message = "{location.latitude.range}")
         Double latitude,
-        @NotNull(message = "경도 값은 필수입니다. (-180.0 ~ 180.0)")
-        @DecimalMin("-180.0") @DecimalMax("180.0")
+
+        @NotNull(message = "{location.longitude.not_null}")
+        @DecimalMin(value = "-180.0", message = "{location.longitude.range}")
+        @DecimalMax(value = "180.0", message = "{location.longitude.range}")
         Double longitude
 ) {
 }

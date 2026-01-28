@@ -5,13 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UserUpdateRequestDto(
-        @NotNull(message = "사용자ID는 필수입니다.")
+        @NotNull(message = "{user.id.not_null}")
         Long id,
-        @NotBlank(message = "ID는 필수입니다.")
+        @NotBlank(message = "{user.username.not_blank}")
         String username,
-        @NotBlank(message = "비밀번호는 필수입니다.")
+        @NotBlank(message = "{user.password.not_blank}")
         String password,
-        @Email(message = "이메일은 필수입니다.")
+        @NotBlank(message = "{user.email.not_blank}")
+        @Email(message = "{user.email.valid}")
         String email
 ) {
 }

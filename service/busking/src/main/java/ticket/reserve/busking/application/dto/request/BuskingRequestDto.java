@@ -1,9 +1,6 @@
 package ticket.reserve.busking.application.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -14,26 +11,30 @@ import ticket.reserve.core.tsid.IdGenerator;
 import java.time.LocalDateTime;
 
 public record BuskingRequestDto(
-        @NotBlank(message = "공연 제목은 필수입니다.")
-        @Size(max = 100, message = "공연 제목은 100자를 초과할 수 없습니다.")
+        @NotBlank(message = "{busking.title.not_blank}")
+        @Size(max = 100, message = "{busking.title.range}")
         String title,
-        @NotBlank(message = "공연 설명은 필수입니다.")
+        @NotBlank(message = "{busking.description.not_blank}")
         String description,
-        @NotBlank(message = "장소를 입력하세요.")
+        @NotBlank(message = "{busking.location.not_blank}")
         String location,
 
-        @NotNull(message = "시작 날짜를 입력하세요.")
+        @NotNull(message = "{busking.startTime.not_null}")
         LocalDateTime startTime,
-        @NotNull(message = "종료 날짜를 입력하세요.")
+        @NotNull(message = "{busking.endTime.not_null}")
         LocalDateTime endTime,
 
-        @NotNull(message = "좌석 수를 입력하세요.")
-        @PositiveOrZero(message = "좌석은 0 이상이어야 합니다.")
+        @NotNull(message = "{busking.totalInventoryCount.not_null}")
+        @PositiveOrZero(message = "{busking.totalInventoryCount.range}")
         Integer totalInventoryCount,
 
-        @NotNull(message = "위도 값은 필수입니다.")
+        @NotNull(message = "{location.latitude.not_null}")
+        @DecimalMin(value = "-90.0", message = "{location.latitude.range}")
+        @DecimalMax(value = "90.0", message = "{location.latitude.range}")
         Double latitude,
-        @NotNull(message = "경도 값은 필수입니다.")
+        @NotNull(message = "{location.longitude.not_null}")
+        @DecimalMin(value = "-180.0", message = "{location.longitude.range}")
+        @DecimalMax(value = "180.0", message = "{location.longitude.range}")
         Double longitude
 ) {
     public Busking toEntity(IdGenerator idGenerator) {

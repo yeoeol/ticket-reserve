@@ -3,9 +3,9 @@ package ticket.reserve.user.application.dto.request;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserLoginRequestDto(
-        @NotBlank(message = "ID는 필수입니다.")
+        @NotBlank(message = "{user.username.not_blank}")
         String username,
-        @NotBlank(message = "비밀번호는 필수입니다.")
+        @NotBlank(message = "{user.password.not_blank}")
         String password
 ) {
 }
