@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.user.domain.user.User;
@@ -20,7 +21,7 @@ public class BulkUserRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${spring.jpa.properties.hibernate.default_batch_fetch_size}")
+    @Value("${app.jdbc.batch-size}")
     private int batchSize;
 
     public int locationBulkUpdate(List<User> users, Map<Long, Point> pointMap) {

@@ -19,7 +19,7 @@ spring:
 
     properties:
       hibernate:
-        default_batch_fetch_size: 1000
+        default_batch_fetch_size: 100
 
   data:
     redis:
@@ -29,6 +29,9 @@ spring:
 app:
   redis:
     geo-key: "user:locations"
+    active-user-key: "user:active"
+  jdbc:
+    batch-size: 100
 
 eureka:
   client:

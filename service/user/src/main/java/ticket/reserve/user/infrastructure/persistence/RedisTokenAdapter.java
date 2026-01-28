@@ -18,6 +18,9 @@ public class RedisTokenAdapter implements TokenStorePort {
     @Value("${app.redis.geo-key:user:locations}")
     private String geoKey;
 
+    @Value("${app.redis.active-user-key:user:active}")
+    private String activeUserKey;
+
     @Override
     public void addBlackList(String token, long ttl) {
         redisTemplate.opsForValue().set("BL:"+token, "logout", ttl, TimeUnit.MILLISECONDS);
@@ -28,6 +31,6 @@ public class RedisTokenAdapter implements TokenStorePort {
         String userIdString = String.valueOf(userId);
 
         redisTemplate.opsForGeo().add(geoKey, new Point(longitude, latitude), userIdString);
-        redisTemplate.opsForValue().set("user:active:" + userIdString, "active", 30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(activeUserKey + ":" + userIdString, "active", 30, TimeUnit.MINUTES);
     }
 }
