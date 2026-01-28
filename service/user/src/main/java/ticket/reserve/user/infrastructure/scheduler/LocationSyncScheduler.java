@@ -27,7 +27,7 @@ public class LocationSyncScheduler {
     private final UserRepository userRepository;
     private final BulkUserRepository bulkUserRepository;
 
-    @Value("${app.redis.geo-key:user:location}")
+    @Value("${app.redis.geo-key:user:locations}")
     private String geoKey;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
@@ -43,8 +43,8 @@ public class LocationSyncScheduler {
                 .toList();
 
         List<User> users = userRepository.findAllById(userIdList);
-        Map<Long, Point> pointMap = new HashMap<>();
 
+        Map<Long, Point> pointMap = new HashMap<>();
         for (String userIdStr : userIds) {
             List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdStr);
 
@@ -56,7 +56,11 @@ public class LocationSyncScheduler {
             }
         }
 
-        int updateCount = bulkUserRepository.LocationBulkUpdate(users, pointMap);
+        List<User> targetUsers = users.stream()
+                .filter(user -> pointMap.containsKey(user.getId()))
+                .toList();
+
+        int updateCount = bulkUserRepository.locationBulkUpdate(targetUsers, pointMap);
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] 백업 완료: 총 {}명의 위치 정보 동기화", updateCount);
     }
 }

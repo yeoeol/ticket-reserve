@@ -1,5 +1,6 @@
 package ticket.reserve.user.infrastructure.scheduler;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +8,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AtomicIntegerTest {
 
@@ -37,6 +40,10 @@ class AtomicIntegerTest {
         System.out.println("예상 결과: " + (10 + (numberOfThreads * incrementsPerThread)));
         System.out.println("일반 int 결과: " + test.getCount());
         System.out.println("AtomicInteger 결과: " + test.getAtomicCount());
+
+        int expected = 10 + (numberOfThreads * incrementsPerThread);
+        assertThat(test.getAtomicCount()).isEqualTo(expected);
+        assertThat(test.getCount()).isLessThanOrEqualTo(expected);
     }
 
     static class ConcurrentTest {

@@ -13,6 +13,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import ticket.reserve.user.domain.user.repository.BulkUserRepository;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 
 
@@ -34,6 +35,10 @@ class LocationSyncSchedulerDataRedisTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
+    @MockitoBean
+    private BulkUserRepository bulkUserRepository;
+
 
     @Value("${app.redis.geo-key:user:locations}")
     private String geoKey;
