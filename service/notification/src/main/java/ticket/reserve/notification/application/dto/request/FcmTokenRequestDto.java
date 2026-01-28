@@ -6,9 +6,9 @@ import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.notification.domain.fcmtoken.FcmToken;
 
 public record FcmTokenRequestDto(
-        @NotNull(message = "사용자ID는 필수입니다.")
+        @NotNull(message = "{user.id.not_null}")
         Long userId,
-        @NotBlank(message = "FCM_TOKEN 값은 필수입니다.")
+        @NotBlank(message = "{fcmToken.not_blank}")
         String fcmToken
 ) {
     public FcmToken toEntity(IdGenerator idGenerator) {

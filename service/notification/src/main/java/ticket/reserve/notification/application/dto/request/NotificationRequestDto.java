@@ -8,13 +8,13 @@ import ticket.reserve.notification.domain.notification.Notification;
 
 @Builder
 public record NotificationRequestDto(
-        @NotBlank(message = "알림 제목은 필수입니다.")
+        @NotBlank(message = "{notification.title.not_blank}")
         String title,
-        @NotBlank(message = "알림 내용은 필수입니다.")
+        @NotBlank(message = "{notification.message.not_blank}")
         String message,
-        @NotNull(message = "버스킹ID는 필수입니다.")
+        @NotNull(message = "{notification.buskingId.not_blank}")
         Long buskingId,
-        @NotNull(message = "사용자ID는 필수입니다.")
+        @NotNull(message = "{user.id.not_null}")
         Long receiverId,
         int retryCount
 ) {

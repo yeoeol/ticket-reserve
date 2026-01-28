@@ -8,6 +8,7 @@ public record UserRegisterRequestDto(
         String username,
         @NotBlank(message = "{user.password.not_blank}")
         String password,
+        @NotBlank(message = "{user.email.not_blank}")
         @Email(message = "{user.email.valid}")
         String email
 ) {
