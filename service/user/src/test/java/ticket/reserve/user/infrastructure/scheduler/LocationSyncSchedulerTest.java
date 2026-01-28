@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Point;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.user.domain.user.User;
@@ -19,9 +17,6 @@ class LocationSyncSchedulerTest {
     private LocationSyncScheduler locationSyncScheduler;
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -32,9 +27,6 @@ class LocationSyncSchedulerTest {
 
     @Autowired
     private RedisTokenAdapter redisTokenAdapter;
-
-    @Value("${app.redis.geo-key:user:locations}")
-    private String geoKey;
 
     @Test
     void verify_query_count() {

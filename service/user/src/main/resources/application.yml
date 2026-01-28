@@ -6,7 +6,7 @@ spring:
     name: user-service
 
   datasource:
-    url: ${USER_DB_URL:jdbc:mysql://localhost:3306/ticket_users}
+    url: ${USER_DB_URL:jdbc:mysql://localhost:3306/ticket_users?rewriteBatchStatements=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${USER_DB_USERNAME:root}
     password: ${USER_DB_PASSWORD}
@@ -38,3 +38,7 @@ eureka:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG

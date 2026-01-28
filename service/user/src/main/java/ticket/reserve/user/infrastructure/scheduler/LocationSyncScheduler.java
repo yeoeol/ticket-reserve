@@ -2,9 +2,6 @@ package ticket.reserve.user.infrastructure.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,15 +9,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.user.domain.user.User;
+import ticket.reserve.user.domain.user.repository.BulkUserRepository;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,7 +25,7 @@ public class LocationSyncScheduler {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
-    private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    private final BulkUserRepository bulkUserRepository;
 
     @Value("${app.redis.geo-key:user:location}")
     private String geoKey;
@@ -46,12 +42,9 @@ public class LocationSyncScheduler {
                 .map(Long::valueOf)
                 .toList();
 
-        Map<Long, User> userMap = userRepository.findAllById(userIdList).stream()
-                .collect(Collectors.toMap(
-                        User::getId, Function.identity())
-                );
+        List<User> users = userRepository.findAllById(userIdList);
+        Map<Long, Point> pointMap = new HashMap<>();
 
-        AtomicInteger updateCount = new AtomicInteger();
         for (String userIdStr : userIds) {
             List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdStr);
 
@@ -59,17 +52,11 @@ public class LocationSyncScheduler {
                 Point pos = positions.getFirst();
                 Long userId = Long.valueOf(userIdStr);
 
-                User user = userMap.get(userId);
-                if (user != null) {
-                    org.locationtech.jts.geom.Point point = geometryFactory.createPoint(
-                            new Coordinate(pos.getX(), pos.getY())
-                    );
-                    // TODO : update 쿼리 N개 나가는 문제 bulk로 변경
-                    user.updateLocation(point);
-                    updateCount.incrementAndGet();
-                }
+                pointMap.put(userId, pos);
             }
         }
-        log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] 백업 완료: 총 {}명의 위치 정보 동기화", updateCount.get());
+
+        int updateCount = bulkUserRepository.LocationBulkUpdate(users, pointMap);
+        log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] 백업 완료: 총 {}명의 위치 정보 동기화", updateCount);
     }
 }
