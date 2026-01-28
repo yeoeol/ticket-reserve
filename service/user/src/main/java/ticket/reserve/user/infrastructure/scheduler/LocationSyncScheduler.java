@@ -64,6 +64,7 @@ public class LocationSyncScheduler {
                     org.locationtech.jts.geom.Point point = geometryFactory.createPoint(
                             new Coordinate(pos.getX(), pos.getY())
                     );
+                    // TODO : update 쿼리 N개 나가는 문제 bulk로 변경
                     user.updateLocation(point);
                     updateCount.incrementAndGet();
                 }
