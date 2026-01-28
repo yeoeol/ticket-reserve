@@ -19,7 +19,7 @@ spring:
 
     properties:
       hibernate:
-        default_batch_fetch_size: 100
+        default_batch_fetch_size: 1000
 
   data:
     redis:
@@ -38,7 +38,3 @@ eureka:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
-
-logging:
-  level:
-    org.springframework.jdbc.core.JdbcTemplate: DEBUG
