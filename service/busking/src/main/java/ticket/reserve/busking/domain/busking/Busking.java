@@ -19,7 +19,7 @@ import java.util.List;
 public class Busking extends BaseTimeEntity {
 
     @Id
-    @Column(name = "event_id")
+    @Column(name = "busking_id")
     private Long id;
 
     private String title;          // 공연 제목

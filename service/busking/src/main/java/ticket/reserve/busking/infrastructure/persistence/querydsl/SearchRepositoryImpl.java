@@ -4,9 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -30,6 +28,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
 
     @Override
     public List<BuskingResponseDto> search(BuskingSearchCondition condition) {
+        NumberTemplate<Double> lat = Expressions.numberTemplate(Double.class, "ST_Y({0})", busking.coordinate);
+        NumberTemplate<Double> lng = Expressions.numberTemplate(Double.class, "ST_X({0})", busking.coordinate);
+
         return queryFactory
                 .from(busking)
                 .leftJoin(busking.buskingImages, buskingImage)
@@ -50,7 +51,9 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                         busking.endTime,
                                         busking.totalInventoryCount,
                                         busking.totalInventoryCount,
-                                        list(buskingImage.storedPath)
+                                        list(buskingImage.storedPath),
+                                        lat,
+                                        lng
                                 )
                         )
                 );

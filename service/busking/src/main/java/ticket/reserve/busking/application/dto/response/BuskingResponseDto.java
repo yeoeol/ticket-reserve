@@ -2,6 +2,7 @@ package ticket.reserve.busking.application.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
+import org.locationtech.jts.geom.Point;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.buskingimage.BuskingImage;
 
@@ -18,9 +19,13 @@ public record BuskingResponseDto(
         LocalDateTime endTime,
         Integer availableInventory,
         Integer totalInventoryCount,
-        List<String> imageUrls
+        List<String> imageUrls,
+        Double latitude,
+        Double longitude
 ) {
     public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount) {
+        Point point = busking.getCoordinate();
+
         return BuskingResponseDto.builder()
                 .id(busking.getId())
                 .title(busking.getTitle())
@@ -33,7 +38,10 @@ public record BuskingResponseDto(
                 .imageUrls(busking.getBuskingImages().stream()
                         .map(BuskingImage::getStoredPath)
                         .toList()
-                ).build();
+                )
+                .latitude(point.getY())
+                .longitude(point.getX())
+                .build();
     }
 
     @QueryProjection

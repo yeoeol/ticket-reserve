@@ -17,7 +17,7 @@ import ticket.reserve.core.tsid.IdGenerator;
 public class BuskingImage extends BaseTimeEntity {
 
     @Id
-    @Column(name = "event_image_id")
+    @Column(name = "busking_image_id")
     private Long id;
     private String originalFileName;
     private String storedPath;
@@ -27,7 +27,7 @@ public class BuskingImage extends BaseTimeEntity {
     private Integer sortOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "busking_id", nullable = false)
     private Busking busking;
 
     @Builder
