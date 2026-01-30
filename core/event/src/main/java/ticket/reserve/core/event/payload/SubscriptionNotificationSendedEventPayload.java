@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticket.reserve.core.event.EventPayload;
 
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubScriptionNotificationSendedEventPayload implements EventPayload {
+public class SubscriptionNotificationSendedEventPayload implements EventPayload {
     private Long buskingId;
-    private Long userId;
+    private Set<Long> userIds;
+    private long remainingMinutes;
 }

@@ -15,14 +15,20 @@ public class RedisRepository implements RedisPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${app.redis.subscription-key:busking:subscription}")
-    private String subscriptionKey;
+    @Value("${app.redis.notification-schdule-key:busking:notification_schedule}")
+    private String notificationScheduleKey;
+
+    @Value("${app.redis.busking-subscribers-key:busking:subscribers}")
+    private String subscribersByBuskingIdKey;
 
     public void addToSubscriptionQueue(Long buskingId, Long userId, LocalDateTime startTime) {
-        String value =  userId + ":" + buskingId;
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
 
-        redisTemplate.opsForZSet().add(subscriptionKey, value, startTimeMillis);
+        redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
+        redisTemplate.opsForSet().add(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
     }
 
+    private String generateSubscribersByBuskingIdKey(Long buskingId) {
+        return subscribersByBuskingIdKey + ":" + buskingId;
+    }
 }

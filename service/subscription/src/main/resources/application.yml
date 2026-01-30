@@ -27,7 +27,8 @@ spring:
 
 app:
   redis:
-    subscription-key: "busking:subscription"
+    notification-schdule-key: "busking:notification_schedule"
+    busking-subscribers-key: "busking:subscribers"
 
 eureka:
   client:
