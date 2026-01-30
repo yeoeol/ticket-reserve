@@ -14,6 +14,7 @@ import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -33,14 +34,15 @@ public class NotificationService {
     public NotificationResponseDto createAndSend(NotificationRequestDto request) {
         Notification notification = request.toEntity(idGenerator);
 
-        String fcmToken = fcmTokenService.getTokenByUserId(request.receiverId());
+        Optional<String> optionalFcmToken = fcmTokenService.getTokenByUserId(request.receiverId());
         // FcmToken이 존재하지 않으면 알림 발송 실패 카운트 증가
-        if (fcmToken == null) {
+        if (optionalFcmToken.isEmpty()) {
             NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
             handleFailure(nextRetryDto);
             return NotificationResponseDto.from(notification, NotificationResult.failResult(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
 
+        String fcmToken = optionalFcmToken.get();
         NotificationResult result = senderPort.send(notification, fcmToken);
         if (result.isSuccess()) {
             notificationCrudService.save(notification);
@@ -58,13 +60,14 @@ public class NotificationService {
         bulkNotificationRepository.bulkInsert(notifications);
 
         for (Notification notification : notifications) {
-            String fcmToken = fcmTokenService.getTokenByUserId(notification.getReceiverId());
-            if (fcmToken == null) {
+            Optional<String> optionalFcmToken = fcmTokenService.getTokenByUserId(notification.getReceiverId());
+            if (optionalFcmToken.isEmpty()) {
                 NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
                 handleFailure(nextRetryDto);
                 continue;
             }
 
+            String fcmToken = optionalFcmToken.get();
             NotificationResult result = senderPort.send(notification, fcmToken);
             if (!result.isSuccess()) {
                 NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);

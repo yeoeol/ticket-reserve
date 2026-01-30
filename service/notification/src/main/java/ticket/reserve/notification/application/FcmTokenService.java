@@ -37,9 +37,8 @@ public class FcmTokenService {
     }
 
     @Transactional(readOnly = true)
-    public String getTokenByUserId(Long userId) {
+    public Optional<String> getTokenByUserId(Long userId) {
         Optional<FcmToken> fcmToken = fcmTokenRepository.findByUserId(userId);
-        return fcmToken.map(FcmToken::getFcmToken)
-                .orElse(null);
+        return fcmToken.map(FcmToken::getFcmToken);
     }
 }

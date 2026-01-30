@@ -15,6 +15,8 @@ import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -48,7 +50,7 @@ public class NotificationServiceTest {
     void createAndSendNotification_success() {
         //given: userId가 1234인 사용자에게 1번 게시글에 대한 알림 발송
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 0);
-        given(fcmTokenService.getTokenByUserId(1234L)).willReturn("testFcmToken");
+        given(fcmTokenService.getTokenByUserId(1234L)).willReturn(Optional.of("testFcmToken"));
         given(senderPort.send(any(), any())).willReturn(NotificationResult.successResult());
 
         //when
@@ -68,7 +70,7 @@ public class NotificationServiceTest {
     void send_fail_noSaveDB_saveRedis() {
         //given
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 0);
-        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(fcmTokenService.getTokenByUserId(any())).willReturn(Optional.of("testFcmToken"));
         given(senderPort.send(any(), any()))
                 .willReturn(NotificationResult.failResult(500));
 
@@ -88,7 +90,7 @@ public class NotificationServiceTest {
     void send_retry_saveRedis_increse_retryCount() {
         //given
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, 1);
-        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(fcmTokenService.getTokenByUserId(any())).willReturn(Optional.of("testFcmToken"));
         given(senderPort.send(any(), any()))
                 .willReturn(NotificationResult.failResult(500));
 
@@ -108,7 +110,7 @@ public class NotificationServiceTest {
     void send_max_retry() {
         //given
         NotificationRequestDto request = new NotificationRequestDto("아이유 버스킹", "아이유 버스킹이 광화문에서 진행됩니다!", 1L, 1234L, MAX_RETRY_COUNT-1);
-        given(fcmTokenService.getTokenByUserId(any())).willReturn("testFcmToken");
+        given(fcmTokenService.getTokenByUserId(any())).willReturn(Optional.of("testFcmToken"));
         given(senderPort.send(any(), any()))
                 .willReturn(NotificationResult.failResult(500));
 
@@ -131,7 +133,7 @@ public class NotificationServiceTest {
                 "제목", "내용", 1L, receiverId, 1
         );
 
-        given(fcmTokenService.getTokenByUserId(receiverId)).willReturn("testFcmToken");
+        given(fcmTokenService.getTokenByUserId(receiverId)).willReturn(Optional.of("testFcmToken"));
         given(senderPort.send(any(), any()))
                 .willReturn(NotificationResult.failResult(500));
 
