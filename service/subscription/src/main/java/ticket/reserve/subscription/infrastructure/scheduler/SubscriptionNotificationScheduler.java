@@ -29,7 +29,6 @@ public class SubscriptionNotificationScheduler {
         Set<BuskingNotificationTarget> targets = redisRepository.findBuskingIdsReadyToNotify(oneHourLater);
         if (targets == null || targets.isEmpty()) return;
 
-
         for (BuskingNotificationTarget target : targets) {
             long remainingMinutes = getRemainingMinutes(now, target.startTime());
 
