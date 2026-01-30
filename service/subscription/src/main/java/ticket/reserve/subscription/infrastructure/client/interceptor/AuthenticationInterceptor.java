@@ -1,4 +1,4 @@
-package ticket.reserve.notification.infrastructure.client.interceptor;
+package ticket.reserve.subscription.infrastructure.client.interceptor;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;

@@ -1,0 +1,24 @@
+server:
+  port: 35555
+
+spring:
+  application:
+    name: subscription-service
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+app:
+  redis:
+    notification-schedule-key: "busking:notification_schedule"
+    busking-subscribers-key: "busking:subscribers"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}

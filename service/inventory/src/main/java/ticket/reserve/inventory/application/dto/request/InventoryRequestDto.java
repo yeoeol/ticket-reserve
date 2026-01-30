@@ -9,7 +9,7 @@ import ticket.reserve.core.tsid.IdGenerator;
 public record InventoryRequestDto(
         @NotBlank(message = "{inventory.name.not_null}")
         String inventoryName,
-        @NotNull(message = "{inventory.buskingId.not_blank}")
+        @NotNull(message = "{busking.id.not_null}")
         Long buskingId,
         @NotNull(message = "{inventory.price.not_null}")
         @PositiveOrZero(message = "{inventory.price.range}")
