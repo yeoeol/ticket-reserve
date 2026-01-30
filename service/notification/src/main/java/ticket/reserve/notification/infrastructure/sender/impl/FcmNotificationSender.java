@@ -12,6 +12,8 @@ import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.infrastructure.sender.NotificationSender;
 
+import java.util.concurrent.CompletableFuture;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -21,8 +23,10 @@ public class FcmNotificationSender implements NotificationSender {
 
     @Async("sendExecutor")
     @Override
-    public NotificationResult send(Notification notification, String fcmToken) {
-        return send(createMessage(notification.getTitle(), notification.getMessage(), notification.getBuskingId(), fcmToken));
+    public CompletableFuture<NotificationResult> send(Notification notification, String fcmToken) {
+        return CompletableFuture.supplyAsync(() ->
+                send(createMessage(notification.getTitle(), notification.getMessage(), notification.getBuskingId(), fcmToken))
+        );
     }
 
     private NotificationResult send(Message message) {

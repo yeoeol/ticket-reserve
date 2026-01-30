@@ -15,6 +15,8 @@ import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.domain.notification.Notification;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -39,7 +41,8 @@ class FcmNotificationSenderTest {
         String fcmToken = "testFcmToken";
 
         //when
-        NotificationResult result = fcmNotificationSender.send(notification, fcmToken);
+        CompletableFuture<NotificationResult> resultCompletableFuture = fcmNotificationSender.send(notification, fcmToken);
+        NotificationResult result = resultCompletableFuture.get();
 
         //then
         verify(firebaseMessaging, times(1)).send(any(Message.class));
@@ -57,7 +60,8 @@ class FcmNotificationSenderTest {
         doThrow(FirebaseMessagingException.class).when(firebaseMessaging).send(any());
 
         //when
-        NotificationResult result = fcmNotificationSender.send(notification, fcmToken);
+        CompletableFuture<NotificationResult> resultCompletableFuture = fcmNotificationSender.send(notification, fcmToken);
+        NotificationResult result = resultCompletableFuture.get();
 
         //then
         assertThat(result.isSuccess()).isFalse();

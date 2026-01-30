@@ -16,6 +16,7 @@ import ticket.reserve.notification.domain.notification.repository.BulkNotificati
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -43,17 +44,32 @@ public class NotificationService {
         }
 
         String fcmToken = optionalFcmToken.get();
-        NotificationResult result = senderPort.send(notification, fcmToken);
-        if (result.isSuccess()) {
-            notificationCrudService.save(notification);
-        } else {
+        NotificationResult result;
+        try {
+            CompletableFuture<NotificationResult> resultCompletableFuture = senderPort.send(notification, fcmToken);
+            result = resultCompletableFuture.get();
+
+            if (result.isSuccess()) {
+                notificationCrudService.save(notification);
+
+                log.info("[NotificationService.createAndSend] 알림 발송 성공: buskingId={}, receiverId={}, title={}",
+                        request.buskingId(), request.receiverId(), request.title());
+            } else {
+                NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
+                handleFailure(nextRetryDto);
+            }
+        } catch (Exception e) {
             NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
             handleFailure(nextRetryDto);
+            result = NotificationResult.failResult(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+            log.info("[NotificationService.createAndSend] 알림 발송 중 예외 발생: buskingId={}, receiverId={}, title={}",
+                    request.buskingId(), request.receiverId(), request.title(), e);
         }
         return NotificationResponseDto.from(notification, result);
     }
 
-    public List<NotificationResponseDto> bulkCreateAndSend(Long buskingId, Set<Long> userIds, long remainingMinutes) {
+    public void bulkCreateAndSend(Long buskingId, Set<Long> userIds, long remainingMinutes) {
         List<Notification> notifications = userIds.stream()
                 .map(userId -> Notification.createSubscriptionRemider(idGenerator, buskingId, userId, remainingMinutes))
                 .toList();
@@ -68,16 +84,25 @@ public class NotificationService {
             }
 
             String fcmToken = optionalFcmToken.get();
-            NotificationResult result = senderPort.send(notification, fcmToken);
-            if (!result.isSuccess()) {
+            try {
+                CompletableFuture<NotificationResult> resultCompletableFuture = senderPort.send(notification, fcmToken);
+                NotificationResult result = resultCompletableFuture.get();
+
+                if (result.isSuccess()) {
+                    log.info("[NotificationService.createAndSend] 알림 발송 성공: buskingId={}, receiverId={}, title={}",
+                            notification.getBuskingId(), notification.getReceiverId(), notification.getTitle());
+                } else {
+                    NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
+                    handleFailure(nextRetryDto);
+                }
+            } catch (Exception e) {
                 NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
                 handleFailure(nextRetryDto);
+
+                log.info("[NotificationService.createAndSend] 알림 발송 중 예외 발생: buskingId={}, receiverId={}, title={}",
+                        notification.getBuskingId(), notification.getReceiverId(), notification.getTitle(), e);
             }
         }
-
-        return notifications.stream()
-                .map(notification -> NotificationResponseDto.from(notification, NotificationResult.acceptResult()))
-                .toList();
     }
 
     private void handleFailure(NotificationRetryDto retryDto) {
