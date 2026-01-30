@@ -1,0 +1,22 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    testImplementation 'com.h2database:h2'
+
+    implementation project(':core:event')
+    implementation project(':core:global')
+    implementation project(':core:outbox-message-relay')
+    implementation project(':core:tsid')
+}

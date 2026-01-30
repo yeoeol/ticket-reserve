@@ -23,4 +23,5 @@ include 'service:payment'
 include 'service:reservation'
 include 'service:image'
 include 'service:notification'
+include 'service:subscription'
 
