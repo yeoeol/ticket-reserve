@@ -6,6 +6,7 @@ import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.domain.notification.Notification;
@@ -18,6 +19,7 @@ public class FcmNotificationSender implements NotificationSender {
 
     private final FirebaseMessaging firebaseMessaging;
 
+    @Async("sendExecutor")
     @Override
     public NotificationResult send(Notification notification, String fcmToken) {
         return send(createMessage(notification.getTitle(), notification.getMessage(), notification.getBuskingId(), fcmToken));

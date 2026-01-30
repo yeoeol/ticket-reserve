@@ -55,6 +55,7 @@ public class NotificationService {
         for (Notification notification : notifications) {
             String fcmToken = fcmTokenService.getTokenByUserId(notification.getReceiverId());
             NotificationResult result = senderPort.send(notification, fcmToken);
+
             if (!result.isSuccess()) {
                 NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
                 handleFailure(nextRetryDto);
