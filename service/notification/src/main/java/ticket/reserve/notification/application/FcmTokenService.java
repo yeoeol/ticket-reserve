@@ -38,8 +38,8 @@ public class FcmTokenService {
 
     @Transactional(readOnly = true)
     public String getTokenByUserId(Long userId) {
-        return fcmTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_FCM_TOKEN))
-                .getFcmToken();
+        Optional<FcmToken> fcmToken = fcmTokenRepository.findByUserId(userId);
+        return fcmToken.map(FcmToken::getFcmToken)
+                .orElse(null);
     }
 }
