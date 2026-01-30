@@ -33,7 +33,7 @@ public class SubscriptionNotificationScheduler {
             long remainingMinutes = getRemainingMinutes(now, target.startTime());
 
             Set<Long> userIds = redisRepository.findSubscribersByBuskingId(target.buskingId());
-            if (userIds == null || userIds.isEmpty()) return;
+            if (userIds == null || userIds.isEmpty()) continue;
 
             Long buskingId = target.buskingId();
             outboxEventPublisher.publish(

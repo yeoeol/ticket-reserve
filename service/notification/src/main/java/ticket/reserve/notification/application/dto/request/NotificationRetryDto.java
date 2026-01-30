@@ -11,7 +11,7 @@ public record NotificationRetryDto(
         String title,
         @NotBlank(message = "{notification.message.not_blank}")
         String message,
-        @NotNull(message = "{notification.buskingId.not_blank}")
+        @NotNull(message = "{busking.id.not_null}")
         Long buskingId,
         @NotNull(message = "{user.id.not_null}")
         Long receiverId,

@@ -22,7 +22,7 @@ public class RedisRepository implements RedisPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${app.redis.notification-schdule-key:busking:notification_schedule}")
+    @Value("${app.redis.notification-schedule-key:busking:notification_schedule}")
     private String notificationScheduleKey;
 
     @Value("${app.redis.busking-subscribers-key:busking:subscribers}")
@@ -41,6 +41,7 @@ public class RedisRepository implements RedisPort {
         if (results == null) return Collections.emptySet();
 
         return results.stream()
+                .filter(tuple -> tuple.getValue() != null && tuple.getScore() != null)
                 .map(tuple -> new BuskingNotificationTarget(
                         Long.valueOf(tuple.getValue()),
                         convertToLocalDateTime(tuple.getScore().longValue())

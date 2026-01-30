@@ -1,5 +1,6 @@
 package ticket.reserve.subscription.presentation.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class SubscriptionApiController {
     private final SubscriptionService subscriptionService;
 
     @PostMapping
-    public ResponseEntity<Void> subscription(@RequestBody SubscriptionRequestDto request) {
+    public ResponseEntity<Void> subscription(@Valid @RequestBody SubscriptionRequestDto request) {
         subscriptionService.subscription(request);
         return ResponseEntity.noContent().build();
     }
