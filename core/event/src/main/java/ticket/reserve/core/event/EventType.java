@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.core.event.payload.PaymentConfirmedEventPayload;
 import ticket.reserve.core.event.payload.ReservationExpiredPayload;
+import ticket.reserve.core.event.payload.SubScriptionNotificationSendedEventPayload;
 
 @Slf4j
 @Getter
@@ -14,7 +15,8 @@ public enum EventType {
 
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
     BUSKING_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
-    RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION)
+    RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION),
+    SUBSCRIPTION_NOTIFICATION_SENDED(SubScriptionNotificationSendedEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
     ;
 
     private final Class<? extends EventPayload> payloadClass;
@@ -36,5 +38,6 @@ public enum EventType {
         public static final String TICKET_RESERVE_PAYMENT = "ticket-reserve-payment";
         public static final String TICKET_RESERVE_RESERVATION = "ticket-reserve-reservation";
         public static final String TICKET_RESERVE_USER = "ticket-reserve-user";
+        public static final String TICKET_RESERVE_SUBSCRIPTION = "ticket-reserve-subscription";
     }
 }
