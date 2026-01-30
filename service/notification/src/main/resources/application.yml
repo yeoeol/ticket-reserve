@@ -6,7 +6,7 @@ spring:
     name: notification-service
 
   datasource:
-    url: ${NOTIFICATION_DB_URL:jdbc:mysql://localhost:3306/notifications}
+    url: ${NOTIFICATION_DB_URL:jdbc:mysql://localhost:3306/notifications?rewriteBatchedStatements=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${NOTIFICATION_DB_USERNAME:root}
     password: ${NOTIFICATION_DB_PASSWORD}
@@ -37,6 +37,8 @@ app:
     fail-key: "notify:retry"
     geo-key: "user:locations"
     active-user-key: "user:active"
+  jdbc:
+    batch-size: 100
 
 eureka:
   client:

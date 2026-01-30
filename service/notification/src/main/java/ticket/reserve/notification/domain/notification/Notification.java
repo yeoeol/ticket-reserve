@@ -46,4 +46,10 @@ public class Notification extends BaseTimeEntity {
                 .receiverId(receiverId)
                 .build();
     }
+
+    public static Notification createSubscriptionRemider(IdGenerator idGenerator, Long buskingId, Long userId, long remainingMinutes) {
+        String title = "버스킹 알림";
+        String message = "[구독 알림] 버스킹이 %d분 후 시작됩니다!".formatted(remainingMinutes);
+        return Notification.create(idGenerator, title, message, buskingId, userId);
+    }
 }

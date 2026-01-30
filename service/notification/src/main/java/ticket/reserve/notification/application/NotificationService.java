@@ -10,6 +10,11 @@ import ticket.reserve.notification.application.dto.response.NotificationResponse
 import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
+import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -21,6 +26,7 @@ public class NotificationService {
     private final RedisService redisService;
     private final NotificationCrudService notificationCrudService;
     private final FcmTokenService fcmTokenService;
+    private final BulkNotificationRepository bulkNotificationRepository;
 
     private static final int MAX_RETRY_COUNT = 5;
 
@@ -40,12 +46,32 @@ public class NotificationService {
         return NotificationResponseDto.from(notification, result);
     }
 
+    public List<NotificationResponseDto> bulkCreateAndSend(Long buskingId, Set<Long> userIds, long remainingMinutes) {
+        List<Notification> notifications = userIds.stream()
+                .map(userId -> Notification.createSubscriptionRemider(idGenerator, buskingId, userId, remainingMinutes))
+                .toList();
+        bulkNotificationRepository.bulkInsert(notifications);
+
+        for (Notification notification : notifications) {
+            String fcmToken = fcmTokenService.getTokenByUserId(notification.getReceiverId());
+            NotificationResult result = senderPort.send(notification, fcmToken);
+            if (!result.isSuccess()) {
+                NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
+                handleFailure(nextRetryDto);
+            }
+        }
+
+        return notifications.stream()
+                .map(notification -> NotificationResponseDto.from(notification, NotificationResult.acceptResult()))
+                .toList();
+    }
+
     private void handleFailure(NotificationRetryDto retryDto) {
         int currentRetryCount = retryDto.retryCount();
 
         if (currentRetryCount >= MAX_RETRY_COUNT) {
-            log.error("[NotificationService.createAndSend.handleFailure] 최대 재시도 횟수 초과: receiverId={}, title={}",
-                    retryDto.receiverId(), retryDto.title()
+            log.error("[NotificationService.createAndSend.handleFailure] 최대 재시도 횟수 초과: buskingId={}, receiverId={}, title={}",
+                    retryDto.buskingId(), retryDto.receiverId(), retryDto.title()
             );
             // TODO : 알림 발송 5회 실패한 DLQ(Dead Letter Queue) 구현
             return;
@@ -56,8 +82,8 @@ public class NotificationService {
 
         redisService.addFailedNotification(retryDto, nextDelaySeconds);
         log.warn("[NotificationService.createAndSend.handleFailure] " +
-                        "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: receiverId={}, title={}",
-                currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.receiverId(), retryDto.title()
+                        "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: buskingId={}, receiverId={}, title={}",
+                currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.buskingId(), retryDto.receiverId(), retryDto.title()
         );
     }
 }
