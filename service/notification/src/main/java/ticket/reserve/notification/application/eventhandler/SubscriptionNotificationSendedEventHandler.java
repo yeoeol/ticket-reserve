@@ -8,8 +8,6 @@ import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.SubscriptionNotificationSendedEventPayload;
 import ticket.reserve.notification.application.NotificationService;
 
-import java.util.Set;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -21,14 +19,14 @@ public class SubscriptionNotificationSendedEventHandler implements EventHandler<
     public void handle(Event<SubscriptionNotificationSendedEventPayload> event) {
         SubscriptionNotificationSendedEventPayload payload = event.getPayload();
 
-        Long buskingId = payload.getBuskingId();
-        Set<Long> userIds = payload.getUserIds();
-        long remainingMinutes = payload.getRemainingMinutes();
-
-        notificationService.bulkCreateAndSend(buskingId, userIds, remainingMinutes);
+        String title = "버스킹이 시작 전 알림";
+        String body = "[구독 알림] 버스킹이 %d분 후 시작합니다!".formatted(payload.getRemainingMinutes());
+        notificationService.sendBulkNotification(
+                title, body, payload.getBuskingId(), payload.getUserIds()
+        );
 
         log.info("[SubscriptionNotificationSendedEventHandler.handle] 버스킹 시작 전 알림 발송 " +
-                        "- buskingId={} : 총 알림 {}건", buskingId, userIds.size());
+                "- buskingId={} : 총 알림 {}건", payload.getBuskingId(), payload.getUserIds().size());
     }
 
     @Override

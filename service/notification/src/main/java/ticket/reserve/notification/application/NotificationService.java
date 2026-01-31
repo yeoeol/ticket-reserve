@@ -12,6 +12,7 @@ import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -25,9 +26,9 @@ public class NotificationService {
     private final BulkNotificationRepository bulkNotificationRepository;
 
     @Transactional
-    public void sendBulkNotification(String title, String body, Long buskingId, List<Long> userIds) {
+    public void sendBulkNotification(String title, String body, Long buskingId, Collection<Long> userIds) {
         List<Notification> pendingNotifications = userIds.stream()
-                .map(userId -> Notification.create(idGenerator, title, body, userId))
+                .map(userId -> Notification.create(idGenerator, title, body, userId, buskingId))
                 .toList();
         bulkNotificationRepository.bulkInsert(pendingNotifications);
 
@@ -67,25 +68,4 @@ public class NotificationService {
     private void handleBatchFailure(List<Notification> partition) {
         partition.forEach(Notification::markAsFail);
     }
-
-/*    private void handleFailure(NotificationRetryDto retryDto) {
-        int currentRetryCount = retryDto.retryCount();
-
-        if (currentRetryCount >= MAX_RETRY_COUNT) {
-            log.error("[NotificationService.createAndSend.handleFailure] 최대 재시도 횟수 초과: buskingId={}, receiverId={}, title={}",
-                    retryDto.buskingId(), retryDto.receiverId(), retryDto.title()
-            );
-            // TODO : 알림 발송 5회 실패한 DLQ(Dead Letter Queue) 구현
-            return;
-        }
-
-        // 지수 백오프: 2^n * 60초 (1분 -> 2분 -> 4분 -> 8분 -> 16분)
-        long nextDelaySeconds = (long) Math.pow(2, Math.max(0, currentRetryCount-1)) * 60;
-
-        redisService.addFailedNotification(retryDto, nextDelaySeconds);
-        log.warn("[NotificationService.createAndSend.handleFailure] " +
-                        "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: buskingId={}, receiverId={}, title={}",
-                currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.buskingId(), retryDto.receiverId(), retryDto.title()
-        );
-    }*/
 }

@@ -34,8 +34,7 @@ spring:
 
 app:
   redis:
-    fail-key: "notify:retry"
-    geo-key: "user:locations"
+    geo-key: "users:location"
     active-user-key: "user:active"
   jdbc:
     batch-size: 100

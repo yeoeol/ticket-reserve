@@ -27,7 +27,7 @@ public class LocationSyncScheduler {
     private final UserRepository userRepository;
     private final BulkUserRepository bulkUserRepository;
 
-    @Value("${app.redis.geo-key:user:locations}")
+    @Value("${app.redis.geo-key:users:location}")
     private String geoKey;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)

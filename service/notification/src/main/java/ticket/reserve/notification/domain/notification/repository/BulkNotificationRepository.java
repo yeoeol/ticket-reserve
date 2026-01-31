@@ -20,8 +20,8 @@ public class BulkNotificationRepository {
 
     @Transactional
     public int bulkInsert(List<Notification> notifications) {
-        String sql = "INSERT INTO notifications (notification_id, title, body, receiver_id, status, retry_count) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO notifications (notification_id, title, body, receiver_id, busking_id, status, retry_count) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         return jdbcTemplate.batchUpdate(sql,
                 notifications,
@@ -31,8 +31,9 @@ public class BulkNotificationRepository {
                     ps.setString(2, notification.getTitle());
                     ps.setString(3, notification.getBody());
                     ps.setLong(4, notification.getReceiverId());
-                    ps.setString(5, notification.getStatus().name());
-                    ps.setInt(6, notification.getRetryCount());
+                    ps.setLong(5, notification.getBuskingId());
+                    ps.setString(6, notification.getStatus().name());
+                    ps.setInt(7, notification.getRetryCount());
                 }
         ).length;
     }
