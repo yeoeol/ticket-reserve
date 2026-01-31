@@ -29,6 +29,7 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
         List<Long> receiverIds = redisPort.findNearbyActiveUsers(
                 payload.getLongitude(), payload.getLatitude(), radiusKm
         );
+        if (receiverIds.isEmpty()) return;
 
         String body = payload.getLocation() + " : 새로운 버스킹이 등록되었습니다!";
         notificationService.sendBulkNotification(

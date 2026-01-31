@@ -24,6 +24,7 @@ public class NotificationService {
     private final SenderPort senderPort;
     private final FcmTokenService fcmTokenService;
     private final BulkNotificationRepository bulkNotificationRepository;
+    private final NotificationCrudService notificationCrudService;
 
     @Transactional
     public void sendBulkNotification(String title, String body, Long buskingId, Collection<Long> userIds) {
@@ -41,12 +42,22 @@ public class NotificationService {
             List<String> fcmTokens = fcmTokenService.getTokensByUserIds(pUserIds);
 
             senderPort.send(title, body, buskingId, fcmTokens)
-                    .thenAccept(response -> handleBatchResult(partition, response))
+                    .thenAccept(response -> {
+                        handleBatchResult(partition, response);
+                        bulkNotificationRepository.bulkUpsert(partition);
+                    })
                     .exceptionally(ex -> {
                         handleBatchFailure(partition);
+                        bulkNotificationRepository.bulkUpsert(partition);
                         return null;
                     });
         }
+    }
+
+    @Transactional
+    public void incrementRetryCounts(List<Long> notificationIds) {
+        List<Notification> notifications = notificationCrudService.findAllByIds(notificationIds);
+        notifications.forEach(Notification::incrementRetryCount);
     }
 
     private void handleBatchResult(List<Notification> partition, BatchResponse response) {

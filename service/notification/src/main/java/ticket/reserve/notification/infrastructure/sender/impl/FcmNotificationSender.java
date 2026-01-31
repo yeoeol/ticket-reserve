@@ -26,7 +26,7 @@ public class FcmNotificationSender implements NotificationSender {
             BatchResponse response = firebaseMessaging.sendEachForMulticast(multicastMessage);
             return CompletableFuture.completedFuture(response);
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException("FCM Multicast Critical Error", e);
+            return CompletableFuture.failedFuture(e);
         }
     }
 

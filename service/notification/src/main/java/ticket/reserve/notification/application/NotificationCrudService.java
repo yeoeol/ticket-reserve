@@ -19,4 +19,9 @@ public class NotificationCrudService {
     public List<Notification> findByStatus(NotificationStatus status) {
         return notificationRepository.findByStatus(status);
     }
+
+    @Transactional
+    public List<Notification> findAllByIds(List<Long> notificationIds) {
+        return notificationRepository.findAllById(notificationIds);
+    }
 }

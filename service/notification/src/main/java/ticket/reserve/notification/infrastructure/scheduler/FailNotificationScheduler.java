@@ -31,6 +31,9 @@ public class FailNotificationScheduler {
             List<Long> userIds = notifications.stream()
                     .map(Notification::getReceiverId)
                     .toList();
+            List<Long> notificationIds = notifications.stream()
+                    .map(Notification::getId)
+                    .toList();
 
             String title = notifications.getFirst().getTitle();
             String body = notifications.getFirst().getBody();
@@ -40,7 +43,8 @@ public class FailNotificationScheduler {
                     buskingId,
                     userIds
             );
-            notifications.forEach(Notification::incrementRetryCount);
+
+            notificationService.incrementRetryCounts(notificationIds);
         });
     }
 }
