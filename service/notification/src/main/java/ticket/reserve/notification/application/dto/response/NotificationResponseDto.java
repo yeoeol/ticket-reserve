@@ -2,25 +2,26 @@ package ticket.reserve.notification.application.dto.response;
 
 import lombok.Builder;
 import ticket.reserve.notification.domain.notification.Notification;
+import ticket.reserve.notification.domain.notification.enums.NotificationStatus;
 
 @Builder
 public record NotificationResponseDto(
         Long notificationId,
         String title,
         String message,
-        Long buskingId,
         Long receiverId,
-        NotificationResult result
+        NotificationStatus status,
+        int retryCount
 ) {
-    public static NotificationResponseDto from(Notification notification, NotificationResult result) {
+    public static NotificationResponseDto from(Notification notification) {
         return NotificationResponseDto
                 .builder()
                 .notificationId(notification.getId())
                 .title(notification.getTitle())
-                .message(notification.getMessage())
-                .buskingId(notification.getBuskingId())
+                .message(notification.getBody())
                 .receiverId(notification.getReceiverId())
-                .result(result)
+                .status(notification.getStatus())
+                .retryCount(notification.getRetryCount())
                 .build();
     }
 }

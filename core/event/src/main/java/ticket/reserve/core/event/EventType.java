@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.core.event.payload.PaymentConfirmedEventPayload;
 import ticket.reserve.core.event.payload.ReservationExpiredPayload;
-import ticket.reserve.core.event.payload.SubscriptionNotificationSendedEventPayload;
+import ticket.reserve.core.event.payload.SubscriptionNotificationSentEventPayload;
 
 @Slf4j
 @Getter
@@ -16,7 +16,7 @@ public enum EventType {
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
     BUSKING_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
     RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION),
-    SUBSCRIPTION_NOTIFICATION_SENDED(SubscriptionNotificationSendedEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
+    SUBSCRIPTION_NOTIFICATION_SENT(SubscriptionNotificationSentEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
     ;
 
     private final Class<? extends EventPayload> payloadClass;

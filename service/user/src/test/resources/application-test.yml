@@ -30,7 +30,7 @@ app:
   scheduling:
     enable: false
   redis:
-    geo-key: "user:locations:test"
+    geo-key: "users:location:test"
 
 eureka:
   client:

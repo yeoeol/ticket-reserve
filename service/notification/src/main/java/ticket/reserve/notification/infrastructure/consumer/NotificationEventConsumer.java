@@ -18,7 +18,8 @@ public class NotificationEventConsumer {
     private final EventHandlerService eventHandlerService;
 
     @KafkaListener(topics = {
-            EventType.Topic.TICKET_RESERVE_BUSKING
+            EventType.Topic.TICKET_RESERVE_BUSKING,
+            EventType.Topic.TICKET_RESERVE_SUBSCRIPTION
     })
     public void listen(String message, Acknowledgment ack) {
         log.info("[NotificationEventConsumer.listen] 이벤트 수신: message = {}", message);

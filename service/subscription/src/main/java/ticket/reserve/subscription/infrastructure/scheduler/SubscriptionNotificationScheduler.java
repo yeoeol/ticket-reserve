@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.core.event.payload.SubscriptionNotificationSendedEventPayload;
+import ticket.reserve.core.event.payload.SubscriptionNotificationSentEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.infrastructure.persistence.RedisRepository;
@@ -37,8 +37,8 @@ public class SubscriptionNotificationScheduler {
 
             Long buskingId = target.buskingId();
             outboxEventPublisher.publish(
-                    EventType.SUBSCRIPTION_NOTIFICATION_SENDED,
-                    SubscriptionNotificationSendedEventPayload.builder()
+                    EventType.SUBSCRIPTION_NOTIFICATION_SENT,
+                    SubscriptionNotificationSentEventPayload.builder()
                             .buskingId(buskingId)
                             .userIds(userIds)
                             .remainingMinutes(remainingMinutes)

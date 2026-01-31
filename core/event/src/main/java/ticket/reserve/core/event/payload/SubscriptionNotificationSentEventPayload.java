@@ -12,7 +12,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubscriptionNotificationSendedEventPayload implements EventPayload {
+public class SubscriptionNotificationSentEventPayload implements EventPayload {
     private Long buskingId;
     private Set<Long> userIds;
     private long remainingMinutes;

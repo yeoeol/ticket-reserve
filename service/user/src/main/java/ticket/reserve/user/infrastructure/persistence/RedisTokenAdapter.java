@@ -15,7 +15,7 @@ public class RedisTokenAdapter implements TokenStorePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${app.redis.geo-key:user:locations}")
+    @Value("${app.redis.geo-key:users:location}")
     private String geoKey;
 
     @Value("${app.redis.active-user-key:user:active}")

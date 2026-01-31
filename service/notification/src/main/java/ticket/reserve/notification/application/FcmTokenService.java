@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.core.global.exception.CustomException;
-import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.notification.application.dto.request.FcmTokenRequestDto;
 import ticket.reserve.notification.domain.fcmtoken.FcmToken;
 import ticket.reserve.notification.domain.fcmtoken.repository.FcmTokenRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +35,9 @@ public class FcmTokenService {
     }
 
     @Transactional(readOnly = true)
-    public String getTokenByUserId(Long userId) {
-        return fcmTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_FCM_TOKEN))
-                .getFcmToken();
+    public List<String> getTokensByUserIds(List<Long> userIds) {
+        return fcmTokenRepository.findByUserIdIn(userIds).stream()
+                .map(FcmToken::getFcmToken)
+                .toList();
     }
 }

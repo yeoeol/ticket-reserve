@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.core.event.payload.SubscriptionNotificationSendedEventPayload;
+import ticket.reserve.core.event.payload.SubscriptionNotificationSentEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.infrastructure.persistence.RedisRepository;
@@ -53,9 +53,9 @@ class SubscriptionNotificationSchedulerTest {
         //then
         verify(outboxEventPublisher, times(1))
                 .publish(
-                        eq(EventType.SUBSCRIPTION_NOTIFICATION_SENDED),
+                        eq(EventType.SUBSCRIPTION_NOTIFICATION_SENT),
                         argThat(payload -> {
-                            SubscriptionNotificationSendedEventPayload p = (SubscriptionNotificationSendedEventPayload) payload;
+                            SubscriptionNotificationSentEventPayload p = (SubscriptionNotificationSentEventPayload) payload;
                             return p.getBuskingId().equals(buskingId) &&
                                     p.getUserIds().equals(userIds) &&
                                     p.getRemainingMinutes() <= 30;

@@ -28,7 +28,7 @@ spring:
 
 app:
   redis:
-    geo-key: "user:locations"
+    geo-key: "users:location"
     active-user-key: "user:active"
   jdbc:
     batch-size: 100

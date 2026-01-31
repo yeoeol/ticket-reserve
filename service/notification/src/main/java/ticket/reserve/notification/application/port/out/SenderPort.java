@@ -1,8 +1,10 @@
 package ticket.reserve.notification.application.port.out;
 
-import ticket.reserve.notification.domain.notification.Notification;
-import ticket.reserve.notification.application.dto.response.NotificationResult;
+import com.google.firebase.messaging.BatchResponse;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface SenderPort {
-    NotificationResult send(Notification notification, String fcmToken);
+    CompletableFuture<BatchResponse> send(String title, String body, Long buskingId, List<String> tokens);
 }

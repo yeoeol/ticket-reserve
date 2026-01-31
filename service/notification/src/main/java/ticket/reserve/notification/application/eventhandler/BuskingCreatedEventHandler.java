@@ -7,9 +7,7 @@ import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.notification.application.NotificationService;
-import ticket.reserve.notification.application.RedisService;
-import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
-import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
+import ticket.reserve.notification.application.port.out.RedisPort;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ import java.util.List;
 public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
     private final NotificationService notificationService;
-    private final RedisService redisService;
+    private final RedisPort redisPort;
 
     private static final double radiusKm = 5; // 반경 5km
 
@@ -27,20 +25,23 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
 
-        List<Long> receiverIds = redisService.findNearbyActiveUsers(
+        // 버스킹 위치 반경 radiumKm 내 사용자 조회
+        List<Long> receiverIds = redisPort.findNearbyActiveUsers(
                 payload.getLongitude(), payload.getLatitude(), radiusKm
         );
+        if (receiverIds.isEmpty()) return;
 
-        int failCount = 0;
-        for (Long receiverId : receiverIds) {
-            NotificationResponseDto response = notificationService.createAndSend(
-                    NotificationRequestDto.notifyBuskingCreated(payload.getTitle(), payload.getLocation(), payload.getBuskingId(), receiverId)
-            );
-            if (!response.result().isSuccess()) failCount++;
-        }
+        String body = payload.getLocation() + " : 새로운 버스킹이 등록되었습니다!";
+        notificationService.sendBulkNotification(
+                payload.getTitle(),
+                body,
+                payload.getBuskingId(),
+                receiverIds
+        );
+
         log.info("[BuskingCreatedEventHandler.handle] 버스킹 생성 알림 발송 " +
-                "- buskingId={}, 제목={} : 총 알림 {}건 : 성공 {}건, 실패 {}건",
-                payload.getBuskingId(), payload.getTitle(), receiverIds.size(), receiverIds.size()-failCount, failCount);
+                "- buskingId={}, 제목={} : 총 알림 {}건",
+                payload.getBuskingId(), payload.getTitle(), receiverIds.size());
     }
 
     @Override

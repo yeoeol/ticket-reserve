@@ -1,15 +1,19 @@
 package ticket.reserve.notification.application;
 
+import com.google.common.collect.Lists;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.SendResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.tsid.IdGenerator;
-import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
-import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
-import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
-import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
+import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
+
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,46 +22,61 @@ public class NotificationService {
 
     private final IdGenerator idGenerator;
     private final SenderPort senderPort;
-    private final RedisService redisService;
-    private final NotificationCrudService notificationCrudService;
     private final FcmTokenService fcmTokenService;
+    private final BulkNotificationRepository bulkNotificationRepository;
+    private final NotificationCrudService notificationCrudService;
 
-    private static final int MAX_RETRY_COUNT = 5;
+    @Transactional
+    public void sendBulkNotification(String title, String body, Long buskingId, Collection<Long> userIds) {
+        List<Notification> pendingNotifications = userIds.stream()
+                .map(userId -> Notification.create(idGenerator, title, body, userId, buskingId))
+                .toList();
+        bulkNotificationRepository.bulkInsert(pendingNotifications);
 
-    public NotificationResponseDto createAndSend(NotificationRequestDto request) {
-        Notification notification = request.toEntity(idGenerator);
+        List<List<Notification>> partitions = Lists.partition(pendingNotifications, 500);
 
-        String fcmToken = fcmTokenService.getTokenByUserId(request.receiverId());
+        for (List<Notification> partition : partitions) {
+            List<Long> pUserIds = partition.stream()
+                    .map(Notification::getReceiverId)
+                    .toList();
+            List<String> fcmTokens = fcmTokenService.getTokensByUserIds(pUserIds);
 
-        NotificationResult result = senderPort.send(notification, fcmToken);
-        if (result.isSuccess()) {
-            notificationCrudService.save(notification);
+            senderPort.send(title, body, buskingId, fcmTokens)
+                    .thenAccept(response -> {
+                        handleBatchResult(partition, response);
+                        bulkNotificationRepository.bulkUpsert(partition);
+                    })
+                    .exceptionally(ex -> {
+                        handleBatchFailure(partition);
+                        bulkNotificationRepository.bulkUpsert(partition);
+                        return null;
+                    });
         }
-        else {
-            NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
-            handleFailure(nextRetryDto);
-        }
-        return NotificationResponseDto.from(notification, result);
     }
 
-    private void handleFailure(NotificationRetryDto retryDto) {
-        int currentRetryCount = retryDto.retryCount();
+    @Transactional
+    public void incrementRetryCounts(List<Long> notificationIds) {
+        List<Notification> notifications = notificationCrudService.findAllByIds(notificationIds);
+        notifications.forEach(Notification::incrementRetryCount);
+    }
 
-        if (currentRetryCount >= MAX_RETRY_COUNT) {
-            log.error("[NotificationService.createAndSend.handleFailure] 최대 재시도 횟수 초과: receiverId={}, title={}",
-                    retryDto.receiverId(), retryDto.title()
-            );
-            // TODO : 알림 발송 5회 실패한 DLQ(Dead Letter Queue) 구현
-            return;
+    private void handleBatchResult(List<Notification> partition, BatchResponse response) {
+        List<SendResponse> responses = response.getResponses();
+        for (int i = 0; i < responses.size(); i++) {
+            Notification notification = partition.get(i);
+
+            SendResponse sendResponse = responses.get(i);
+            if (sendResponse.isSuccessful()) {
+                notification.markAsSuccess();
+            } else {
+                notification.markAsFail();
+                log.warn("[NotificationService] 알림 발송 실패: 사용자ID={}, {}",
+                        notification.getReceiverId(), sendResponse.getException().getMessage());
+            }
         }
+    }
 
-        // 지수 백오프: 2^n * 60초 (1분 -> 2분 -> 4분 -> 8분 -> 16분)
-        long nextDelaySeconds = (long) Math.pow(2, Math.max(0, currentRetryCount-1)) * 60;
-
-        redisService.addFailedNotification(retryDto, nextDelaySeconds);
-        log.warn("[NotificationService.createAndSend.handleFailure] " +
-                        "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: receiverId={}, title={}",
-                currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.receiverId(), retryDto.title()
-        );
+    private void handleBatchFailure(List<Notification> partition) {
+        partition.forEach(Notification::markAsFail);
     }
 }
