@@ -1,22 +1,18 @@
 package ticket.reserve.notification.application;
 
+import com.google.common.collect.Lists;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.SendResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.tsid.IdGenerator;
-import ticket.reserve.notification.application.dto.request.NotificationRequestDto;
-import ticket.reserve.notification.application.dto.request.NotificationRetryDto;
-import ticket.reserve.notification.application.dto.response.NotificationResponseDto;
-import ticket.reserve.notification.application.dto.response.NotificationResult;
 import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -25,87 +21,54 @@ public class NotificationService {
 
     private final IdGenerator idGenerator;
     private final SenderPort senderPort;
-    private final RedisService redisService;
-    private final NotificationCrudService notificationCrudService;
     private final FcmTokenService fcmTokenService;
     private final BulkNotificationRepository bulkNotificationRepository;
 
-    private static final int MAX_RETRY_COUNT = 5;
-
-    public NotificationResponseDto createAndSend(NotificationRequestDto request) {
-        Notification notification = request.toEntity(idGenerator);
-
-        Optional<String> optionalFcmToken = fcmTokenService.getTokenByUserId(request.receiverId());
-        // FcmToken이 존재하지 않으면 알림 발송 실패 카운트 증가
-        if (optionalFcmToken.isEmpty()) {
-            NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
-            handleFailure(nextRetryDto);
-            return NotificationResponseDto.from(notification, NotificationResult.failResult(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-        }
-
-        String fcmToken = optionalFcmToken.get();
-        NotificationResult result;
-        try {
-            CompletableFuture<NotificationResult> resultCompletableFuture = senderPort.send(notification, fcmToken);
-            result = resultCompletableFuture.get();
-
-            if (result.isSuccess()) {
-                notificationCrudService.save(notification);
-
-                log.info("[NotificationService.createAndSend] 알림 발송 성공: buskingId={}, receiverId={}, title={}",
-                        request.buskingId(), request.receiverId(), request.title());
-            } else {
-                NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
-                handleFailure(nextRetryDto);
-            }
-        } catch (Exception e) {
-            NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, request.retryCount() + 1);
-            handleFailure(nextRetryDto);
-            result = NotificationResult.failResult(HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-            log.info("[NotificationService.createAndSend] 알림 발송 중 예외 발생: buskingId={}, receiverId={}, title={}",
-                    request.buskingId(), request.receiverId(), request.title(), e);
-        }
-        return NotificationResponseDto.from(notification, result);
-    }
-
-    public void bulkCreateAndSend(Long buskingId, Set<Long> userIds, long remainingMinutes) {
-        List<Notification> notifications = userIds.stream()
-                .map(userId -> Notification.createSubscriptionRemider(idGenerator, buskingId, userId, remainingMinutes))
+    @Transactional
+    public void sendBulkNotification(String title, String body, Long buskingId, List<Long> userIds) {
+        List<Notification> pendingNotifications = userIds.stream()
+                .map(userId -> Notification.create(idGenerator, title, body, userId))
                 .toList();
-        bulkNotificationRepository.bulkInsert(notifications);
+        bulkNotificationRepository.bulkInsert(pendingNotifications);
 
-        for (Notification notification : notifications) {
-            Optional<String> optionalFcmToken = fcmTokenService.getTokenByUserId(notification.getReceiverId());
-            if (optionalFcmToken.isEmpty()) {
-                NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
-                handleFailure(nextRetryDto);
-                continue;
-            }
+        List<List<Notification>> partitions = Lists.partition(pendingNotifications, 500);
 
-            String fcmToken = optionalFcmToken.get();
-            try {
-                CompletableFuture<NotificationResult> resultCompletableFuture = senderPort.send(notification, fcmToken);
-                NotificationResult result = resultCompletableFuture.get();
+        for (List<Notification> partition : partitions) {
+            List<Long> pUserIds = partition.stream()
+                    .map(Notification::getReceiverId)
+                    .toList();
+            List<String> fcmTokens = fcmTokenService.getTokensByUserIds(pUserIds);
 
-                if (result.isSuccess()) {
-                    log.info("[NotificationService.createAndSend] 알림 발송 성공: buskingId={}, receiverId={}, title={}",
-                            notification.getBuskingId(), notification.getReceiverId(), notification.getTitle());
-                } else {
-                    NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
-                    handleFailure(nextRetryDto);
-                }
-            } catch (Exception e) {
-                NotificationRetryDto nextRetryDto = NotificationRetryDto.from(notification, 1);
-                handleFailure(nextRetryDto);
+            senderPort.send(title, body, buskingId, fcmTokens)
+                    .thenAccept(response -> handleBatchResult(partition, response))
+                    .exceptionally(ex -> {
+                        handleBatchFailure(partition);
+                        return null;
+                    });
+        }
+    }
 
-                log.info("[NotificationService.createAndSend] 알림 발송 중 예외 발생: buskingId={}, receiverId={}, title={}",
-                        notification.getBuskingId(), notification.getReceiverId(), notification.getTitle(), e);
+    private void handleBatchResult(List<Notification> partition, BatchResponse response) {
+        List<SendResponse> responses = response.getResponses();
+        for (int i = 0; i < responses.size(); i++) {
+            Notification notification = partition.get(i);
+
+            SendResponse sendResponse = responses.get(i);
+            if (sendResponse.isSuccessful()) {
+                notification.markAsSuccess();
+            } else {
+                notification.markAsFail();
+                log.warn("[NotificationService] 알림 발송 실패: 사용자ID={}, {}",
+                        notification.getReceiverId(), sendResponse.getException().getMessage());
             }
         }
     }
 
-    private void handleFailure(NotificationRetryDto retryDto) {
+    private void handleBatchFailure(List<Notification> partition) {
+        partition.forEach(Notification::markAsFail);
+    }
+
+/*    private void handleFailure(NotificationRetryDto retryDto) {
         int currentRetryCount = retryDto.retryCount();
 
         if (currentRetryCount >= MAX_RETRY_COUNT) {
@@ -124,5 +87,5 @@ public class NotificationService {
                         "알림 전송 실패(횟수:{}/{}), {}초 후 재시도: buskingId={}, receiverId={}, title={}",
                 currentRetryCount, MAX_RETRY_COUNT, nextDelaySeconds, retryDto.buskingId(), retryDto.receiverId(), retryDto.title()
         );
-    }
+    }*/
 }

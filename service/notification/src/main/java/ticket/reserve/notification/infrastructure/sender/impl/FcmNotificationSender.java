@@ -1,17 +1,13 @@
 package ticket.reserve.notification.infrastructure.sender.impl;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import ticket.reserve.notification.application.dto.response.NotificationResult;
-import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.infrastructure.sender.NotificationSender;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -23,29 +19,23 @@ public class FcmNotificationSender implements NotificationSender {
 
     @Async("sendExecutor")
     @Override
-    public CompletableFuture<NotificationResult> send(Notification notification, String fcmToken) {
-        return CompletableFuture.supplyAsync(() ->
-                send(createMessage(notification.getTitle(), notification.getMessage(), notification.getBuskingId(), fcmToken))
-        );
-    }
+    public CompletableFuture<BatchResponse> send(String title, String body, Long buskingId, List<String> tokens) {
+        MulticastMessage multicastMessage = createMessage(title, body, buskingId, tokens);
 
-    private NotificationResult send(Message message) {
         try {
-            String response = firebaseMessaging.send(message);
-            log.info("[FcmNotificationSender.send] Successfully Send Fcm Notification: {}", response);
-            return NotificationResult.successResult();
+            BatchResponse response = firebaseMessaging.sendEachForMulticast(multicastMessage);
+            return CompletableFuture.completedFuture(response);
         } catch (FirebaseMessagingException e) {
-            log.error("[FcmNotificationSender.send] Fail To Send Fcm Notification: {}", e.getMessage(), e);
-            return NotificationResult.failResult(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            throw new RuntimeException("FCM Multicast Critical Error", e);
         }
     }
 
-    private Message createMessage(String title, String message, Long buskingId, String fcmToken) {
-        return Message.builder()
+    private MulticastMessage createMessage(String title, String body, Long buskingId, List<String> tokens) {
+        return MulticastMessage.builder()
+                .addAllTokens(tokens)
                 .putData("title", title)
-                .putData("message", message)
+                .putData("body", body)
                 .putData("buskingId", String.valueOf(buskingId))
-                .setToken(fcmToken)
                 .build();
     }
 }

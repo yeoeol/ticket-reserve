@@ -20,7 +20,7 @@ public record NotificationRetryDto(
     public static NotificationRetryDto from(Notification notification, int currentRetryCount) {
         return NotificationRetryDto.builder()
                 .title(notification.getTitle())
-                .message(notification.getMessage())
+                .message(notification.getBody())
                 .receiverId(notification.getReceiverId())
                 .buskingId(notification.getBuskingId())
                 .retryCount(currentRetryCount)
