@@ -90,7 +90,6 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
-    @Transactional
     public void logout(String accessToken) {
         if (accessToken != null) {
             long remainingTime = generateTokenPort.getRemainingTime(accessToken);

@@ -24,6 +24,7 @@ public class BulkUserRepository {
     @Value("${app.jdbc.batch-size}")
     private int batchSize;
 
+    @Transactional
     public int locationBulkUpdate(List<User> users, Map<Long, Point> pointMap) {
         String sql = "INSERT INTO users (user_id, username, password, email, location, created_at, updated_at) " +
                         "VALUES (?, ?, ?, ?, ST_SRID(POINT(?, ?), 4326), ?, ?) " +
