@@ -40,11 +40,10 @@ class BuskingServiceTest {
     @InjectMocks
     BuskingService buskingService;
 
-    @Mock
-    BuskingRepository buskingRepository;
     @Mock InventoryPort inventoryPort;
     @Mock OutboxEventPublisher outboxEventPublisher;
     @Mock IdGenerator idGenerator;
+    @Mock BuskingCrudService buskingCrudService;
 
     private Busking busking;
 
@@ -75,7 +74,7 @@ class BuskingServiceTest {
         );
 
         ArgumentCaptor<Busking> eventCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingRepository.save(eventCaptor.capture()))
+        given(buskingCrudService.save(eventCaptor.capture()))
                 .willReturn(busking);
 
         //when
@@ -95,52 +94,5 @@ class BuskingServiceTest {
         assertThat(savedEvent.getLocation()).isEqualTo(request.location());
         assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
-
-        verify(outboxEventPublisher, times(1)).publish(any(), any(), any());
     }
-
-    @Test
-    @DisplayName("이벤트 수정 성공 - 수정 정보를 기반으로 이벤트 엔티티를 수정한다")
-    void updateSuccess() {
-        //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
-        );
-        given(buskingRepository.findById(1234L))
-                .willReturn(Optional.of(busking));
-
-        //when
-        buskingService.update(1234L, request);
-
-        //then
-        assertThat(busking.getTitle()).isEqualTo(request.title());
-        assertThat(busking.getDescription()).isEqualTo(request.description());
-        assertThat(busking.getLocation()).isEqualTo(request.location());
-        assertThat(busking.getStartTime()).isEqualTo(request.startTime());
-        assertThat(busking.getEndTime()).isEqualTo(request.endTime());
-        assertThat(busking.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
-    }
-
-    @Test
-    @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
-    void updateEventFail_NotFound() {
-        //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
-        );
-        given(buskingRepository.findById(9999L))
-                .willReturn(Optional.empty());
-
-        //when
-        Throwable throwable = catchThrowable(() -> buskingService.update(9999L, request));
-
-        //then
-        assertThat(throwable)
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.BUSKING_NOT_FOUND.getMessage())
-                .extracting("errorCode").isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
-    }
-
 }

@@ -2,22 +2,14 @@ package ticket.reserve.busking.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ticket.reserve.core.event.EventType;
-import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
-import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
-import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.domain.busking.Busking;
-import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
-import ticket.reserve.core.global.exception.CustomException;
-import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
@@ -26,13 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BuskingService {
 
-    private final BuskingRepository buskingRepository;
+    private final BuskingCrudService buskingCrudService;
     private final InventoryPort inventoryPort;
     private final ImagePort imagePort;
-    private final OutboxEventPublisher outboxEventPublisher;
     private final IdGenerator idGenerator;
 
-    @Transactional
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
         if (file != null && !file.isEmpty()) {
@@ -43,60 +33,18 @@ public class BuskingService {
             );
         }
 
-        Busking savedBusking = buskingRepository.save(busking);
-        outboxEventPublisher.publish(
-                EventType.BUSKING_CREATED,
-                BuskingCreatedEventPayload.builder()
-                        .buskingId(savedBusking.getId())
-                        .title(savedBusking.getTitle())
-                        .description(savedBusking.getDescription())
-                        .location(savedBusking.getLocation())
-                        .startTime(savedBusking.getStartTime())
-                        .endTime(savedBusking.getEndTime())
-                        .totalInventoryCount(savedBusking.getTotalInventoryCount())
-                        .latitude(savedBusking.getCoordinate().getY())
-                        .longitude(savedBusking.getCoordinate().getX())
-                        .build(),
-                savedBusking.getId()
-        );
-
+        Busking savedBusking = buskingCrudService.save(busking);
         return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
     }
 
-    @Transactional(readOnly = true)
     public List<BuskingResponseDto> getAll() {
-        return buskingRepository.findAll().stream()
+        return buskingCrudService.findAll().stream()
                 .map(e -> BuskingResponseDto.from(e, inventoryPort.countInventory(e.getId())))
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public BuskingResponseDto getOne(Long buskingId) {
         Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
-
-        return buskingRepository.findById(buskingId)
-                .map(e -> BuskingResponseDto.from(e, availableInventoryCount))
-                .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
-    }
-
-    @Transactional
-    public void update(Long id, BuskingUpdateRequestDto request) {
-        Busking event = buskingRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
-
-        event.update(
-                request.title(), request.description(), request.location(),
-                request.startTime(), request.endTime(), request.totalInventoryCount()
-        );
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        buskingRepository.deleteById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Long> getIds() {
-        return buskingRepository.findIds();
+        return BuskingResponseDto.from(buskingCrudService.findById(buskingId), availableInventoryCount);
     }
 }
