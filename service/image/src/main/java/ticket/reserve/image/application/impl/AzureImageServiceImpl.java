@@ -7,6 +7,7 @@ import com.azure.storage.blob.models.BlobHttpHeaders;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.core.global.exception.CustomException;
@@ -29,9 +30,10 @@ public class AzureImageServiceImpl implements ImageService {
     private final ImageCrudService imageCrudService;
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
-    private static final long MAX_SIZE = 5 * 1024 * 1024; // 5MB
-
     private final String CONTAINER_NAME = "busking";
+
+    @Value("${app.servlet.multipart.max-file-size}")
+    private int maxSize;
 
     @PostConstruct
     public void init() {
@@ -93,7 +95,7 @@ public class AzureImageServiceImpl implements ImageService {
     }
 
     private void validateFileSize(MultipartFile file) {
-        if (file.getSize() > MAX_SIZE) {
+        if (file.getSize() > maxSize) {
             throw new CustomException(ErrorCode.FILE_SIZE_EXCEED);
         }
     }
