@@ -38,21 +38,18 @@ public class AzureImageServiceImpl implements ImageService {
 
     @PostConstruct
     public void init() {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-        if (!containerClient.exists()) {
+        if (!blobServiceClient.getBlobContainerClient(CONTAINER_NAME).exists()) {
             throw new CustomException(ErrorCode.NOT_FOUND_BLOB_CONTAINER);
         }
     }
 
     @Override
     public ImageResponseDto upload(MultipartFile file, Long userId) {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-
         validateExtension(file);
         validateFileSize(file);
 
         String uniqueFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        BlobClient blobClient = containerClient.getBlobClient(uniqueFileName);
+        BlobClient blobClient = getBlobClient(uniqueFileName);
 
         // Azure 업로드
         try {
@@ -66,7 +63,7 @@ public class AzureImageServiceImpl implements ImageService {
         // DB 저장
         try {
             String storedPath = blobClient.getBlobUrl();
-            Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
+            Image savedImage = imageCrudService.save(file.getOriginalFilename(), uniqueFileName, storedPath, userId);
             return ImageResponseDto.from(savedImage);
         } catch (Exception e) {
             log.error("Azure 이미지 업로드 실패 - 보상 트랜잭션 실행 : {}", uniqueFileName, e);
@@ -78,12 +75,11 @@ public class AzureImageServiceImpl implements ImageService {
     @Override
     public void delete(Long id) {
         Image image = imageCrudService.findById(id);
-        String storedPath = image.getStoredPath();
+        String uniqueFileName = image.getUniqueFileName();
 
         imageCrudService.deleteById(id);
         try {
-            BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-            BlobClient blobClient = containerClient.getBlobClient(getBlobNameFromUrl(storedPath));
+            BlobClient blobClient = getBlobClient(uniqueFileName);
 
             deleteFromAzure(blobClient);
         } catch (Exception e) {
@@ -91,8 +87,9 @@ public class AzureImageServiceImpl implements ImageService {
         }
     }
 
-    private String getBlobNameFromUrl(String url) {
-        return url.substring(url.lastIndexOf("/")+1);
+    private BlobClient getBlobClient(String uniqueFileName) {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+        return containerClient.getBlobClient(uniqueFileName);
     }
 
     private void deleteFromAzure(BlobClient blobClient) {

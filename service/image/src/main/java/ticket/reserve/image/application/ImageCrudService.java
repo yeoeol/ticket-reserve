@@ -17,9 +17,9 @@ public class ImageCrudService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public Image save(String originalFileName, String storedPath, Long userId) {
+    public Image save(String originalFileName, String uniqueFileName, String storedPath, Long userId) {
         return imageRepository.save(
-                Image.create(idGenerator, originalFileName, storedPath, userId)
+                Image.create(idGenerator, originalFileName, uniqueFileName, storedPath, userId)
         );
     }
 
