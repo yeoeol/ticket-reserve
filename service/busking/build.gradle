@@ -20,8 +20,6 @@ dependencies {
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    testImplementation 'com.h2database:h2'
-
     implementation("io.github.openfeign.querydsl:querydsl-core:${queryDslVersion}")
     implementation("io.github.openfeign.querydsl:querydsl-jpa:$queryDslVersion")
     annotationProcessor("io.github.openfeign.querydsl:querydsl-apt:$queryDslVersion:jpa")

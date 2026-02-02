@@ -10,6 +10,8 @@ import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
@@ -30,10 +32,13 @@ public class BuskingService {
         ImageResponseDto imageResponse = null;
         if (file != null && !file.isEmpty()) {
             imageResponse = imagePort.uploadImage(file);
-            busking.addEventImage(
-                    idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
-                    ImageType.THUMBNAIL, 1
-            );
+            if (imageResponse != null) {
+                busking.addEventImage(
+                        idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
+                        ImageType.THUMBNAIL, 1
+                );
+            }
+            // TODO: imageResponse가 null일 때 재시도 로직 구현
         }
 
         // 버스킹 저장
@@ -44,7 +49,7 @@ public class BuskingService {
             if (imageResponse != null) {
                 imagePort.deleteImage(imageResponse.getImageId());
             }
-            throw e;
+            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
         }
     }
 
