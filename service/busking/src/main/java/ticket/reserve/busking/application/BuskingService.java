@@ -25,16 +25,27 @@ public class BuskingService {
 
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
+
+        // 이미지가 있다면 저장
+        ImageResponseDto imageResponse = null;
         if (file != null && !file.isEmpty()) {
-            ImageResponseDto imageResponse = imagePort.uploadImage(file);
+            imageResponse = imagePort.uploadImage(file);
             busking.addEventImage(
                     idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
                     ImageType.THUMBNAIL, 1
             );
         }
 
-        Busking savedBusking = buskingCrudService.save(busking);
-        return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
+        // 버스킹 저장
+        try {
+            Busking savedBusking = buskingCrudService.save(busking);
+            return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
+        } catch (Exception e) {
+            if (imageResponse != null) {
+                imagePort.deleteImage(imageResponse.getImageId());
+            }
+            throw e;
+        }
     }
 
     public List<BuskingResponseDto> getAll() {

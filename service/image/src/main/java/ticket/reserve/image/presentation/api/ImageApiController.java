@@ -3,10 +3,7 @@ package ticket.reserve.image.presentation.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.image.application.ImageService;
 import ticket.reserve.image.application.dto.response.ImageResponseDto;
@@ -24,5 +21,13 @@ public class ImageApiController {
             @AuthenticationPrincipal String userId
     ) {
         return ResponseEntity.ok(imageService.upload(file, Long.valueOf(userId)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable("id") Long imageId
+    ) {
+        imageService.delete(imageId);
+        return ResponseEntity.noContent().build();
     }
 }

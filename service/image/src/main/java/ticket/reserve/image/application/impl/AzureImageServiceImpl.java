@@ -75,6 +75,26 @@ public class AzureImageServiceImpl implements ImageService {
         }
     }
 
+    @Override
+    public void delete(Long id) {
+        Image image = imageCrudService.findById(id);
+        String storedPath = image.getStoredPath();
+
+        imageCrudService.deleteById(id);
+        try {
+            BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+            BlobClient blobClient = containerClient.getBlobClient(getBlobNameFromUrl(storedPath));
+
+            deleteFromAzure(blobClient);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
+        }
+    }
+
+    private String getBlobNameFromUrl(String url) {
+        return url.substring(url.lastIndexOf("/")+1);
+    }
+
     private void deleteFromAzure(BlobClient blobClient) {
         try {
             blobClient.deleteIfExists();

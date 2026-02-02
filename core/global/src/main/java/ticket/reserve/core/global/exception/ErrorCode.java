@@ -43,6 +43,8 @@ public enum ErrorCode {
     FILE_SIZE_EXCEED(HttpStatus.BAD_REQUEST, "IMAGE003", "파일 크기는 5MB를 초과할 수 없습니다."),
     NOT_FOUND_BLOB_CONTAINER(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE004", "Azure Blob container가 존재하지 않습니다. 애플리케이션을 시작하기 전에 만들어주세요."),
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "IMAGE005", "파일명이 유효하지 않습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "IMAGE006", "이미지를 찾지 못했습니다."),
+    IMAGE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE007", "이미지 삭제 중 오류가 발생했습니다."),
 
     // NOTIFICATION-SERVICE
     NOT_FOUND_FCM_TOKEN(HttpStatus.NOT_FOUND, "NOTIFICATION001", "사용자 기기 FCM_TOKEN을 찾을 수 없습니다."),
