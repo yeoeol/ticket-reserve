@@ -31,7 +31,7 @@ dependencies {
     implementation project(':core:tsid')
 }
 
-def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+def querydslDir = layout.buildDirectory.dir("generated").get().asFile
 
 sourceSets {
     main.java.srcDirs += [ querydslDir ]
