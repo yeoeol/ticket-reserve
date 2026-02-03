@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import ticket.reserve.notification.application.dto.response.NotificationBatchResponseDto;
 import ticket.reserve.notification.infrastructure.sender.NotificationSender;
 
 import java.util.List;
@@ -19,12 +20,24 @@ public class FcmNotificationSender implements NotificationSender {
 
     @Async("sendExecutor")
     @Override
-    public CompletableFuture<BatchResponse> send(String title, String body, Long buskingId, List<String> tokens) {
+    public CompletableFuture<NotificationBatchResponseDto> send(String title, String body, Long buskingId, List<String> tokens) {
         MulticastMessage multicastMessage = createMessage(title, body, buskingId, tokens);
 
         try {
-            BatchResponse response = firebaseMessaging.sendEachForMulticast(multicastMessage);
-            return CompletableFuture.completedFuture(response);
+            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(multicastMessage);
+            List<SendResponse> sendResponses = batchResponse.getResponses();
+
+            List<NotificationBatchResponseDto.NotificationSendResponseDto> notificationSendResponses = sendResponses.stream()
+                    .map(r -> NotificationBatchResponseDto.NotificationSendResponseDto.of(
+                            r.getMessageId(),
+                            r.getException().getErrorCode().name(),
+                            r.getException().getMessage())
+                    ).toList();
+
+            NotificationBatchResponseDto notificationBatchResponse = NotificationBatchResponseDto.of(
+                    notificationSendResponses, batchResponse.getSuccessCount(), batchResponse.getFailureCount()
+            );
+            return CompletableFuture.completedFuture(notificationBatchResponse);
         } catch (FirebaseMessagingException e) {
             return CompletableFuture.failedFuture(e);
         }
