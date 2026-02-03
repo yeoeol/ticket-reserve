@@ -18,7 +18,7 @@ import static ticket.reserve.subscription.global.util.TimeConverterUtil.convertT
 
 @Repository
 @RequiredArgsConstructor
-public class RedisRepository implements RedisPort {
+public class RedisAdapter implements RedisPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -28,6 +28,7 @@ public class RedisRepository implements RedisPort {
     @Value("${app.redis.busking-subscribers-key:busking:subscribers}")
     private String subscribersByBuskingIdKey;
 
+    // ZSet : 알림 대상 버스킹ID 집합, Set : 특정 버스킹ID를 구독한 사용자ID 집합
     public void addToSubscriptionQueue(Long buskingId, Long userId, LocalDateTime startTime) {
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
 
@@ -35,20 +36,21 @@ public class RedisRepository implements RedisPort {
         redisTemplate.opsForSet().add(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
     }
 
+    // 알림 대상 버스킹ID 집합 추출
     public Set<BuskingNotificationTarget> findBuskingIdsReadyToNotify(LocalDateTime time) {
         Set<ZSetOperations.TypedTuple<String>> results = redisTemplate.opsForZSet()
                 .rangeByScoreWithScores(notificationScheduleKey, 0, TimeConverterUtil.convertToMilli(time));
         if (results == null) return Collections.emptySet();
 
         return results.stream()
-                .filter(tuple -> tuple.getValue() != null && tuple.getScore() != null)
-                .map(tuple -> new BuskingNotificationTarget(
+                .filter(tuple -> isNotNull(tuple))
+                .map(tuple -> BuskingNotificationTarget.of(
                         Long.valueOf(tuple.getValue()),
                         convertToLocalDateTime(tuple.getScore().longValue())
-                ))
-                .collect(Collectors.toSet());
+                )).collect(Collectors.toSet());
     }
 
+    // 특정 버스킹ID를 구독한 사용자ID 집합 추출
     public Set<Long> findSubscribersByBuskingId(Long buskingId) {
         Set<String> userIds = redisTemplate.opsForSet()
                 .members(generateSubscribersByBuskingIdKey(buskingId));
@@ -59,9 +61,14 @@ public class RedisRepository implements RedisPort {
                 .collect(Collectors.toSet());
     }
 
+    // 특정 버스킹ID에 대한 데이터 삭제
     public void removeSubscriptionData(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
         redisTemplate.delete(generateSubscribersByBuskingIdKey(buskingId));
+    }
+
+    private static boolean isNotNull(ZSetOperations.TypedTuple<String> tuple) {
+        return !(tuple.getValue() == null || tuple.getScore() == null);
     }
 
     private String generateSubscribersByBuskingIdKey(Long buskingId) {

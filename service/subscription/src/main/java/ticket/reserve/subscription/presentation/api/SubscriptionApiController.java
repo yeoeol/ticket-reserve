@@ -18,8 +18,8 @@ public class SubscriptionApiController {
     private final SubscriptionService subscriptionService;
 
     @PostMapping
-    public ResponseEntity<Void> subscription(@Valid @RequestBody SubscriptionRequestDto request) {
-        subscriptionService.subscription(request);
+    public ResponseEntity<Void> subscribe(@Valid @RequestBody SubscriptionRequestDto request) {
+        subscriptionService.subscribe(request);
         return ResponseEntity.noContent().build();
     }
 }
