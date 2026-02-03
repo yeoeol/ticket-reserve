@@ -4,4 +4,6 @@ import java.time.LocalDateTime;
 
 public interface RedisPort {
     void addToSubscriptionQueue(Long buskingId, Long userId, LocalDateTime startTime);
+
+    void removeFromSubscriptionQueue(Long buskingId, Long userId);
 }

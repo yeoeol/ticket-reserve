@@ -14,4 +14,8 @@ public class SubscriptionService {
     public void subscribe(SubscriptionRequestDto request) {
         redisPort.addToSubscriptionQueue(request.buskingId(), request.userId(), request.startTime());
     }
+
+    public void unsubscribe(SubscriptionRequestDto request) {
+        redisPort.removeFromSubscriptionQueue(request.buskingId(), request.userId());
+    }
 }
