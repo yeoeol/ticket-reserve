@@ -44,7 +44,7 @@ public class BuskingCrudService {
 
     @Transactional(readOnly = true)
     public Busking findById(Long id) {
-        return buskingRepository.findById(id)
+        return buskingRepository.findByIdWithImage(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
     }
 
