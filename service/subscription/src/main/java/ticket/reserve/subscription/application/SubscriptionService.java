@@ -11,7 +11,7 @@ public class SubscriptionService {
 
     private final RedisPort redisPort;
 
-    public void subscription(SubscriptionRequestDto request) {
+    public void subscribe(SubscriptionRequestDto request) {
         redisPort.addToSubscriptionQueue(request.buskingId(), request.userId(), request.startTime());
     }
 }

@@ -21,22 +21,28 @@ public class Image extends BaseTimeEntity {
     private Long id;
 
     private String originalFileName;
+
+    @Column(unique = true)
+    private String uniqueFileName;
+
     private String storedPath;
 
     private Long userId;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Image(IdGenerator idGenerator, String originalFileName, String storedPath, Long userId) {
+    private Image(IdGenerator idGenerator, String originalFileName, String uniqueFileName, String storedPath, Long userId) {
         this.id = idGenerator.nextId();
         this.originalFileName = originalFileName;
+        this.uniqueFileName = uniqueFileName;
         this.storedPath = storedPath;
         this.userId = userId;
     }
 
-    public static Image create(IdGenerator idGenerator, String originalFileName, String storedPath, Long userId) {
+    public static Image create(IdGenerator idGenerator, String originalFileName, String uniqueFileName, String storedPath, Long userId) {
         return Image.builder()
                 .idGenerator(idGenerator)
                 .originalFileName(originalFileName)
+                .uniqueFileName(uniqueFileName)
                 .storedPath(storedPath)
                 .userId(userId)
                 .build();

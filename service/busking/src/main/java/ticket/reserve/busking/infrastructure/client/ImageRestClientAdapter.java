@@ -51,4 +51,12 @@ public class ImageRestClientAdapter implements ImagePort {
                 .retrieve()
                 .body(ImageResponseDto.class);
     }
+
+    @Override
+    public void deleteImage(Long id) {
+        restClient.delete()
+                .uri("/api/images/{id}", id)
+                .retrieve()
+                .toBodilessEntity();
+    }
 }

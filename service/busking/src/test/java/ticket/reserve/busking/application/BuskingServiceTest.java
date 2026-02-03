@@ -13,26 +13,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
+import org.springframework.mock.web.MockMultipartFile;
+import ticket.reserve.busking.application.dto.response.ImageResponseDto;
+import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
-import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.domain.busking.Busking;
-import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
-import ticket.reserve.core.global.exception.CustomException;
-import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -40,10 +35,9 @@ class BuskingServiceTest {
     @InjectMocks
     BuskingService buskingService;
 
-    @Mock
-    BuskingRepository buskingRepository;
+    @Mock BuskingCrudService buskingCrudService;
     @Mock InventoryPort inventoryPort;
-    @Mock OutboxEventPublisher outboxEventPublisher;
+    @Mock ImagePort imagePort;
     @Mock IdGenerator idGenerator;
 
     private Busking busking;
@@ -66,23 +60,23 @@ class BuskingServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 생성 성공 - 요청 정보를 기반으로 이벤트를 생성한다")
-    void createSuccess() {
+    @DisplayName("버스킹 생성 성공(파일 X) - 요청 정보를 기반으로 이벤트를 생성한다")
+    void create_success() {
         //given
         BuskingRequestDto request = new BuskingRequestDto(
                 "testTitle", "testDesc", "장소",
                 busking.getStartTime(), busking.getEndTime(), 0, 0.0, 0.0
         );
 
-        ArgumentCaptor<Busking> eventCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingRepository.save(eventCaptor.capture()))
+        ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
+        given(buskingCrudService.save(buskingCaptor.capture()))
                 .willReturn(busking);
 
         //when
         BuskingResponseDto response = buskingService.create(request, null);
 
         //then
-        Busking savedEvent = eventCaptor.getValue();
+        Busking savedBusking = buskingCaptor.getValue();
 
         assertThat(response.title()).isEqualTo(request.title());
         assertThat(response.description()).isEqualTo(request.description());
@@ -90,57 +84,86 @@ class BuskingServiceTest {
         assertThat(response.startTime()).isEqualTo(request.startTime());
         assertThat(response.endTime()).isEqualTo(request.endTime());
 
-        assertThat(savedEvent.getTitle()).isEqualTo(request.title());
-        assertThat(savedEvent.getDescription()).isEqualTo(request.description());
-        assertThat(savedEvent.getLocation()).isEqualTo(request.location());
-        assertThat(savedEvent.getStartTime()).isEqualTo(request.startTime());
-        assertThat(savedEvent.getEndTime()).isEqualTo(request.endTime());
+        assertThat(savedBusking.getTitle()).isEqualTo(request.title());
+        assertThat(savedBusking.getDescription()).isEqualTo(request.description());
+        assertThat(savedBusking.getLocation()).isEqualTo(request.location());
+        assertThat(savedBusking.getStartTime()).isEqualTo(request.startTime());
+        assertThat(savedBusking.getEndTime()).isEqualTo(request.endTime());
 
-        verify(outboxEventPublisher, times(1)).publish(any(), any(), any());
+        verify(imagePort, never()).uploadImage(any());
+        verify(imagePort, never()).deleteImage(any());
     }
 
     @Test
-    @DisplayName("이벤트 수정 성공 - 수정 정보를 기반으로 이벤트 엔티티를 수정한다")
-    void updateSuccess() {
+    @DisplayName("버스킹 생성 성공(파일 O) - 요청 정보를 기반으로 이벤트를 생성한다")
+    void create_success_with_file() {
         //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
+        BuskingRequestDto request = new BuskingRequestDto(
+                "testTitle", "testDesc", "장소",
+                busking.getStartTime(), busking.getEndTime(), 0, 0.0, 0.0
         );
-        given(buskingRepository.findById(1234L))
-                .willReturn(Optional.of(busking));
+        MockMultipartFile file = new MockMultipartFile(
+                "test_file", "test.png", "image/png", new byte[10]);
+        ImageResponseDto imageResponse = ImageResponseDto.builder()
+                .imageId(123456L)
+                .originalFileName(file.getOriginalFilename())
+                .storedPath("testStoredPath")
+                .userId(1234L)
+                .build();
+
+        ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
+        given(buskingCrudService.save(buskingCaptor.capture())).willReturn(busking);
+        given(imagePort.uploadImage(file)).willReturn(imageResponse);
 
         //when
-        buskingService.update(1234L, request);
+        BuskingResponseDto response = buskingService.create(request, file);
 
         //then
-        assertThat(busking.getTitle()).isEqualTo(request.title());
-        assertThat(busking.getDescription()).isEqualTo(request.description());
-        assertThat(busking.getLocation()).isEqualTo(request.location());
-        assertThat(busking.getStartTime()).isEqualTo(request.startTime());
-        assertThat(busking.getEndTime()).isEqualTo(request.endTime());
-        assertThat(busking.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
+        Busking savedBusking = buskingCaptor.getValue();
+
+        assertThat(response.title()).isEqualTo(request.title());
+        assertThat(response.description()).isEqualTo(request.description());
+        assertThat(response.location()).isEqualTo(request.location());
+        assertThat(response.startTime()).isEqualTo(request.startTime());
+        assertThat(response.endTime()).isEqualTo(request.endTime());
+
+        assertThat(savedBusking.getTitle()).isEqualTo(request.title());
+        assertThat(savedBusking.getDescription()).isEqualTo(request.description());
+        assertThat(savedBusking.getLocation()).isEqualTo(request.location());
+        assertThat(savedBusking.getStartTime()).isEqualTo(request.startTime());
+        assertThat(savedBusking.getEndTime()).isEqualTo(request.endTime());
+
+        assertThat(savedBusking.getBuskingImages()).hasSize(1);
+        verify(imagePort, times(1)).uploadImage(any());
+        verify(imagePort, never()).deleteImage(any());
     }
 
     @Test
-    @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
-    void updateEventFail_NotFound() {
+    @DisplayName("버스킹 생성 실패 - 요청 정보를 기반으로 이벤트를 생성한다")
+    void create_fail() {
         //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
+        BuskingRequestDto request = new BuskingRequestDto(
+                "testTitle", "testDesc", "장소",
+                busking.getStartTime(), busking.getEndTime(), 0, 0.0, 0.0
         );
-        given(buskingRepository.findById(9999L))
-                .willReturn(Optional.empty());
+        MockMultipartFile file = new MockMultipartFile(
+                "test_file", "test.png", "image/png", new byte[10]);
+        ImageResponseDto imageResponse = ImageResponseDto.builder()
+                .imageId(123456L)
+                .originalFileName(file.getOriginalFilename())
+                .storedPath("testStoredPath")
+                .userId(1234L)
+                .build();
 
-        //when
-        Throwable throwable = catchThrowable(() -> buskingService.update(9999L, request));
+        given(imagePort.uploadImage(file)).willReturn(imageResponse);
+        when(buskingCrudService.save(any(Busking.class))).thenThrow(RuntimeException.class);
 
-        //then
-        assertThat(throwable)
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.BUSKING_NOT_FOUND.getMessage())
-                .extracting("errorCode").isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
+        //when & then
+        assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);
+
+        verify(imagePort, times(1)).uploadImage(any());
+        verify(imagePort, times(1)).deleteImage(any());
+        assertThat(busking.getBuskingImages()).hasSize(0);
     }
 
 }

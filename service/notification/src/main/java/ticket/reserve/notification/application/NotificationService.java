@@ -1,13 +1,12 @@
 package ticket.reserve.notification.application;
 
 import com.google.common.collect.Lists;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.SendResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.notification.application.dto.response.NotificationBatchResponseDto;
 import ticket.reserve.notification.application.port.out.SenderPort;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.repository.BulkNotificationRepository;
@@ -26,7 +25,6 @@ public class NotificationService {
     private final BulkNotificationRepository bulkNotificationRepository;
     private final NotificationCrudService notificationCrudService;
 
-    @Transactional
     public void sendBulkNotification(String title, String body, Long buskingId, Collection<Long> userIds) {
         List<Notification> pendingNotifications = userIds.stream()
                 .map(userId -> Notification.create(idGenerator, title, body, userId, buskingId))
@@ -60,18 +58,17 @@ public class NotificationService {
         notifications.forEach(Notification::incrementRetryCount);
     }
 
-    private void handleBatchResult(List<Notification> partition, BatchResponse response) {
-        List<SendResponse> responses = response.getResponses();
+    private void handleBatchResult(List<Notification> partition, NotificationBatchResponseDto response) {
+        List<NotificationBatchResponseDto.NotificationSendResponseDto> responses = response.responses();
         for (int i = 0; i < responses.size(); i++) {
             Notification notification = partition.get(i);
 
-            SendResponse sendResponse = responses.get(i);
-            if (sendResponse.isSuccessful()) {
+            if (responses.get(i).isSuccessful()) {
                 notification.markAsSuccess();
             } else {
                 notification.markAsFail();
                 log.warn("[NotificationService] 알림 발송 실패: 사용자ID={}, {}",
-                        notification.getReceiverId(), sendResponse.getException().getMessage());
+                        notification.getReceiverId(), responses.get(i).errorMessage());
             }
         }
     }

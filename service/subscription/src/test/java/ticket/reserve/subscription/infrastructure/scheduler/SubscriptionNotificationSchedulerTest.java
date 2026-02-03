@@ -10,7 +10,7 @@ import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.SubscriptionNotificationSentEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
-import ticket.reserve.subscription.infrastructure.persistence.RedisRepository;
+import ticket.reserve.subscription.infrastructure.persistence.RedisAdapter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -29,7 +29,7 @@ class SubscriptionNotificationSchedulerTest {
     private OutboxEventPublisher outboxEventPublisher;
 
     @Mock
-    private RedisRepository redisRepository;
+    private RedisAdapter redisAdapter;
 
     @Test
     @DisplayName("알림 대상이 존재하면 이벤트를 발행하고 Redis 데이터를 삭제해야 한다")
@@ -42,9 +42,9 @@ class SubscriptionNotificationSchedulerTest {
 
         BuskingNotificationTarget target = new BuskingNotificationTarget(buskingId, startTime);
 
-        given(redisRepository.findBuskingIdsReadyToNotify(any(LocalDateTime.class)))
+        given(redisAdapter.findBuskingIdsReadyToNotify(any(LocalDateTime.class)))
                 .willReturn(Set.of(target));
-        given(redisRepository.findSubscribersByBuskingId(buskingId))
+        given(redisAdapter.findSubscribersByBuskingId(buskingId))
                 .willReturn(userIds);
 
         //when
@@ -62,7 +62,7 @@ class SubscriptionNotificationSchedulerTest {
                         }),
                         eq(buskingId)
                 );
-        verify(redisRepository, times(1))
+        verify(redisAdapter, times(1))
                 .removeSubscriptionData(buskingId);
     }
 

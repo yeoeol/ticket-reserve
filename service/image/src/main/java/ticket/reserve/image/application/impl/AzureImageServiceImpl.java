@@ -7,7 +7,9 @@ import com.azure.storage.blob.models.BlobHttpHeaders;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
@@ -29,27 +31,25 @@ public class AzureImageServiceImpl implements ImageService {
     private final ImageCrudService imageCrudService;
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
-    private static final long MAX_SIZE = 5 * 1024 * 1024; // 5MB
-
     private final String CONTAINER_NAME = "busking";
+
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private DataSize maxSize;
 
     @PostConstruct
     public void init() {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-        if (!containerClient.exists()) {
+        if (!blobServiceClient.getBlobContainerClient(CONTAINER_NAME).exists()) {
             throw new CustomException(ErrorCode.NOT_FOUND_BLOB_CONTAINER);
         }
     }
 
     @Override
     public ImageResponseDto upload(MultipartFile file, Long userId) {
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-
         validateExtension(file);
         validateFileSize(file);
 
         String uniqueFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        BlobClient blobClient = containerClient.getBlobClient(uniqueFileName);
+        BlobClient blobClient = getBlobClient(uniqueFileName);
 
         // Azure 업로드
         try {
@@ -63,21 +63,45 @@ public class AzureImageServiceImpl implements ImageService {
         // DB 저장
         try {
             String storedPath = blobClient.getBlobUrl();
-            Image savedImage = imageCrudService.save(file.getOriginalFilename(), storedPath, userId);
+            Image savedImage = imageCrudService.save(file.getOriginalFilename(), uniqueFileName, storedPath, userId);
             return ImageResponseDto.from(savedImage);
         } catch (Exception e) {
             log.error("Azure 이미지 업로드 실패 - 보상 트랜잭션 실행 : {}", uniqueFileName, e);
-            deleteFromAzure(blobClient);
+            deleteFromAzure(uniqueFileName);
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
     }
 
-    private void deleteFromAzure(BlobClient blobClient) {
+    @Override
+    public void delete(Long id, Long userId) {
+        Image image = imageCrudService.findById(id);
+        validateUser(image.getUserId(), userId);
+
+        String uniqueFileName = image.getUniqueFileName();
+
+        imageCrudService.deleteById(id);
+        deleteFromAzure(uniqueFileName);
+    }
+
+    private void validateUser(Long imageUserId, Long userId) {
+        if (!imageUserId.equals(userId)) {
+            throw new CustomException(ErrorCode.INVALID_CLIENT_REQUEST);
+        }
+    }
+
+    private BlobClient getBlobClient(String uniqueFileName) {
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
+        return containerClient.getBlobClient(uniqueFileName);
+    }
+
+    private void deleteFromAzure(String uniqueFileName) {
         try {
+            BlobClient blobClient = getBlobClient(uniqueFileName);
             blobClient.deleteIfExists();
             log.info("보상 트랜잭션 성공: Azure에서 파일 삭제 완료 - {}", blobClient.getBlobName());
         } catch (Exception e) {
-            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", blobClient.getBlobUrl(), e);
+            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", uniqueFileName, e);
+            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
         }
     }
 
@@ -93,7 +117,7 @@ public class AzureImageServiceImpl implements ImageService {
     }
 
     private void validateFileSize(MultipartFile file) {
-        if (file.getSize() > MAX_SIZE) {
+        if (file.getSize() > maxSize.toBytes()) {
             throw new CustomException(ErrorCode.FILE_SIZE_EXCEED);
         }
     }

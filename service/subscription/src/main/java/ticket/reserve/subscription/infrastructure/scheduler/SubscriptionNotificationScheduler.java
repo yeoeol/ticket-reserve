@@ -7,7 +7,7 @@ import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.SubscriptionNotificationSentEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
-import ticket.reserve.subscription.infrastructure.persistence.RedisRepository;
+import ticket.reserve.subscription.infrastructure.persistence.RedisAdapter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,20 +19,20 @@ import java.util.concurrent.TimeUnit;
 public class SubscriptionNotificationScheduler {
 
     private final OutboxEventPublisher outboxEventPublisher;
-    private final RedisRepository redisRepository;
+    private final RedisAdapter redisAdapter;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
     public void subscriptionNotificationScheduler() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneHourLater = now.plusHours(1);
 
-        Set<BuskingNotificationTarget> targets = redisRepository.findBuskingIdsReadyToNotify(oneHourLater);
+        Set<BuskingNotificationTarget> targets = redisAdapter.findBuskingIdsReadyToNotify(oneHourLater);
         if (targets == null || targets.isEmpty()) return;
 
         for (BuskingNotificationTarget target : targets) {
             long remainingMinutes = getRemainingMinutes(now, target.startTime());
 
-            Set<Long> userIds = redisRepository.findSubscribersByBuskingId(target.buskingId());
+            Set<Long> userIds = redisAdapter.findSubscribersByBuskingId(target.buskingId());
             if (userIds == null || userIds.isEmpty()) continue;
 
             Long buskingId = target.buskingId();
@@ -46,7 +46,7 @@ public class SubscriptionNotificationScheduler {
                     buskingId
             );
 
-            redisRepository.removeSubscriptionData(buskingId);
+            redisAdapter.removeSubscriptionData(buskingId);
         }
     }
 
