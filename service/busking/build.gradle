@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-spatial'
 
     // DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation("io.github.openfeign.querydsl:querydsl-core:${queryDslVersion}")

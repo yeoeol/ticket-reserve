@@ -3,6 +3,7 @@ package ticket.reserve.busking.presentation.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.BuskingCrudService;
@@ -37,8 +38,11 @@ public class BuskingApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BuskingResponseDto> get(@PathVariable Long id) {
-        return ResponseEntity.ok(buskingService.getOne(id));
+    public ResponseEntity<BuskingResponseDto> get(
+            @PathVariable Long id,
+            @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(buskingService.getOne(id, Long.valueOf(userId)));
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})

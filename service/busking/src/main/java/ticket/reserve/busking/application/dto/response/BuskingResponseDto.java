@@ -21,8 +21,31 @@ public record BuskingResponseDto(
         Integer totalInventoryCount,
         List<String> imageUrls,
         Double latitude,
-        Double longitude
+        Double longitude,
+        boolean isSubscribed
 ) {
+    public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount, boolean isSubscribed) {
+        Point point = busking.getCoordinate();
+
+        return BuskingResponseDto.builder()
+                .id(busking.getId())
+                .title(busking.getTitle())
+                .description(busking.getDescription())
+                .location(busking.getLocation())
+                .startTime(busking.getStartTime())
+                .endTime(busking.getEndTime())
+                .availableInventory(availableInventoryCount)
+                .totalInventoryCount(busking.getTotalInventoryCount())
+                .imageUrls(busking.getBuskingImages().stream()
+                        .map(BuskingImage::getStoredPath)
+                        .toList()
+                )
+                .latitude(point.getY())
+                .longitude(point.getX())
+                .isSubscribed(isSubscribed)
+                .build();
+    }
+
     public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount) {
         Point point = busking.getCoordinate();
 
@@ -41,8 +64,10 @@ public record BuskingResponseDto(
                 )
                 .latitude(point.getY())
                 .longitude(point.getX())
+                .isSubscribed(false)
                 .build();
     }
+
 
     @QueryProjection
     public BuskingResponseDto {
