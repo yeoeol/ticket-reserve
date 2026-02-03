@@ -28,11 +28,19 @@ public class FcmNotificationSender implements NotificationSender {
             List<SendResponse> sendResponses = batchResponse.getResponses();
 
             List<NotificationBatchResponseDto.NotificationSendResponseDto> notificationSendResponses = sendResponses.stream()
-                    .map(r -> NotificationBatchResponseDto.NotificationSendResponseDto.of(
-                            r.getMessageId(),
-                            r.getException().getErrorCode().name(),
-                            r.getException().getMessage())
-                    ).toList();
+                    .map(r -> {
+                        if (r.isSuccessful()) {
+                            return NotificationBatchResponseDto.NotificationSendResponseDto.of(
+                                    r.getMessageId(), null, null
+                            );
+                        } else {
+                            FirebaseMessagingException ex = r.getException();
+                            return NotificationBatchResponseDto.NotificationSendResponseDto.of(
+                                    r.getMessageId(),
+                                    ex != null ? r.getException().getErrorCode().name() : null,
+                                    ex != null ? r.getException().getMessage() : null);
+                        }
+                    }).toList();
 
             NotificationBatchResponseDto notificationBatchResponse = NotificationBatchResponseDto.of(
                     notificationSendResponses, batchResponse.getSuccessCount(), batchResponse.getFailureCount()

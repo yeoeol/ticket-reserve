@@ -1,6 +1,5 @@
 package ticket.reserve.notification.application.dto.response;
 
-import com.google.common.base.Strings;
 import lombok.Builder;
 
 import java.util.List;

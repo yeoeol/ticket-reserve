@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // GLOBAL
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "GLOBAL001", "권한을 찾지 못했습니다."),
+    INVALID_CLIENT_REQUEST(HttpStatus.BAD_REQUEST, "GLOBAL002", "유효하지 않은 요청입니다."),
 
     // USER-SERVICE
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자를 찾지 못했습니다."),

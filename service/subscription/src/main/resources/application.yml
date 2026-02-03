@@ -5,6 +5,18 @@ spring:
   application:
     name: subscription-service
 
+  datasource:
+    url: ${SUBSCRIPTION_DB_URL:jdbc:mysql://localhost:3306/subscription}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SUBSCRIPTION_DB_USERNAME:root}
+    password: ${SUBSCRIPTION_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
   data:
     redis:
       host: ${REDIS_HOST:localhost}

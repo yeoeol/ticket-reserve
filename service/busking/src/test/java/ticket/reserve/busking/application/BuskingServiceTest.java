@@ -156,7 +156,7 @@ class BuskingServiceTest {
                 .build();
 
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
-        when(buskingCrudService.save(busking)).thenThrow(RuntimeException.class);
+        when(buskingCrudService.save(any(Busking.class))).thenThrow(RuntimeException.class);
 
         //when & then
         assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);

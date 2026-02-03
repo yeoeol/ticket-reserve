@@ -25,9 +25,10 @@ public class ImageApiController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable("id") Long imageId
+            @PathVariable("id") Long imageId,
+            @AuthenticationPrincipal String userId
     ) {
-        imageService.delete(imageId);
+        imageService.delete(imageId, Long.valueOf(userId));
         return ResponseEntity.noContent().build();
     }
 }

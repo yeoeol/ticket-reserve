@@ -56,15 +56,14 @@ public class BuskingCrudServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 수정 성공 - 수정 정보를 기반으로 이벤트 엔티티를 수정한다")
-    void updateSuccess() {
+    @DisplayName("버스킹 수정 성공 - 수정 정보를 기반으로 버스킹 엔티티를 수정한다")
+    void update_success() {
         //given
         BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
                 "updateEventTitle", "updateDesc", "테스트장소",
                 LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
         );
-        given(buskingRepository.findById(1234L))
-                .willReturn(Optional.of(busking));
+        given(buskingRepository.findById(1234L)).willReturn(Optional.of(busking));
 
         //when
         buskingCrudService.update(1234L, request);
@@ -79,8 +78,8 @@ public class BuskingCrudServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 수정 실패 - 입력된 'id'와 일치하는 이벤트가 존재하지 않을 때 예외가 발생한다")
-    void updateEventFail_NotFound() {
+    @DisplayName("버스킹 수정 실패 - 입력된 'id'와 일치하는 버스킹이 존재하지 않을 때 예외가 발생한다")
+    void updateEvent_fail_notFound() {
         //given
         BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
                 "updateEventTitle", "updateDesc", "테스트장소",

@@ -5,5 +5,5 @@ import ticket.reserve.image.application.dto.response.ImageResponseDto;
 
 public interface ImageService {
     ImageResponseDto upload(MultipartFile file, Long userId);
-    void delete(Long id);
+    void delete(Long id, Long userId);
 }

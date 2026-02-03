@@ -67,23 +67,25 @@ public class AzureImageServiceImpl implements ImageService {
             return ImageResponseDto.from(savedImage);
         } catch (Exception e) {
             log.error("Azure 이미지 업로드 실패 - 보상 트랜잭션 실행 : {}", uniqueFileName, e);
-            deleteFromAzure(blobClient);
+            deleteFromAzure(uniqueFileName);
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id, Long userId) {
         Image image = imageCrudService.findById(id);
+        validateUser(image.getUserId(), userId);
+
         String uniqueFileName = image.getUniqueFileName();
 
         imageCrudService.deleteById(id);
-        try {
-            BlobClient blobClient = getBlobClient(uniqueFileName);
+        deleteFromAzure(uniqueFileName);
+    }
 
-            deleteFromAzure(blobClient);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
+    private void validateUser(Long imageUserId, Long userId) {
+        if (!imageUserId.equals(userId)) {
+            throw new CustomException(ErrorCode.INVALID_CLIENT_REQUEST);
         }
     }
 
@@ -92,12 +94,14 @@ public class AzureImageServiceImpl implements ImageService {
         return containerClient.getBlobClient(uniqueFileName);
     }
 
-    private void deleteFromAzure(BlobClient blobClient) {
+    private void deleteFromAzure(String uniqueFileName) {
         try {
+            BlobClient blobClient = getBlobClient(uniqueFileName);
             blobClient.deleteIfExists();
             log.info("보상 트랜잭션 성공: Azure에서 파일 삭제 완료 - {}", blobClient.getBlobName());
         } catch (Exception e) {
-            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", blobClient.getBlobUrl(), e);
+            log.error("보상 트랜잭션 실패: Azure 파일 삭제 중 오류 발생 - {}", uniqueFileName, e);
+            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
         }
     }
 
