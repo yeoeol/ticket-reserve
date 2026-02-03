@@ -44,6 +44,10 @@ spring:
               uri: lb://NOTIFICATION-SERVICE
               predicates:
                 - Path=/api/notifications/**, /api/fcm/**
+            - id: subscription-service
+              uri: lb://SUBSCRIPTION-SERVICE
+              predicates:
+                - Path=/api/subscription/**
 
   data:
     redis:
