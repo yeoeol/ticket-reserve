@@ -30,6 +30,7 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
     public List<BuskingResponseDto> search(BuskingSearchCondition condition) {
         NumberTemplate<Double> lat = Expressions.numberTemplate(Double.class, "ST_Y({0})", busking.coordinate);
         NumberTemplate<Double> lng = Expressions.numberTemplate(Double.class, "ST_X({0})", busking.coordinate);
+        BooleanExpression isSubscribed = Expressions.asBoolean(false).as("isSubscribed");
 
         return queryFactory
                 .from(busking)
@@ -53,7 +54,8 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                         busking.totalInventoryCount,
                                         list(buskingImage.storedPath),
                                         lat,
-                                        lng
+                                        lng,
+                                        isSubscribed
                                 )
                         )
                 );

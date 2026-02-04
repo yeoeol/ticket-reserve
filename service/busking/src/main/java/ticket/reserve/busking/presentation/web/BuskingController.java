@@ -33,7 +33,7 @@ public class BuskingController {
             @AuthenticationPrincipal String userId,
             Model model
     ) {
-        BuskingResponseDto busking = buskingService.getOne(buskingId);
+        BuskingResponseDto busking = buskingService.getOne(buskingId, Long.valueOf(userId));
         model.addAttribute("busking", busking);
         model.addAttribute("isAuthenticated", userId != null);
 

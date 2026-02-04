@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticket.reserve.subscription.application.SubscriptionService;
+import ticket.reserve.subscription.application.dto.request.SubscriptionCancelRequestDto;
 import ticket.reserve.subscription.application.dto.request.SubscriptionRequestDto;
 
 @RestController
@@ -20,8 +21,8 @@ public class SubscriptionApiController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody SubscriptionRequestDto request) {
+    @PostMapping("/unsubscribe")
+    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody SubscriptionCancelRequestDto request) {
         subscriptionService.unsubscribe(request);
         return ResponseEntity.noContent().build();
     }
