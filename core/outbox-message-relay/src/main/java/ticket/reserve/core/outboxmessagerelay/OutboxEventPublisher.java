@@ -19,8 +19,8 @@ public class OutboxEventPublisher {
     private final IdGenerator idGenerator;
 
     public void publish(EventType type, EventPayload payload, Long partitionKey) {
-        log.info("[OutboxEventPublisher.publish] EventType={}, EventPayload={}",
-                type, payload.getClass());
+        log.info("[OutboxEventPublisher.publish] EventType={}, EventPayload={}, EventPayload.getClass={}",
+                type, payload, payload.getClass());
 
         long outboxId = idGenerator.nextId();
         long eventId = idGenerator.nextId();

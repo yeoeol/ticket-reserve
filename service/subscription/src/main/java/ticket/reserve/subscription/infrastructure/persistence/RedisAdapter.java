@@ -29,11 +29,17 @@ public class RedisAdapter implements RedisPort {
     private String subscribersByBuskingIdKey;
 
     // ZSet : 알림 대상 버스킹ID 집합, Set : 특정 버스킹ID를 구독한 사용자ID 집합
+    @Override
     public void addToSubscriptionQueue(Long buskingId, Long userId, LocalDateTime startTime) {
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
 
         redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
         redisTemplate.opsForSet().add(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
+    }
+
+    @Override
+    public void removeFromSubscriptionQueue(Long buskingId, Long userId) {
+        redisTemplate.opsForSet().remove(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
     }
 
     // 알림 대상 버스킹ID 집합 추출
@@ -61,9 +67,19 @@ public class RedisAdapter implements RedisPort {
                 .collect(Collectors.toSet());
     }
 
-    // 특정 버스킹ID에 대한 데이터 삭제
+    // 특정 버스킹ID에 대한 데이터 모두 삭제
     public void removeSubscriptionData(Long buskingId) {
+        removeFromNotificationSchedule(buskingId);
+        removeSubscriber(buskingId);
+    }
+
+    // 알림 스케줄 데이터 삭제
+    public void removeFromNotificationSchedule(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
+    }
+
+    // 특정 버스킹ID에 대한 구독 데이터 삭제
+    public void removeSubscriber(Long buskingId) {
         redisTemplate.delete(generateSubscribersByBuskingIdKey(buskingId));
     }
 

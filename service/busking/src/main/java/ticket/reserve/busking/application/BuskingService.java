@@ -8,6 +8,7 @@ import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
+import ticket.reserve.busking.application.port.out.RedisPort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.global.exception.CustomException;
@@ -21,6 +22,7 @@ import java.util.List;
 public class BuskingService {
 
     private final BuskingCrudService buskingCrudService;
+    private final RedisPort redisPort;
     private final InventoryPort inventoryPort;
     private final ImagePort imagePort;
     private final IdGenerator idGenerator;
@@ -59,8 +61,14 @@ public class BuskingService {
                 .toList();
     }
 
-    public BuskingResponseDto getOne(Long buskingId) {
+    public BuskingResponseDto getOne(Long buskingId, Long userId) {
         Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
-        return BuskingResponseDto.from(buskingCrudService.findById(buskingId), availableInventoryCount);
+        boolean isSubscribed = redisPort.isSubscribed(buskingId, userId);
+
+        return BuskingResponseDto.from(
+                buskingCrudService.findById(buskingId),
+                availableInventoryCount,
+                isSubscribed
+        );
     }
 }

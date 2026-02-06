@@ -7,6 +7,7 @@ import ticket.reserve.core.event.EventPayload;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class PaymentConfirmedEventPayload implements EventPayload {
 
     private Long reservationId;

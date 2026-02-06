@@ -3,6 +3,7 @@ package ticket.reserve.busking.presentation.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.BuskingCrudService;
@@ -31,14 +32,18 @@ public class BuskingApiController {
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "startTime", required = false) LocalDateTime startTime,
-            @RequestParam(value = "endTime", required = false) LocalDateTime endTime
+            @RequestParam(value = "endTime", required = false) LocalDateTime endTime,
+            @AuthenticationPrincipal String userId
     ) {
-        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime));
+        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime, userId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BuskingResponseDto> get(@PathVariable Long id) {
-        return ResponseEntity.ok(buskingService.getOne(id));
+    public ResponseEntity<BuskingResponseDto> get(
+            @PathVariable Long id,
+            @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(buskingService.getOne(id, Long.valueOf(userId)));
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
