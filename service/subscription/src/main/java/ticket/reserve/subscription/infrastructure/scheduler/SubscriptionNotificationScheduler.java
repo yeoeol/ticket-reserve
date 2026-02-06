@@ -21,7 +21,7 @@ public class SubscriptionNotificationScheduler {
     private final NotificationPublishService notificationPublishService;
     private final RedisAdapter redisAdapter;
 
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
     public void subscriptionNotificationScheduler() {
         LocalDateTime now = LocalDateTime.now();
 
@@ -30,7 +30,11 @@ public class SubscriptionNotificationScheduler {
 
         for (BuskingNotificationTarget target : targets) {
             long remainingMinutes = getRemainingMinutes(now, target.startTime());
-            if (remainingMinutes <= -10) continue;
+            if (remainingMinutes <= -10) {
+                // 다시 알림이 가지 않도록 알림 스케줄링 목록에서 제거
+                redisAdapter.removeFromNotificationSchedule(target.buskingId());
+                continue;
+            }
 
             Set<Long> userIds = redisAdapter.findSubscribersByBuskingId(target.buskingId());
             if (userIds == null || userIds.isEmpty()) continue;
