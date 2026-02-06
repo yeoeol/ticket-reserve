@@ -18,7 +18,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "WHERE s.buskingId = :buskingId " +
                     "AND s.status = :status " +
                     "AND s.isNotified = :isNotified")
-    List<Subscription> findByBuskingIdAndStatusAndIsNotified(Long buskingId, SubscriptionStatus status, boolean notified);
+    List<Subscription> findByBuskingIdAndStatusAndIsNotified(Long buskingId, SubscriptionStatus status, boolean isNotified);
 
     List<Subscription> findAllByUserIdIn(Collection<Long> userIds);
 }
