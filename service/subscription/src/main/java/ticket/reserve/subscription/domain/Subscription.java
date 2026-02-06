@@ -32,16 +32,16 @@ public class Subscription {
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
 
-    private boolean notified;
+    private boolean isNotified;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Subscription(IdGenerator idGenerator, Long userId, Long buskingId, LocalDateTime startTime, SubscriptionStatus status, boolean notified) {
+    private Subscription(IdGenerator idGenerator, Long userId, Long buskingId, LocalDateTime startTime, SubscriptionStatus status, boolean isNotified) {
         this.id = idGenerator.nextId();
         this.userId = userId;
         this.buskingId = buskingId;
         this.startTime = startTime;
         this.status = status;
-        this.notified = notified;
+        this.isNotified = isNotified;
     }
 
     public static Subscription create(
@@ -54,11 +54,15 @@ public class Subscription {
                 .buskingId(buskingId)
                 .startTime(startTime)
                 .status(status)
-                .notified(false)
+                .isNotified(false)
                 .build();
     }
 
     public void cancel() {
         this.status = SubscriptionStatus.CANCELLED;
+    }
+
+    public void notified() {
+        this.isNotified = true;
     }
 }
