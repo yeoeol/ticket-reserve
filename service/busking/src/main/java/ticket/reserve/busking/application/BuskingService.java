@@ -46,6 +46,7 @@ public class BuskingService {
         // 버스킹 저장
         try {
             Busking savedBusking = buskingCrudService.save(busking);
+            redisPort.addToNotificationSchedule(busking.getId(), busking.getStartTime());
             return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
         } catch (Exception e) {
             if (imageResponse != null) {

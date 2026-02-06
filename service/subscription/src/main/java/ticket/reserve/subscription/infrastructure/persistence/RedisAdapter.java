@@ -31,9 +31,17 @@ public class RedisAdapter implements RedisPort {
     // ZSet : 알림 대상 버스킹ID 집합, Set : 특정 버스킹ID를 구독한 사용자ID 집합
     @Override
     public void addToSubscriptionQueue(Long buskingId, Long userId, LocalDateTime startTime) {
-        long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
+        addToNotificationSchedule(buskingId, startTime);
+        addToSubscriberByBusking(buskingId, userId);
+    }
 
+    @Override
+    public void addToNotificationSchedule(Long buskingId, LocalDateTime startTime) {
+        long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
         redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
+    }
+
+    public void addToSubscriberByBusking(Long buskingId, Long userId) {
         redisTemplate.opsForSet().add(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
     }
 
