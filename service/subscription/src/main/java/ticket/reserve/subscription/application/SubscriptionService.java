@@ -9,6 +9,7 @@ import ticket.reserve.subscription.application.dto.request.SubscriptionRequestDt
 import ticket.reserve.subscription.domain.Subscription;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,8 +20,16 @@ public class SubscriptionService {
     private final IdGenerator idGenerator;
     private final SubscriptionCrudService subscriptionCrudService;
 
+    @Transactional
     public void subscribe(SubscriptionRequestDto request) {
-        subscriptionCrudService.save(request.toEntity(idGenerator));
+        Optional<Subscription> optionalSubscription = subscriptionCrudService
+                .findByBuskingIdAndUserId(request.buskingId(), request.userId());
+
+        // 같은 버스킹에 대해 구독 내역이 있다면 구독 상태만 변경
+        optionalSubscription.ifPresentOrElse(
+                Subscription::activate,
+                () -> subscriptionCrudService.save(request.toEntity(idGenerator))
+        );
     }
 
     public void unsubscribe(SubscriptionCancelRequestDto request) {

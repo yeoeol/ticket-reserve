@@ -30,9 +30,9 @@ public class Subscription {
     private LocalDateTime startTime;
 
     @Enumerated(EnumType.STRING)
-    private SubscriptionStatus status;
+    private SubscriptionStatus status;  // 구독 여부
 
-    private boolean isNotified;
+    private boolean isNotified;         // 알림 발송 여부
 
     @Builder(access = AccessLevel.PRIVATE)
     private Subscription(IdGenerator idGenerator, Long userId, Long buskingId, LocalDateTime startTime, SubscriptionStatus status, boolean isNotified) {
@@ -56,6 +56,10 @@ public class Subscription {
                 .status(status)
                 .isNotified(false)
                 .build();
+    }
+
+    public void activate() {
+        this.status = SubscriptionStatus.ACTIVATED;
     }
 
     public void cancel() {

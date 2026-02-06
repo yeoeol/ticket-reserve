@@ -1,5 +1,6 @@
 package ticket.reserve.subscription.application;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import ticket.reserve.subscription.domain.enums.SubscriptionStatus;
 import ticket.reserve.subscription.domain.repository.SubscriptionRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -25,11 +27,10 @@ public class SubscriptionCrudService {
 
     @Transactional
     public void cancel(Long buskingId, Long userId) {
-        Subscription subscription = subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
-
+        Subscription subscription = getSubscription(buskingId, userId);
         subscription.cancel();
     }
+
 
     @Transactional(readOnly = true)
     public List<Subscription> findByBuskingIdAndStatusAndNotified(Long buskingId) {
@@ -47,4 +48,15 @@ public class SubscriptionCrudService {
                 buskingId, userId, SubscriptionStatus.ACTIVATED
         );
     }
+
+    @Transactional(readOnly = true)
+    public Optional<Subscription> findByBuskingIdAndUserId(Long buskingId, Long userId) {
+        return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId);
+    }
+
+    private Subscription getSubscription(Long buskingId, Long userId) {
+        return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+    }
+
 }
