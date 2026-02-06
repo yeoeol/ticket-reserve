@@ -57,4 +57,8 @@ public class Subscription {
                 .notified(false)
                 .build();
     }
+
+    public void cancel() {
+        this.status = SubscriptionStatus.CANCELLED;
+    }
 }
