@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
+import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.event.EventType;
@@ -70,5 +71,10 @@ public class BuskingCrudService {
     @Transactional(readOnly = true)
     public List<Long> getIds() {
         return buskingRepository.findIds();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Busking> findAllByBulk(List<Long> buskingIds) {
+        return buskingRepository.findAllByIdIn(buskingIds);
     }
 }

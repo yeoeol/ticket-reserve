@@ -59,4 +59,11 @@ public class SubscriptionCrudService {
                 .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
+        List<Subscription> subscriptions = subscriptionRepository.findAllByUserId(userId);
+        return subscriptions.stream()
+                .map(Subscription::getBuskingId)
+                .toList();
+    }
 }

@@ -71,4 +71,11 @@ public class BuskingApiController {
     public ResponseEntity<List<Long>> getIds() {
         return ResponseEntity.ok(buskingCrudService.getIds());
     }
+
+    @GetMapping("/bulk")
+    public ResponseEntity<List<BuskingResponseDto>> getAllByBuskingIds(
+            @RequestParam("ids") List<Long> buskingIds
+    ) {
+        return ResponseEntity.ok(buskingService.findAllByBulk(buskingIds));
+    }
 }

@@ -2,6 +2,7 @@ package ticket.reserve.busking.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.dto.request.IsSubscribeRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
@@ -75,5 +76,12 @@ public class BuskingService {
                 availableInventoryCount,
                 isSubscribed
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
+        return buskingCrudService.findAllByBulk(buskingIds).stream()
+                .map(busking -> BuskingResponseDto.from(busking, 0))
+                .toList();
     }
 }
