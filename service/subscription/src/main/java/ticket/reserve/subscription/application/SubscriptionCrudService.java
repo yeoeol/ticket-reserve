@@ -40,4 +40,11 @@ public class SubscriptionCrudService {
     public List<Subscription> findAllByUserIds(Set<Long> userIds) {
         return subscriptionRepository.findAllByUserIdIn(userIds);
     }
+
+    @Transactional(readOnly = true)
+    public boolean isSubscriptionActive(Long buskingId, Long userId) {
+        return subscriptionRepository.existsByBuskingIdAndUserIdAndStatus(
+                buskingId, userId, SubscriptionStatus.ACTIVATED
+        );
+    }
 }

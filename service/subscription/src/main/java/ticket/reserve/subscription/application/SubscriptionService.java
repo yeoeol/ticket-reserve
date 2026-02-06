@@ -40,4 +40,8 @@ public class SubscriptionService {
         subscriptionCrudService.findAllByUserIds(userIds)
                 .forEach(Subscription::notified);
     }
+
+    public boolean isSubscriptionActive(Long buskingId, Long userId) {
+        return subscriptionCrudService.isSubscriptionActive(buskingId, userId);
+    }
 }

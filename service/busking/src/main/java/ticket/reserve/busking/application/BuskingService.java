@@ -3,12 +3,14 @@ package ticket.reserve.busking.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.busking.application.dto.request.IsSubscribeRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.port.out.RedisPort;
+import ticket.reserve.busking.application.port.out.SubscriptionPort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.global.exception.CustomException;
@@ -21,11 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BuskingService {
 
+    private final IdGenerator idGenerator;
     private final BuskingCrudService buskingCrudService;
     private final RedisPort redisPort;
     private final InventoryPort inventoryPort;
     private final ImagePort imagePort;
-    private final IdGenerator idGenerator;
+    private final SubscriptionPort subscriptionPort;
 
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
@@ -64,7 +67,8 @@ public class BuskingService {
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {
         Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
-        boolean isSubscribed = redisPort.isSubscribed(buskingId, userId);
+        boolean isSubscribed = subscriptionPort.isSubscribe(new IsSubscribeRequestDto(buskingId, userId));
+//        boolean isSubscribed = redisPort.isSubscribed(buskingId, userId);
 
         return BuskingResponseDto.from(
                 buskingCrudService.findById(buskingId),
