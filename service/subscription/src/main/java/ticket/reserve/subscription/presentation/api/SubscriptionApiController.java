@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ticket.reserve.subscription.application.SubscriptionQueryService;
 import ticket.reserve.subscription.application.SubscriptionService;
 import ticket.reserve.subscription.application.dto.request.IsSubscribeRequestDto;
 import ticket.reserve.subscription.application.dto.request.SubscriptionCancelRequestDto;
@@ -19,6 +20,7 @@ import java.util.List;
 public class SubscriptionApiController {
 
     private final SubscriptionService subscriptionService;
+    private final SubscriptionQueryService subscriptionQueryService;
 
     @PostMapping
     public ResponseEntity<Void> subscribe(@Valid @RequestBody SubscriptionRequestDto request) {
@@ -36,7 +38,7 @@ public class SubscriptionApiController {
     public ResponseEntity<Boolean> isSubscribe(
             @Valid @ModelAttribute IsSubscribeRequestDto request
     ) {
-        return ResponseEntity.ok(subscriptionService.isSubscriptionActive(request.buskingId(), request.userId()));
+        return ResponseEntity.ok(subscriptionQueryService.isSubscriptionActive(request.buskingId(), request.userId()));
     }
 
     @GetMapping("/me")

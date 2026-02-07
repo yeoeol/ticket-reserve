@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ticket.reserve.subscription.application.NotificationPublishService;
-import ticket.reserve.subscription.application.SubscriptionService;
+import ticket.reserve.subscription.application.SubscriptionQueryService;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.infrastructure.persistence.RedisAdapter;
 
@@ -20,7 +20,7 @@ import static java.lang.Math.max;
 public class SubscriptionNotificationScheduler {
 
     private final NotificationPublishService notificationPublishService;
-    private final SubscriptionService subscriptionService;
+    private final SubscriptionQueryService subscriptionQueryService;
     private final RedisAdapter redisAdapter;
 
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
@@ -38,7 +38,7 @@ public class SubscriptionNotificationScheduler {
                 continue;
             }
             // 알림이 가지 않은 구독자 추출
-            Set<Long> userIds = subscriptionService.findSubscribers(target.buskingId());
+            Set<Long> userIds = subscriptionQueryService.findSubscribers(target.buskingId());
             if (userIds == null || userIds.isEmpty()) continue;
 
             // 알림 발송 이벤트 발행 및 구독 엔티티 알림 여부 변경

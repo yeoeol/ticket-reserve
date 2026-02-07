@@ -10,37 +10,21 @@ import ticket.reserve.subscription.domain.enums.SubscriptionStatus;
 import ticket.reserve.subscription.domain.repository.SubscriptionRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class SubscriptionCrudService {
+public class SubscriptionQueryService {
 
     private final SubscriptionRepository subscriptionRepository;
 
-    @Transactional
-    public void save(Subscription subscription) {
-        subscriptionRepository.save(subscription);
-    }
-
-    @Transactional
-    public void cancel(Long buskingId, Long userId) {
-        Subscription subscription = getSubscription(buskingId, userId);
-        subscription.cancel();
-    }
-
-
+    // 활성 구독 확인 : buskingIds 반환
     @Transactional(readOnly = true)
-    public Set<Long> findByBuskingIdAndStatusAndNotified(Long buskingId) {
-        return subscriptionRepository.findUserIdsByBuskingIdAndStatusAndIsNotified(buskingId, SubscriptionStatus.ACTIVATED, false);
+    public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
+        return subscriptionRepository.findBuskingIdsByUserIdWithActivated(userId, SubscriptionStatus.ACTIVATED);
     }
 
-    @Transactional(readOnly = true)
-    public List<Subscription> findAllByUserIds(Long buskingId, Set<Long> userIds) {
-        return subscriptionRepository.findAllByBuskingIdAndUserIdIn(buskingId, userIds);
-    }
-
+    // 활성 구독 확인 : true/false
     @Transactional(readOnly = true)
     public boolean isSubscriptionActive(Long buskingId, Long userId) {
         return subscriptionRepository.existsByBuskingIdAndUserIdAndStatus(
@@ -48,17 +32,16 @@ public class SubscriptionCrudService {
         );
     }
 
+    // 구독자 조회
     @Transactional(readOnly = true)
-    public Optional<Subscription> findByBuskingIdAndUserId(Long buskingId, Long userId) {
-        return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId);
+    public Set<Long> findSubscribers(Long buskingId) {
+        return subscriptionRepository.findUserIdsByBuskingIdAndStatusAndIsNotified(
+                buskingId, SubscriptionStatus.ACTIVATED, false
+        );
     }
 
     @Transactional(readOnly = true)
-    public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
-        return subscriptionRepository.findAllByUserIdWithActivated(userId, SubscriptionStatus.ACTIVATED);
-    }
-
-    private Subscription getSubscription(Long buskingId, Long userId) {
+    public Subscription getSubscription(Long buskingId, Long userId) {
         return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }
