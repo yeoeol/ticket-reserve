@@ -18,23 +18,10 @@ public class RedisAdapter implements RedisPort {
     @Value("${app.redis.notification-schedule-key:busking:notification_schedule}")
     private String notificationScheduleKey;
 
-    @Value("${app.redis.busking-subscribers-key:busking:subscribers}")
-    private String subscribersByBuskingIdKey;
-
-    @Override
-    public boolean isSubscribed(Long buskingId, Long userId) {
-        return Boolean.TRUE.equals(redisTemplate.opsForSet()
-                .isMember(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId)));
-    }
-
     // ZSet : 알림 대상 버스킹ID 집합
     @Override
     public void addToNotificationSchedule(Long buskingId, LocalDateTime startTime) {
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
         redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
-    }
-
-    private String generateSubscribersByBuskingIdKey(Long buskingId) {
-        return subscribersByBuskingIdKey + ":" + buskingId;
     }
 }

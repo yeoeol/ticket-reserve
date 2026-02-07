@@ -35,7 +35,7 @@ public class BuskingApiController {
             @RequestParam(value = "endTime", required = false) LocalDateTime endTime,
             @AuthenticationPrincipal String userId
     ) {
-        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime, userId));
+        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime, Long.valueOf(userId)));
     }
 
     @GetMapping("/{id}")
@@ -74,8 +74,9 @@ public class BuskingApiController {
 
     @GetMapping("/bulk")
     public ResponseEntity<List<BuskingResponseDto>> getAllByBuskingIds(
-            @RequestParam("ids") List<Long> buskingIds
+            @RequestParam("ids") List<Long> buskingIds,
+            @AuthenticationPrincipal String userId
     ) {
-        return ResponseEntity.ok(buskingService.findAllByBulk(buskingIds));
+        return ResponseEntity.ok(buskingService.findAllByBulk(buskingIds, Long.valueOf(userId)));
     }
 }

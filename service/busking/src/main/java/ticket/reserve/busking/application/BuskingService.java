@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ticket.reserve.busking.application.dto.request.IsSubscribeRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
@@ -68,8 +67,7 @@ public class BuskingService {
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {
         Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
-        boolean isSubscribed = subscriptionPort.isSubscribe(new IsSubscribeRequestDto(buskingId, userId));
-//        boolean isSubscribed = redisPort.isSubscribed(buskingId, userId);
+        boolean isSubscribed = subscriptionPort.isSubscribe(buskingId, userId);
 
         return BuskingResponseDto.from(
                 buskingCrudService.findById(buskingId),
@@ -79,9 +77,11 @@ public class BuskingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
+    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds, Long userId) {
         return buskingCrudService.findAllByBulk(buskingIds).stream()
-                .map(busking -> BuskingResponseDto.from(busking, 0))
-                .toList();
+                .map(busking -> {
+                    Boolean isSubscribed = subscriptionPort.isSubscribe(busking.getId(), userId);
+                    return BuskingResponseDto.from(busking, 0, isSubscribed);
+                }).toList();
     }
 }
