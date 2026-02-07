@@ -35,7 +35,8 @@ class BuskingServiceTest {
     @InjectMocks
     BuskingService buskingService;
 
-    @Mock BuskingCrudService buskingCrudService;
+    @Mock
+    BuskingQueryService buskingQueryService;
     @Mock InventoryPort inventoryPort;
     @Mock ImagePort imagePort;
     @Mock IdGenerator idGenerator;
@@ -69,7 +70,7 @@ class BuskingServiceTest {
         );
 
         ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingCrudService.save(buskingCaptor.capture()))
+        given(buskingQueryService.save(buskingCaptor.capture()))
                 .willReturn(busking);
 
         //when
@@ -112,7 +113,7 @@ class BuskingServiceTest {
                 .build();
 
         ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingCrudService.save(buskingCaptor.capture())).willReturn(busking);
+        given(buskingQueryService.save(buskingCaptor.capture())).willReturn(busking);
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
 
         //when
@@ -156,7 +157,7 @@ class BuskingServiceTest {
                 .build();
 
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
-        when(buskingCrudService.save(any(Busking.class))).thenThrow(RuntimeException.class);
+        when(buskingQueryService.save(any(Busking.class))).thenThrow(RuntimeException.class);
 
         //when & then
         assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);

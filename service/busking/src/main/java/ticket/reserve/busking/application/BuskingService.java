@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.InventoryPort;
@@ -12,6 +13,7 @@ import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.port.out.RedisPort;
 import ticket.reserve.busking.application.port.out.SubscriptionPort;
 import ticket.reserve.busking.domain.busking.Busking;
+import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
@@ -24,7 +26,9 @@ import java.util.List;
 public class BuskingService {
 
     private final IdGenerator idGenerator;
-    private final BuskingCrudService buskingCrudService;
+    private final BuskingPublishService buskingPublishService;
+    private final BuskingQueryService buskingQueryService;
+    private final BuskingRepository buskingRepository;
     private final RedisPort redisPort;
     private final InventoryPort inventoryPort;
     private final ImagePort imagePort;
@@ -48,7 +52,7 @@ public class BuskingService {
 
         // 버스킹 저장
         try {
-            Busking savedBusking = buskingCrudService.save(busking);
+            Busking savedBusking = buskingPublishService.publishBuskingCreatedEvent(busking);
             redisPort.addToNotificationSchedule(busking.getId(), busking.getStartTime());
             return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
         } catch (Exception e) {
@@ -60,7 +64,7 @@ public class BuskingService {
     }
 
     public List<BuskingResponseDto> getAll() {
-        return buskingCrudService.findAll().stream()
+        return buskingRepository.findAll().stream()
                 .map(e -> BuskingResponseDto.from(e, inventoryPort.countInventory(e.getId())))
                 .toList();
     }
@@ -70,15 +74,24 @@ public class BuskingService {
         boolean isSubscribed = subscriptionPort.isSubscribe(buskingId, userId);
 
         return BuskingResponseDto.from(
-                buskingCrudService.findById(buskingId),
+                buskingQueryService.findById(buskingId),
                 availableInventoryCount,
                 isSubscribed
         );
     }
 
+    @Transactional
+    public void update(Long id, BuskingUpdateRequestDto request) {
+        Busking busking = buskingQueryService.findById(id);
+        busking.update(
+                request.title(), request.description(), request.location(),
+                request.startTime(), request.endTime(), request.totalInventoryCount()
+        );
+    }
+
     @Transactional(readOnly = true)
     public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
-        return buskingCrudService.findAllByBulk(buskingIds).stream()
+        return buskingRepository.findAllByIdIn(buskingIds).stream()
                 .map(busking -> BuskingResponseDto.from(busking, 0))
                 .toList();
     }

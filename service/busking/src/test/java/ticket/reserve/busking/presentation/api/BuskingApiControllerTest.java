@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
-import ticket.reserve.busking.application.BuskingCrudService;
+import ticket.reserve.busking.application.BuskingQueryService;
 import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
@@ -37,7 +37,7 @@ class BuskingApiControllerTest {
     @MockitoBean
     private BuskingService buskingService;
     @MockitoBean
-    private BuskingCrudService buskingCrudService;
+    private BuskingQueryService buskingQueryService;
     @MockitoBean
     private SearchService searchService;
 

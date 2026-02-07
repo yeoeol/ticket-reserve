@@ -26,10 +26,10 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class BuskingCrudServiceTest {
+public class BuskingQueryServiceTest {
 
     @InjectMocks
-    BuskingCrudService buskingCrudService;
+    BuskingQueryService buskingQueryService;
 
     @Mock
     private BuskingRepository buskingRepository;
@@ -66,7 +66,7 @@ public class BuskingCrudServiceTest {
         given(buskingRepository.findById(1234L)).willReturn(Optional.of(busking));
 
         //when
-        buskingCrudService.update(1234L, request);
+        buskingService.update(1234L, request);
 
         //then
         assertThat(busking.getTitle()).isEqualTo(request.title());
@@ -89,7 +89,7 @@ public class BuskingCrudServiceTest {
                 .willReturn(Optional.empty());
 
         //when
-        Throwable throwable = catchThrowable(() -> buskingCrudService.update(9999L, request));
+        Throwable throwable = catchThrowable(() -> buskingQueryService.update(9999L, request));
 
         //then
         assertThat(throwable)

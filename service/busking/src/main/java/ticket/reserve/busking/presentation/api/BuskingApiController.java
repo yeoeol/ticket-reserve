@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ticket.reserve.busking.application.BuskingCrudService;
+import ticket.reserve.busking.application.BuskingQueryService;
 import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
@@ -24,7 +24,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class BuskingApiController {
 
     private final BuskingService buskingService;
-    private final BuskingCrudService buskingCrudService;
+    private final BuskingQueryService buskingQueryService;
     private final SearchService searchService;
 
     @GetMapping
@@ -57,19 +57,19 @@ public class BuskingApiController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long buskingId,
                                        @RequestBody BuskingUpdateRequestDto request) {
-        buskingCrudService.update(buskingId, request);
+        buskingService.update(buskingId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long buskingId) {
-        buskingCrudService.delete(buskingId);
+        buskingQueryService.delete(buskingId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/ids")
     public ResponseEntity<List<Long>> getIds() {
-        return ResponseEntity.ok(buskingCrudService.getIds());
+        return ResponseEntity.ok(buskingQueryService.getIds());
     }
 
     @GetMapping("/bulk")
