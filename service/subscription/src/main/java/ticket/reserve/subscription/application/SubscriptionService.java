@@ -1,6 +1,7 @@
 package ticket.reserve.subscription.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.tsid.IdGenerator;
@@ -30,7 +31,15 @@ public class SubscriptionService {
         // 같은 버스킹에 대해 구독 내역이 있다면 구독 상태만 변경
         optionalSubscription.ifPresentOrElse(
                 Subscription::activate,
-                () -> subscriptionCrudService.save(request.toEntity(idGenerator))
+                () -> {
+                    try {
+                        subscriptionCrudService.save(request.toEntity(idGenerator));
+                    } catch (DataIntegrityViolationException e) {
+                        subscriptionCrudService
+                                .findByBuskingIdAndUserId(request.buskingId(), request.userId())
+                                .ifPresent(Subscription::activate);
+                    }
+                }
         );
     }
 
@@ -43,8 +52,8 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void notified(Set<Long> userIds) {
-        subscriptionCrudService.findAllByUserIds(userIds)
+    public void notified(Long buskingId, Set<Long> userIds) {
+        subscriptionCrudService.findAllByUserIds(buskingId, userIds)
                 .forEach(Subscription::notified);
     }
 

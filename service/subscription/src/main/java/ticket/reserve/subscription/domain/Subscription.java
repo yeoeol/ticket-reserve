@@ -13,7 +13,14 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "subscription")
+@Table(
+        name = "subscription",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"busking_id", "user_id"}
+                )
+        }
+)
 public class Subscription {
 
     @Id
@@ -30,6 +37,7 @@ public class Subscription {
     private LocalDateTime startTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private SubscriptionStatus status;  // 구독 여부
 
     private boolean isNotified;         // 알림 발송 여부

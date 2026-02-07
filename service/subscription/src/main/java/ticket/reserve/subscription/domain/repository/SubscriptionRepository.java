@@ -21,7 +21,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
                     "AND s.isNotified = :isNotified")
     Set<Long> findUserIdsByBuskingIdAndStatusAndIsNotified(Long buskingId, SubscriptionStatus status, boolean isNotified);
 
-    List<Subscription> findAllByUserIdIn(Collection<Long> userIds);
+    List<Subscription> findAllByBuskingIdAndUserIdIn(Long buskingId, Collection<Long> userIds);
 
     boolean existsByBuskingIdAndUserIdAndStatus(Long buskingId, Long userId, SubscriptionStatus status);
 
@@ -29,6 +29,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "SELECT s.buskingId " +
             "FROM Subscription s " +
             "WHERE s.userId = :userId " +
-                    "AND s.status = 'ACTIVATED'")
-    List<Long> findAllByUserIdWithActivated(Long userId);
+                    "AND s.status = :status")
+    List<Long> findAllByUserIdWithActivated(Long userId, SubscriptionStatus status);
 }

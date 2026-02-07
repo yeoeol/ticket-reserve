@@ -27,6 +27,6 @@ public class NotificationPublishService {
                         .build(),
                 buskingId
         );
-        subscriptionService.notified(userIds);
+        subscriptionService.notified(buskingId, userIds);
     }
 }

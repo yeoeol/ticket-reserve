@@ -37,8 +37,8 @@ public class SubscriptionCrudService {
     }
 
     @Transactional(readOnly = true)
-    public List<Subscription> findAllByUserIds(Set<Long> userIds) {
-        return subscriptionRepository.findAllByUserIdIn(userIds);
+    public List<Subscription> findAllByUserIds(Long buskingId, Set<Long> userIds) {
+        return subscriptionRepository.findAllByBuskingIdAndUserIdIn(buskingId, userIds);
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +55,7 @@ public class SubscriptionCrudService {
 
     @Transactional(readOnly = true)
     public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
-        return subscriptionRepository.findAllByUserIdWithActivated(userId);
+        return subscriptionRepository.findAllByUserIdWithActivated(userId, SubscriptionStatus.ACTIVATED);
     }
 
     private Subscription getSubscription(Long buskingId, Long userId) {

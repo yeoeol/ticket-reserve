@@ -7,6 +7,7 @@ import org.springframework.web.client.RestClient;
 import ticket.reserve.subscription.application.dto.response.BuskingResponseDto;
 import ticket.reserve.subscription.application.port.out.BuskingPort;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -25,6 +26,8 @@ public class BuskingRestClientAdapter implements BuskingPort {
 
     @Override
     public List<BuskingResponseDto> getAllByBuskingIds(List<Long> buskingIds) {
+        if (buskingIds == null || buskingIds.isEmpty()) return Collections.emptyList();
+
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/buskings/bulk")
