@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
-import ticket.reserve.busking.application.port.out.RedisPort;
 import ticket.reserve.busking.infrastructure.persistence.querydsl.BuskingSearchCondition;
 import ticket.reserve.busking.infrastructure.persistence.querydsl.SearchRepositoryCustom;
 
@@ -16,19 +15,10 @@ import java.util.List;
 public class SearchService {
 
     private final SearchRepositoryCustom searchRepository;
-    private final RedisPort redisPort;
 
     @Transactional(readOnly = true)
-    public List<BuskingResponseDto> search(String title, String location, LocalDateTime startTime, LocalDateTime endTime, String userId) {
+    public List<BuskingResponseDto> search(String title, String location, LocalDateTime startTime, LocalDateTime endTime, Long userId) {
         BuskingSearchCondition condition = new BuskingSearchCondition(title, location, startTime, endTime);
-        List<BuskingResponseDto> searchResults = searchRepository.search(condition);
-
-        searchResults.forEach(result -> {
-            boolean isSubscribed = redisPort.isSubscribed(result.id(), Long.valueOf(userId));
-            result.withSubscribed(isSubscribed);
-        });
-
-        return searchResults;
+        return searchRepository.search(condition);
     }
-
 }

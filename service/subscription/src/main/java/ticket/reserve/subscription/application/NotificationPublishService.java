@@ -14,6 +14,7 @@ import java.util.Set;
 public class NotificationPublishService {
 
     private final OutboxEventPublisher outboxEventPublisher;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     public void publishNotificationEvent(Long buskingId, Set<Long> userIds, long remainingMinutes) {
@@ -26,5 +27,6 @@ public class NotificationPublishService {
                         .build(),
                 buskingId
         );
+        subscriptionService.notified(buskingId, userIds);
     }
 }

@@ -49,3 +49,5 @@ endpoints:
     url: ${INVENTORY_SERVICE_URL:http://127.0.0.1:30002}
   ticket-reserve-image-service:
     url: ${IMAGE_SERVICE_URL:http://127.0.0.1:33333}
+  ticket-reserve-subscription-service:
+    url: ${SUBSCRIPTION_SERVICE_URL:http://127.0.0.1:35555}

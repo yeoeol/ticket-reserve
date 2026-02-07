@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
-import ticket.reserve.busking.application.BuskingCrudService;
+import ticket.reserve.busking.application.BuskingQueryService;
 import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
@@ -37,14 +37,14 @@ class BuskingApiControllerTest {
     @MockitoBean
     private BuskingService buskingService;
     @MockitoBean
-    private BuskingCrudService buskingCrudService;
+    private BuskingQueryService buskingQueryService;
     @MockitoBean
     private SearchService searchService;
 
     @Test
     @DisplayName("이벤트 조회 컨트롤러 성공 - GET /api/events 호출 시 이벤트 리스트를 조회한다")
     void getEventsSuccess() throws Exception {
-        given(searchService.search(null, null, null, null, "1"))
+        given(searchService.search(null, null, null, null, 1L))
                 .willReturn(List.of(
                         BuskingResponseDto.from(createBusking(123L), 0),
                         BuskingResponseDto.from(createBusking(234L), 0)

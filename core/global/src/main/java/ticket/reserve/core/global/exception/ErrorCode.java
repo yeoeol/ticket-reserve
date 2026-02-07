@@ -50,6 +50,9 @@ public enum ErrorCode {
     // NOTIFICATION-SERVICE
     NOT_FOUND_FCM_TOKEN(HttpStatus.NOT_FOUND, "NOTIFICATION001", "사용자 기기 FCM_TOKEN을 찾을 수 없습니다."),
 
+    // SUBSCRIPTION-SERVICE
+    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "SUBSCRIPTION001", "구독 정보를 찾을 수 없습니다."),
+
     ;
     private final HttpStatus httpStatus;
     private final String code;

@@ -47,25 +47,7 @@ public record BuskingResponseDto(
     }
 
     public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount) {
-        Point point = busking.getCoordinate();
-
-        return BuskingResponseDto.builder()
-                .id(busking.getId())
-                .title(busking.getTitle())
-                .description(busking.getDescription())
-                .location(busking.getLocation())
-                .startTime(busking.getStartTime())
-                .endTime(busking.getEndTime())
-                .availableInventory(availableInventoryCount)
-                .totalInventoryCount(busking.getTotalInventoryCount())
-                .imageUrls(busking.getBuskingImages().stream()
-                        .map(BuskingImage::getStoredPath)
-                        .toList()
-                )
-                .latitude(point.getY())
-                .longitude(point.getX())
-                .isSubscribed(false)
-                .build();
+        return from(busking, availableInventoryCount, false);
     }
 
     public BuskingResponseDto withSubscribed(boolean isSubscribed) {
