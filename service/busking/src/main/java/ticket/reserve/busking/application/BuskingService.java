@@ -77,11 +77,9 @@ public class BuskingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds, Long userId) {
+    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
         return buskingCrudService.findAllByBulk(buskingIds).stream()
-                .map(busking -> {
-                    Boolean isSubscribed = subscriptionPort.isSubscribe(busking.getId(), userId);
-                    return BuskingResponseDto.from(busking, 0, isSubscribed);
-                }).toList();
+                .map(busking -> BuskingResponseDto.from(busking, 0))
+                .toList();
     }
 }

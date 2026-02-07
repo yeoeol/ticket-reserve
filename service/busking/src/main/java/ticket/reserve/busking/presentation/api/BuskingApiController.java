@@ -74,9 +74,8 @@ public class BuskingApiController {
 
     @GetMapping("/bulk")
     public ResponseEntity<List<BuskingResponseDto>> getAllByBuskingIds(
-            @RequestParam("ids") List<Long> buskingIds,
-            @AuthenticationPrincipal String userId
+            @RequestParam("ids") List<Long> buskingIds
     ) {
-        return ResponseEntity.ok(buskingService.findAllByBulk(buskingIds, Long.valueOf(userId)));
+        return ResponseEntity.ok(buskingService.findAllByBulk(buskingIds));
     }
 }

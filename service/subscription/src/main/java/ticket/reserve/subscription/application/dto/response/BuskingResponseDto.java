@@ -20,4 +20,20 @@ public record BuskingResponseDto(
         Double longitude,
         boolean isSubscribed
 ) {
+    public BuskingResponseDto withSubscribed(boolean isSubscribed) {
+        return BuskingResponseDto.builder()
+                .id(this.id)
+                .title(this.title)
+                .description(this.description)
+                .location(this.location)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .availableInventory(this.availableInventory)
+                .totalInventoryCount(this.totalInventoryCount)
+                .imageUrls(this.imageUrls)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
+                .isSubscribed(isSubscribed)
+                .build();
+    }
 }

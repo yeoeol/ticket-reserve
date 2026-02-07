@@ -1,6 +1,5 @@
 package ticket.reserve.subscription.application;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +32,8 @@ public class SubscriptionCrudService {
 
 
     @Transactional(readOnly = true)
-    public List<Subscription> findByBuskingIdAndStatusAndNotified(Long buskingId) {
-        return subscriptionRepository.findByBuskingIdAndStatusAndIsNotified(buskingId, SubscriptionStatus.ACTIVATED, false);
+    public Set<Long> findByBuskingIdAndStatusAndNotified(Long buskingId) {
+        return subscriptionRepository.findUserIdsByBuskingIdAndStatusAndIsNotified(buskingId, SubscriptionStatus.ACTIVATED, false);
     }
 
     @Transactional(readOnly = true)
@@ -54,16 +53,13 @@ public class SubscriptionCrudService {
         return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
+        return subscriptionRepository.findAllByUserIdWithActivated(userId);
+    }
+
     private Subscription getSubscription(Long buskingId, Long userId) {
         return subscriptionRepository.findByBuskingIdAndUserId(buskingId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Long> findBuskingIdsByUserIdWithActivated(Long userId) {
-        List<Subscription> subscriptions = subscriptionRepository.findAllByUserId(userId);
-        return subscriptions.stream()
-                .map(Subscription::getBuskingId)
-                .toList();
     }
 }

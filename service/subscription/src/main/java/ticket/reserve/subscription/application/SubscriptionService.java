@@ -13,7 +13,6 @@ import ticket.reserve.subscription.domain.Subscription;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +39,7 @@ public class SubscriptionService {
     }
 
     public Set<Long> findSubscribers(Long buskingId) {
-        List<Subscription> subscriptions = subscriptionCrudService.findByBuskingIdAndStatusAndNotified(buskingId);
-
-        return subscriptions.stream()
-                .map(Subscription::getUserId)
-                .collect(Collectors.toSet());
+        return subscriptionCrudService.findByBuskingIdAndStatusAndNotified(buskingId);
     }
 
     @Transactional
@@ -60,6 +55,9 @@ public class SubscriptionService {
     public List<BuskingResponseDto> getAllByUserId(Long userId) {
         // userId에 대해 ACTIVATED 상태인 것들의 buskingId를 조회
         List<Long> buskingIds = subscriptionCrudService.findBuskingIdsByUserIdWithActivated(userId);
-        return buskingPort.getAllByBuskingIds(buskingIds);
+
+        return buskingPort.getAllByBuskingIds(buskingIds).stream()
+                .map(busking -> busking.withSubscribed(true))
+                .toList();
     }
 }
