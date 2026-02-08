@@ -52,8 +52,9 @@ public class RedisAdapter implements RedisPort {
 
     // 알림 대상 버스킹ID 집합 추출
     public Set<BuskingNotificationTarget> findBuskingIdsReadyToNotify(LocalDateTime time) {
+        long maxScore = TimeConverterUtil.convertToMilli(time);
         Set<ZSetOperations.TypedTuple<String>> results = redisTemplate.opsForZSet()
-                .rangeByScoreWithScores(notificationScheduleKey, 0, TimeConverterUtil.convertToMilli(time));
+                .rangeByScoreWithScores(notificationScheduleKey, 0, maxScore);
         if (results == null) return Collections.emptySet();
 
         return results.stream()

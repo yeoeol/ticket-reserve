@@ -29,8 +29,6 @@ public class Busking extends BaseTimeEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    private Integer totalInventoryCount;             // 총 좌석 수
-
     @Column(columnDefinition = "POINT SRID 4326")
     private Point coordinate;
 
@@ -38,21 +36,20 @@ public class Busking extends BaseTimeEntity {
     private List<BuskingImage> buskingImages = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Busking(IdGenerator idGenerator, String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount, Point coordinate) {
+    private Busking(IdGenerator idGenerator, String title, String description, String location, LocalDateTime startTime, LocalDateTime endTime, Point coordinate) {
         this.id = idGenerator.nextId();
         this.title = title;
         this.description = description;
         this.location = location;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.totalInventoryCount = totalInventoryCount;
         this.coordinate = coordinate;
     }
 
     public static Busking create(
             IdGenerator idGenerator, String title, String description,
             String location, LocalDateTime startTime, LocalDateTime endTime,
-            Integer totalInventoryCount, Point coordinate
+            Point coordinate
     ) {
         return Busking.builder()
                 .idGenerator(idGenerator)
@@ -61,21 +58,19 @@ public class Busking extends BaseTimeEntity {
                 .location(location)
                 .startTime(startTime)
                 .endTime(endTime)
-                .totalInventoryCount(totalInventoryCount)
                 .coordinate(coordinate)
                 .build();
     }
 
     public void update(
             String title, String description, String location,
-            LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount
+            LocalDateTime startTime, LocalDateTime endTime
     ) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.totalInventoryCount = totalInventoryCount;
     }
 
     public void addEventImage(

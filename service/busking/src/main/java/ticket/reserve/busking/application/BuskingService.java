@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
-import ticket.reserve.busking.application.port.out.InventoryPort;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.port.out.RedisPort;
@@ -30,7 +29,6 @@ public class BuskingService {
     private final BuskingQueryService buskingQueryService;
     private final BuskingRepository buskingRepository;
     private final RedisPort redisPort;
-    private final InventoryPort inventoryPort;
     private final ImagePort imagePort;
     private final SubscriptionPort subscriptionPort;
 
@@ -54,7 +52,7 @@ public class BuskingService {
         try {
             Busking savedBusking = buskingPublishService.publishBuskingCreatedEvent(busking);
             redisPort.addToNotificationSchedule(busking.getId(), busking.getStartTime());
-            return BuskingResponseDto.from(savedBusking, savedBusking.getTotalInventoryCount());
+            return BuskingResponseDto.from(savedBusking);
         } catch (Exception e) {
             if (imageResponse != null) {
                 imagePort.deleteImage(imageResponse.getImageId());
@@ -65,17 +63,15 @@ public class BuskingService {
 
     public List<BuskingResponseDto> getAll() {
         return buskingRepository.findAll().stream()
-                .map(e -> BuskingResponseDto.from(e, inventoryPort.countInventory(e.getId())))
+                .map(BuskingResponseDto::from)
                 .toList();
     }
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {
-        Integer availableInventoryCount = inventoryPort.countInventory(buskingId);
         boolean isSubscribed = subscriptionPort.isSubscribe(buskingId, userId);
 
         return BuskingResponseDto.from(
                 buskingQueryService.findById(buskingId),
-                availableInventoryCount,
                 isSubscribed
         );
     }
@@ -85,14 +81,14 @@ public class BuskingService {
         Busking busking = buskingQueryService.findById(id);
         busking.update(
                 request.title(), request.description(), request.location(),
-                request.startTime(), request.endTime(), request.totalInventoryCount()
+                request.startTime(), request.endTime()
         );
     }
 
     @Transactional(readOnly = true)
     public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
         return buskingRepository.findAllByIdIn(buskingIds).stream()
-                .map(busking -> BuskingResponseDto.from(busking, 0))
+                .map(BuskingResponseDto::from)
                 .toList();
     }
 }

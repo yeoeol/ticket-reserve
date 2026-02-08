@@ -13,8 +13,6 @@ public record BuskingResponseDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        Integer availableInventory,
-        Integer totalInventoryCount,
         List<String> imageUrls,
         Double latitude,
         Double longitude,
@@ -28,8 +26,6 @@ public record BuskingResponseDto(
                 .location(this.location)
                 .startTime(this.startTime)
                 .endTime(this.endTime)
-                .availableInventory(this.availableInventory)
-                .totalInventoryCount(this.totalInventoryCount)
                 .imageUrls(this.imageUrls)
                 .latitude(this.latitude)
                 .longitude(this.longitude)

@@ -50,52 +50,7 @@ public class BuskingQueryServiceTest {
                 "장소",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
-                10,
                 coordinate
         );
     }
-
-    @Test
-    @DisplayName("버스킹 수정 성공 - 수정 정보를 기반으로 버스킹 엔티티를 수정한다")
-    void update_success() {
-        //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
-        );
-        given(buskingRepository.findById(1234L)).willReturn(Optional.of(busking));
-
-        //when
-        buskingService.update(1234L, request);
-
-        //then
-        assertThat(busking.getTitle()).isEqualTo(request.title());
-        assertThat(busking.getDescription()).isEqualTo(request.description());
-        assertThat(busking.getLocation()).isEqualTo(request.location());
-        assertThat(busking.getStartTime()).isEqualTo(request.startTime());
-        assertThat(busking.getEndTime()).isEqualTo(request.endTime());
-        assertThat(busking.getTotalInventoryCount()).isEqualTo(request.totalInventoryCount());
-    }
-
-    @Test
-    @DisplayName("버스킹 수정 실패 - 입력된 'id'와 일치하는 버스킹이 존재하지 않을 때 예외가 발생한다")
-    void updateEvent_fail_notFound() {
-        //given
-        BuskingUpdateRequestDto request = new BuskingUpdateRequestDto(
-                "updateEventTitle", "updateDesc", "테스트장소",
-                LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20), 20
-        );
-        given(buskingRepository.findById(9999L))
-                .willReturn(Optional.empty());
-
-        //when
-        Throwable throwable = catchThrowable(() -> buskingQueryService.update(9999L, request));
-
-        //then
-        assertThat(throwable)
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.BUSKING_NOT_FOUND.getMessage())
-                .extracting("errorCode").isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
-    }
-
 }
