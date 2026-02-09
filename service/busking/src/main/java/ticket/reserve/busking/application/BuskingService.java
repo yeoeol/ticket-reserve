@@ -51,7 +51,13 @@ public class BuskingService {
         // 버스킹 저장
         try {
             Busking savedBusking = buskingPublishService.publishBuskingCreatedEvent(busking);
-            redisPort.addToNotificationSchedule(busking.getId(), busking.getStartTime());
+            redisPort.addToNotificationSchedule(
+                    busking.getId(),
+                    savedBusking.getCoordinate().getY(),
+                    savedBusking.getCoordinate().getX(),
+                    busking.getStartTime(),
+                    busking.getEndTime()
+            );
             return BuskingResponseDto.from(savedBusking);
         } catch (Exception e) {
             if (imageResponse != null) {

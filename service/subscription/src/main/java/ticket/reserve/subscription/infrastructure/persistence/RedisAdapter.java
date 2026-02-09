@@ -2,8 +2,13 @@ package ticket.reserve.subscription.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.domain.geo.GeoReference;
+import org.springframework.data.redis.domain.geo.Metrics;
 import org.springframework.stereotype.Repository;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.application.port.out.RedisPort;
@@ -11,6 +16,7 @@ import ticket.reserve.subscription.global.util.TimeConverterUtil;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +33,12 @@ public class RedisAdapter implements RedisPort {
 
     @Value("${app.redis.busking-subscribers-key:busking:subscribers}")
     private String subscribersByBuskingIdKey;
+
+    @Value("${app.redis.geo-key:users:location}")
+    private String geoKey;
+
+    @Value("${app.redis.busking-detail-key:busking:details}")
+    private String buskingDetailsKey;
 
     // ZSet : 알림 대상 버스킹ID 집합, Set : 특정 버스킹ID를 구독한 사용자ID 집합
     @Override
@@ -85,11 +97,30 @@ public class RedisAdapter implements RedisPort {
     // 알림 스케줄 데이터 삭제
     public void removeFromNotificationSchedule(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
+        redisTemplate.delete(generateDetailsKey(buskingId));
     }
 
     // 특정 버스킹ID에 대한 구독 데이터 삭제
     public void removeSubscriber(Long buskingId) {
         redisTemplate.delete(generateSubscribersByBuskingIdKey(buskingId));
+    }
+
+    public Map<Object, Object> findEntries(Long buskingId) {
+        return redisTemplate.opsForHash().entries(generateDetailsKey(buskingId));
+    }
+
+    public Set<Long> findNearbyUsers(Double lat, Double lng) {
+        GeoResults<RedisGeoCommands.GeoLocation<String>> results = redisTemplate.opsForGeo().search(
+                geoKey,
+                GeoReference.fromCoordinate(lng, lat),
+                new Distance(5, Metrics.KILOMETERS)
+        );
+        if (results == null) return Collections.emptySet();
+
+        return results.getContent().stream()
+                .map(res -> res.getContent().getName())
+                .map(Long::valueOf)
+                .collect(Collectors.toSet());
     }
 
     private static boolean isNotNull(ZSetOperations.TypedTuple<String> tuple) {
@@ -98,5 +129,9 @@ public class RedisAdapter implements RedisPort {
 
     private String generateSubscribersByBuskingIdKey(Long buskingId) {
         return subscribersByBuskingIdKey + ":" + buskingId;
+    }
+
+    private String generateDetailsKey(Long buskingId) {
+        return buskingDetailsKey + buskingId;
     }
 }

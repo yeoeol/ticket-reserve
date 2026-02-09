@@ -27,8 +27,10 @@ spring:
 
 app:
   redis:
+    geo-key: "users:location"
     notification-schedule-key: "busking:notification_schedule"
     busking-subscribers-key: "busking:subscribers"
+    busking-detail-key: "busking:details:"
 
 eureka:
   client:

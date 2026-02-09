@@ -9,6 +9,7 @@ import ticket.reserve.subscription.application.dto.request.SubscriptionRequestDt
 import ticket.reserve.subscription.application.dto.response.BuskingResponseDto;
 import ticket.reserve.subscription.application.port.out.BuskingPort;
 import ticket.reserve.subscription.domain.Subscription;
+import ticket.reserve.subscription.domain.enums.SubscriptionStatus;
 import ticket.reserve.subscription.domain.repository.SubscriptionRepository;
 
 import java.util.List;
@@ -62,5 +63,11 @@ public class SubscriptionService {
         return buskingPort.getAllByBuskingIds(buskingIds).stream()
                 .map(busking -> busking.withSubscribed(true))
                 .toList();
+    }
+
+    public Set<Long> findSubscribers(Long buskingId, Set<Long> nearbyUserIds) {
+        return subscriptionRepository.findAllByBuskingIdAndUserIdInAndStatusAndIsNotified(
+                buskingId, SubscriptionStatus.ACTIVATED, false, nearbyUserIds
+        );
     }
 }

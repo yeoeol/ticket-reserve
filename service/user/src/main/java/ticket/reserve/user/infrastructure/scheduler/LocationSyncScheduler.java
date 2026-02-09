@@ -30,7 +30,7 @@ public class LocationSyncScheduler {
     @Value("${app.redis.geo-key:users:location}")
     private String geoKey;
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     @Transactional
     public void syncLocationFromRedisToDB() {
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] Redis 위치 데이터 MySQL 백업 시작");
