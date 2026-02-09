@@ -70,6 +70,4 @@ public class SubscriptionNotificationScheduler {
     private long getRemainingMinutes(LocalDateTime now, LocalDateTime startTime) {
         return Duration.between(now, startTime).toMinutes();
     }
-
-
 }

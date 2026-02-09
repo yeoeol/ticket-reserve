@@ -97,7 +97,6 @@ public class RedisAdapter implements RedisPort {
     // 알림 스케줄 데이터 삭제
     public void removeFromNotificationSchedule(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
-        redisTemplate.delete(generateDetailsKey(buskingId));
     }
 
     // 특정 버스킹ID에 대한 구독 데이터 삭제

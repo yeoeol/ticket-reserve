@@ -23,7 +23,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "FROM Subscription s " +
             "WHERE s.buskingId = :buskingId " +
                     "AND s.status = :status " +
-                    "AND s.userId = :userIds")
+                    "AND s.isNotified = :isNotified " +
+                    "AND s.userId IN :userIds")
     Set<Long> findAllByBuskingIdAndUserIdInAndStatusAndIsNotified(Long buskingId, SubscriptionStatus status, boolean isNotified, Collection<Long> userIds);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
