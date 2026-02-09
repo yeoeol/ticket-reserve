@@ -24,10 +24,6 @@ public record BuskingRequestDto(
         @NotNull(message = "{busking.endTime.not_null}")
         LocalDateTime endTime,
 
-        @NotNull(message = "{busking.totalInventoryCount.not_null}")
-        @PositiveOrZero(message = "{busking.totalInventoryCount.range}")
-        Integer totalInventoryCount,
-
         @NotNull(message = "{location.latitude.not_null}")
         @DecimalMin(value = "-90.0", message = "{location.latitude.range}")
         @DecimalMax(value = "90.0", message = "{location.latitude.range}")
@@ -43,7 +39,7 @@ public record BuskingRequestDto(
 
         return Busking.create(
                 idGenerator, this.title, this.description, this.location,
-                this.startTime, this.endTime, this.totalInventoryCount, coordinate
+                this.startTime, this.endTime, coordinate
         );
     }
 }

@@ -23,7 +23,7 @@ public class SubscriptionNotificationScheduler {
     private final SubscriptionQueryService subscriptionQueryService;
     private final RedisAdapter redisAdapter;
 
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
     public void subscriptionNotificationScheduler() {
         LocalDateTime now = LocalDateTime.now();
 

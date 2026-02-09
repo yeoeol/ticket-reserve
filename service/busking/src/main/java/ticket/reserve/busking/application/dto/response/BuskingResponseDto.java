@@ -17,14 +17,12 @@ public record BuskingResponseDto(
         String location,            // 장소
         LocalDateTime startTime,
         LocalDateTime endTime,
-        Integer availableInventory,
-        Integer totalInventoryCount,
         List<String> imageUrls,
         Double latitude,
         Double longitude,
         boolean isSubscribed
 ) {
-    public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount, boolean isSubscribed) {
+    public static BuskingResponseDto from(Busking busking, boolean isSubscribed) {
         Point point = busking.getCoordinate();
 
         return BuskingResponseDto.builder()
@@ -34,8 +32,6 @@ public record BuskingResponseDto(
                 .location(busking.getLocation())
                 .startTime(busking.getStartTime())
                 .endTime(busking.getEndTime())
-                .availableInventory(availableInventoryCount)
-                .totalInventoryCount(busking.getTotalInventoryCount())
                 .imageUrls(busking.getBuskingImages().stream()
                         .map(BuskingImage::getStoredPath)
                         .toList()
@@ -46,8 +42,8 @@ public record BuskingResponseDto(
                 .build();
     }
 
-    public static BuskingResponseDto from(Busking busking, Integer availableInventoryCount) {
-        return from(busking, availableInventoryCount, false);
+    public static BuskingResponseDto from(Busking busking) {
+        return from(busking, false);
     }
 
     public BuskingResponseDto withSubscribed(boolean isSubscribed) {
@@ -58,8 +54,6 @@ public record BuskingResponseDto(
                 .location(this.location)
                 .startTime(this.startTime)
                 .endTime(this.endTime)
-                .availableInventory(this.availableInventory)
-                .totalInventoryCount(this.totalInventoryCount)
                 .imageUrls(this.imageUrls)
                 .latitude(this.latitude)
                 .longitude(this.longitude)

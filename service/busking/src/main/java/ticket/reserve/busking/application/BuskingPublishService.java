@@ -28,7 +28,6 @@ public class BuskingPublishService {
                         .location(savedBusking.getLocation())
                         .startTime(savedBusking.getStartTime())
                         .endTime(savedBusking.getEndTime())
-                        .totalInventoryCount(savedBusking.getTotalInventoryCount())
                         .latitude(savedBusking.getCoordinate().getY())
                         .longitude(savedBusking.getCoordinate().getX())
                         .build(),

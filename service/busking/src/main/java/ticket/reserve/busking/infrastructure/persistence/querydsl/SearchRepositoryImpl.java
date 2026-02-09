@@ -2,8 +2,6 @@ package ticket.reserve.busking.infrastructure.persistence.querydsl;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +48,6 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                         busking.location,
                                         busking.startTime,
                                         busking.endTime,
-                                        busking.totalInventoryCount,
-                                        busking.totalInventoryCount,
                                         list(buskingImage.storedPath),
                                         lat,
                                         lng,
