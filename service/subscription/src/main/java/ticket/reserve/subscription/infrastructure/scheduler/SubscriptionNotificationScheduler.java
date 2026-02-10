@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.subscription.application.NotificationPublishService;
 import ticket.reserve.subscription.application.SubscriptionQueryService;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
-import ticket.reserve.subscription.infrastructure.persistence.RedisAdapter;
+import ticket.reserve.subscription.application.port.out.NotificationSchedulePort;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ import static java.lang.Math.max;
 public class SubscriptionNotificationScheduler {
 
     private final NotificationPublishService notificationPublishService;
-    private final RedisAdapter redisAdapter;
+    private final NotificationSchedulePort notificationSchedulePort;
     private final SubscriptionQueryService subscriptionQueryService;
 
 
@@ -45,14 +45,14 @@ public class SubscriptionNotificationScheduler {
             // 알림 발송 이벤트 발행 및 구독 엔티티 알림 여부 변경
             notificationPublishService.publishNotificationEvent(target.buskingId(), targetUserIds, max(0, remainingMinutes));
             // 스케줄링 목록에서 제거
-            redisAdapter.removeFromNotificationSchedule(target.buskingId());
+            notificationSchedulePort.removeFromNotificationSchedule(target.buskingId());
         }
     }
 
     // 알림 대상 버스킹 정보 추출
     private Set<BuskingNotificationTarget> findTargets(LocalDateTime now) {
         LocalDateTime oneHourLater = now.plusHours(1);
-        return redisAdapter.findBuskingIdsReadyToNotify(oneHourLater);
+        return notificationSchedulePort.findTargetsToNotify(oneHourLater);
     }
 
     // 버스킹 시작 시간까지 남은 시간 반환
