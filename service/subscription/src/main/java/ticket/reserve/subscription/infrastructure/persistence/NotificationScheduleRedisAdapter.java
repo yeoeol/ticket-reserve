@@ -25,7 +25,6 @@ public class NotificationScheduleRedisAdapter implements NotificationSchedulePor
     @Value("${app.redis.notification-schedule-key:busking:notification_schedule}")
     private String notificationScheduleKey;
 
-    // 알림 대상 버스킹 정보 추출
     public Set<BuskingNotificationTarget> findTargetsToNotify(LocalDateTime time) {
         long maxScore = TimeConverterUtil.convertToMilli(time);
         Set<ZSetOperations.TypedTuple<String>> results = redisTemplate.opsForZSet()
@@ -41,7 +40,6 @@ public class NotificationScheduleRedisAdapter implements NotificationSchedulePor
                 .collect(Collectors.toSet());
     }
 
-    // 알림 스케줄 데이터 삭제
     public void removeFromNotificationSchedule(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
     }
