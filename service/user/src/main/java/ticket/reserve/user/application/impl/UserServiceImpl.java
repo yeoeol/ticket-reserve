@@ -1,39 +1,39 @@
-package ticket.reserve.user.application;
+package ticket.reserve.user.application.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.user.application.UserService;
+import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
+import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
+import ticket.reserve.user.application.port.out.LocationPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
 import ticket.reserve.user.domain.user.User;
-import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
-import ticket.reserve.user.application.dto.response.UserResponseDto;
-import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements UserService {
 
+    private final IdGenerator idGenerator;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+
     private final GenerateTokenPort generateTokenPort;
+    private final LocationPort locationPort;
     private final TokenStorePort tokenStorePort;
-    private final IdGenerator idGenerator;
 
     @Transactional
     public Long register(UserRegisterRequestDto requestDto) {
@@ -101,7 +101,7 @@ public class UserService {
     }
 
     public void updateLocation(Long userId, Double latitude, Double longitude) {
-        tokenStorePort.addLocation(userId, latitude, longitude);
+        locationPort.addLocation(userId, latitude, longitude);
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {

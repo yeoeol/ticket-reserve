@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import ticket.reserve.user.application.port.out.TokenStorePort;
+import ticket.reserve.user.application.port.out.LocationPort;
 
 import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class RedisTokenAdapter implements TokenStorePort {
+public class LocationRedisAdapter implements LocationPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -20,11 +20,6 @@ public class RedisTokenAdapter implements TokenStorePort {
 
     @Value("${app.redis.active-user-key:user:active}")
     private String activeUserKey;
-
-    @Override
-    public void addBlackList(String token, long ttl) {
-        redisTemplate.opsForValue().set("BL:"+token, "logout", ttl, TimeUnit.MILLISECONDS);
-    }
 
     @Override
     public void addLocation(Long userId, Double latitude, Double longitude) {
