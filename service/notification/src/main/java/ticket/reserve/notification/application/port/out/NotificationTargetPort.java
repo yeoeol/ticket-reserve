@@ -6,5 +6,5 @@ public interface NotificationTargetPort {
     /**
      * 버스킹 위치 기준 반경 내에 있는 활성 상태의 사용자 목록을 조회한다.
      */
-    List<Long> findNearbyActiveUsers(Double lng, Double lat, double radiusKm);
+    List<Long> findNearbyActiveUsers(double lng, double lat, double radiusKm);
 }

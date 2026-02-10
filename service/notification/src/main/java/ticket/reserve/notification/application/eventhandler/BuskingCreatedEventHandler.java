@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.notification.application.NotificationService;
 import ticket.reserve.notification.application.port.out.NotificationTargetPort;
 
@@ -24,8 +26,11 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
     @Override
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
+        if (payload.getLatitude() == null || payload.getLongitude() == null) {
+            throw new CustomException(ErrorCode.INVALID_BUSKING_LOCATION);
+        }
 
-        // 버스킹 위치 반경 radiumKm 내 사용자 조회
+        // 버스킹 위치 반경 radiusKm 내 사용자 조회
         List<Long> receiverIds = notificationTargetPort.findNearbyActiveUsers(
                 payload.getLongitude(), payload.getLatitude(), radiusKm
         );

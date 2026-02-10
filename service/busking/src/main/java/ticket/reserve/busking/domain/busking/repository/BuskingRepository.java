@@ -2,6 +2,7 @@ package ticket.reserve.busking.domain.busking.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ticket.reserve.busking.domain.busking.Busking;
 
 import java.util.Collection;
@@ -16,7 +17,7 @@ public interface BuskingRepository extends JpaRepository<Busking, Long> {
             "SELECT b FROM Busking b " +
             "LEFT JOIN FETCH b.buskingImages bi " +
             "WHERE b.id = :id")
-    Optional<Busking> findByIdWithImage(Long id);
+    Optional<Busking> findByIdWithImage(@Param("id") Long id);
 
     List<Busking> findAllByIdIn(Collection<Long> ids);
 }

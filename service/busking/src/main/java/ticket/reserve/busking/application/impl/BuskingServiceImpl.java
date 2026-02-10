@@ -1,6 +1,7 @@
 package ticket.reserve.busking.application.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BuskingServiceImpl implements BuskingService {
@@ -61,10 +63,15 @@ public class BuskingServiceImpl implements BuskingService {
             );
             return BuskingResponseDto.from(savedBusking);
         } catch (Exception e) {
+            log.error("[BuskingService.create] 버스킹 생성 실패", e);
             if (imageResponse != null) {
-                imagePort.deleteImage(imageResponse.getImageId());
+                try {
+                    imagePort.deleteImage(imageResponse.getImageId());
+                } catch (Exception deleteEx) {
+                    log.error("[BuskingService.create] 이미지 삭제 실패: imageId={}", imageResponse.getImageId(), deleteEx);
+                }
             }
-            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
+            throw new CustomException(ErrorCode.BUSKING_CREATED_ERROR);
         }
     }
 

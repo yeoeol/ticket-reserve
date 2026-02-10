@@ -26,7 +26,7 @@ public class NotificationTargetRedisAdapter implements NotificationTargetPort {
     private String activeUserKey;
 
     @Override
-    public List<Long> findNearbyActiveUsers(Double buskingLng, Double buskingLat, double radiusKm) {
+    public List<Long> findNearbyActiveUsers(double buskingLng, double buskingLat, double radiusKm) {
         GeoResults<RedisGeoCommands.GeoLocation<String>> results = search(buskingLng, buskingLat, radiusKm);
         if (results == null) return List.of();
 
