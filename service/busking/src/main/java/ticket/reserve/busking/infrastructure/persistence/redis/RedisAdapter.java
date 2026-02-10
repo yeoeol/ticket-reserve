@@ -20,7 +20,7 @@ public class RedisAdapter implements RedisPort {
 
     // ZSet : 알림 대상 버스킹ID 집합
     @Override
-    public void addToNotificationSchedule(Long buskingId, LocalDateTime startTime) {
+    public void addToNotificationSchedule(Long buskingId, LocalDateTime startTime, LocalDateTime endTime) {
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
         redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
     }
