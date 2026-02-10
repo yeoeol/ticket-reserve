@@ -4,6 +4,7 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ticket.reserve.subscription.domain.Subscription;
 import ticket.reserve.subscription.domain.enums.SubscriptionStatus;
 
@@ -24,7 +25,10 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "FROM Subscription s " +
             "WHERE s.buskingId = :buskingId " +
                     "AND s.userId = :userId")
-    Optional<Subscription> findByBuskingIdAndUserIdForUpdate(Long buskingId, Long userId);
+    Optional<Subscription> findByBuskingIdAndUserIdForUpdate(
+            @Param("buskingId") Long buskingId,
+            @Param("userId") Long userId
+    );
 
     @Query(value =
             "SELECT DISTINCT s.userId " +
@@ -32,12 +36,19 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             "WHERE s.buskingId = :buskingId " +
                     "AND s.status = :status " +
                     "AND s.isNotified = :isNotified")
-    Set<Long> findUserIdsByBuskingIdAndStatusAndIsNotified(Long buskingId, SubscriptionStatus status, boolean isNotified);
+    Set<Long> findUserIdsByBuskingIdAndStatusAndIsNotified(
+            @Param("buskingId") Long buskingId,
+            @Param("status") SubscriptionStatus status,
+            @Param("isNotified") boolean isNotified
+    );
 
     @Query(value =
             "SELECT s.buskingId " +
             "FROM Subscription s " +
             "WHERE s.userId = :userId " +
                     "AND s.status = :status")
-    List<Long> findBuskingIdsByUserIdWithActivated(Long userId, SubscriptionStatus status);
+    List<Long> findBuskingIdsByUserIdWithActivated(
+            @Param("userId") Long userId,
+            @Param("status") SubscriptionStatus status
+    );
 }

@@ -60,14 +60,22 @@ public class NotificationServiceImpl implements NotificationService {
                     .toList();
             handleBatchFailure(nonSendable);
 
+            // 발송할 알림이 없다면 결과 반영 후 continue
+            if (sendableNotifications.isEmpty()) {
+                bulkNotificationRepository.bulkUpsert(partition);
+                continue;
+            }
+
             // 알림 발송 로직 수행
             senderPort.send(title, body, buskingId, fcmTokens)
-                    .thenAccept(response ->
-                            handleBatchResult(sendableNotifications, response)
-                    );
-
-            // 알림 상태 업데이트
-            bulkNotificationRepository.bulkUpsert(partition);
+                    .thenAccept(response -> {
+                        handleBatchResult(sendableNotifications, response);
+                        bulkNotificationRepository.bulkUpsert(partition);
+                    }).exceptionally(ex -> {
+                        handleBatchFailure(sendableNotifications);
+                        bulkNotificationRepository.bulkUpsert(partition);
+                        return null;
+                    });
         }
     }
 

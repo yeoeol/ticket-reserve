@@ -63,11 +63,12 @@ public class BuskingServiceImpl implements BuskingService {
             );
             return BuskingResponseDto.from(savedBusking);
         } catch (Exception e) {
+            log.error("[BuskingService.create] 버스킹 생성 실패", e);
             if (imageResponse != null) {
                 try {
                     imagePort.deleteImage(imageResponse.getImageId());
                 } catch (Exception deleteEx) {
-                    log.error("이미지 삭제 실패: imageId={}", imageResponse.getImageId(), deleteEx);
+                    log.error("[BuskingService.create] 이미지 삭제 실패: imageId={}", imageResponse.getImageId(), deleteEx);
                 }
             }
             throw new CustomException(ErrorCode.BUSKING_CREATED_ERROR);

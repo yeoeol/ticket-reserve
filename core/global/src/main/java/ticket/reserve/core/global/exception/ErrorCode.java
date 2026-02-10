@@ -19,6 +19,7 @@ public enum ErrorCode {
     // BUSKING-SERVICE
     BUSKING_NOT_FOUND(HttpStatus.NOT_FOUND, "BUSKING001", "공연을 찾지 못했습니다."),
     BUSKING_CREATED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BUSKING002", "공연 생성 중 오류가 발생했습니다."),
+    INVALID_BUSKING_LOCATION(HttpStatus.BAD_REQUEST, "BUSKING003", "공연의 위치 정보가 누락되었습니다."),
 
     // INVENTORY-SERVICE
     INVENTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "INVENTORY001", "좌석을 찾지 못했습니다."),
