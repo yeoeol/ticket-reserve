@@ -32,10 +32,9 @@ public class BuskingApiController {
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "startTime", required = false) LocalDateTime startTime,
-            @RequestParam(value = "endTime", required = false) LocalDateTime endTime,
-            @AuthenticationPrincipal String userId
+            @RequestParam(value = "endTime", required = false) LocalDateTime endTime
     ) {
-        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime, Long.valueOf(userId)));
+        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime));
     }
 
     @GetMapping("/{id}")

@@ -18,7 +18,7 @@ import static ticket.reserve.subscription.global.util.TimeConverterUtil.convertT
 
 @Repository
 @RequiredArgsConstructor
-public class SubscriptionRedisAdapter implements NotificationSchedulePort {
+public class NotificationScheduleRedisAdapter implements NotificationSchedulePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -33,7 +33,7 @@ public class SubscriptionRedisAdapter implements NotificationSchedulePort {
         if (results == null) return Collections.emptySet();
 
         return results.stream()
-                .filter(SubscriptionRedisAdapter::isNotNull)
+                .filter(NotificationScheduleRedisAdapter::isNotNull)
                 .map(tuple -> BuskingNotificationTarget.of(
                         Long.valueOf(tuple.getValue()),
                         convertToLocalDateTime(tuple.getScore().longValue())

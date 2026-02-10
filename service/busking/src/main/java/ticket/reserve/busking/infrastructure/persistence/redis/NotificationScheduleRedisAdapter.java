@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import ticket.reserve.busking.application.port.out.RedisPort;
+import ticket.reserve.busking.application.port.out.NotificationSchedulePort;
 import ticket.reserve.busking.util.TimeConverterUtil;
 
 import java.time.LocalDateTime;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisAdapter implements RedisPort {
+public class NotificationScheduleRedisAdapter implements NotificationSchedulePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
