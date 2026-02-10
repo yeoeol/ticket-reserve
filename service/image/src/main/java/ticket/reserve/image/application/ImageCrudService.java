@@ -1,36 +1,20 @@
 package ticket.reserve.image.application;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.core.global.exception.CustomException;
-import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.image.domain.Image;
-import ticket.reserve.image.domain.repository.ImageRepository;
-import ticket.reserve.core.tsid.IdGenerator;
 
-@Service
-@RequiredArgsConstructor
-public class ImageCrudService {
+public interface ImageCrudService {
+    /**
+     * 파일 이름과 저장소URL, 사용자 식별 값을 받아서 이미지를 저장한다.
+     */
+    Image save(String originalFileName, String uniqueFileName, String storedPath, Long userId);
 
-    private final ImageRepository imageRepository;
-    private final IdGenerator idGenerator;
+    /**
+     * 이미지를 조회한다.
+     */
+    Image findById(Long id);
 
-    @Transactional
-    public Image save(String originalFileName, String uniqueFileName, String storedPath, Long userId) {
-        return imageRepository.save(
-                Image.create(idGenerator, originalFileName, uniqueFileName, storedPath, userId)
-        );
-    }
-
-    @Transactional(readOnly = true)
-    public Image findById(Long id) {
-        return imageRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
-    }
-
-    @Transactional
-    public void deleteById(Long id) {
-        imageRepository.deleteById(id);
-    }
+    /**
+     * 이미지를 삭제한다.
+     */
+    void deleteById(Long id);
 }
