@@ -1,0 +1,112 @@
+package ticket.reserve.user.application.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.core.global.exception.CustomException;
+import ticket.reserve.core.global.exception.ErrorCode;
+import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.user.application.UserService;
+import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
+import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
+import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
+import ticket.reserve.user.application.dto.response.UserResponseDto;
+import ticket.reserve.user.application.port.out.GenerateTokenPort;
+import ticket.reserve.user.application.port.out.LocationPort;
+import ticket.reserve.user.application.port.out.TokenStorePort;
+import ticket.reserve.user.domain.role.Role;
+import ticket.reserve.user.domain.role.repository.RoleRepository;
+import ticket.reserve.user.domain.user.User;
+import ticket.reserve.user.domain.user.repository.UserRepository;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+
+    private final IdGenerator idGenerator;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    private final GenerateTokenPort generateTokenPort;
+    private final LocationPort locationPort;
+    private final TokenStorePort tokenStorePort;
+
+    @Transactional
+    public Long register(UserRegisterRequestDto requestDto) {
+        Role roleUser = roleRepository.findByRoleName("ROLE_USER")
+                .orElseThrow(() -> new CustomException(ErrorCode.ROLE_NOT_FOUND));
+
+        User user = User.create(
+                idGenerator,
+                requestDto.username(),
+                passwordEncoder.encode(requestDto.password()),
+                requestDto.email()
+        );
+        user.addRole(idGenerator, roleUser);
+
+        return userRepository.save(user).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public UserLoginResponseDto login(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_LOGIN));
+
+        validatePassword(password, user.getPassword());
+
+        List<String> userRoles = user.getRoleNames();
+
+        String accessToken = generateTokenPort.generateToken(user.getId(), userRoles);
+
+        return UserLoginResponseDto.from(UserResponseDto.from(user), accessToken);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserResponseDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDto getUser(Long userId) {
+        return userRepository.findById(userId)
+                .map(UserResponseDto::from)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public UserResponseDto updateUser(UserUpdateRequestDto request) {
+        User user = userRepository.findById(request.id())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        validatePassword(request.password(), user.getPassword());
+        user.update(request.username(), request.email());
+
+        return UserResponseDto.from(user);
+    }
+
+    public void logout(String accessToken) {
+        if (accessToken != null) {
+            long remainingTime = generateTokenPort.getRemainingTime(accessToken);
+
+            if (remainingTime > 0) {
+                tokenStorePort.addBlackList(accessToken, remainingTime);
+            }
+        }
+    }
+
+    public void updateLocation(Long userId, Double latitude, Double longitude) {
+        locationPort.addLocation(userId, latitude, longitude);
+    }
+
+    private void validatePassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new CustomException(ErrorCode.INVALID_LOGIN);
+        }
+    }
+}

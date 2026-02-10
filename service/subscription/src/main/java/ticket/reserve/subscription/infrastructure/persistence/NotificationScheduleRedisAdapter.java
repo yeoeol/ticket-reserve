@@ -18,14 +18,13 @@ import static ticket.reserve.subscription.global.util.TimeConverterUtil.convertT
 
 @Repository
 @RequiredArgsConstructor
-public class SubscriptionRedisAdapter implements NotificationSchedulePort {
+public class NotificationScheduleRedisAdapter implements NotificationSchedulePort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${app.redis.notification-schedule-key:busking:notification_schedule}")
     private String notificationScheduleKey;
 
-    // 알림 대상 버스킹 정보 추출
     public Set<BuskingNotificationTarget> findTargetsToNotify(LocalDateTime time) {
         long maxScore = TimeConverterUtil.convertToMilli(time);
         Set<ZSetOperations.TypedTuple<String>> results = redisTemplate.opsForZSet()
@@ -33,7 +32,7 @@ public class SubscriptionRedisAdapter implements NotificationSchedulePort {
         if (results == null) return Collections.emptySet();
 
         return results.stream()
-                .filter(SubscriptionRedisAdapter::isNotNull)
+                .filter(NotificationScheduleRedisAdapter::isNotNull)
                 .map(tuple -> BuskingNotificationTarget.of(
                         Long.valueOf(tuple.getValue()),
                         convertToLocalDateTime(tuple.getScore().longValue())
@@ -41,7 +40,6 @@ public class SubscriptionRedisAdapter implements NotificationSchedulePort {
                 .collect(Collectors.toSet());
     }
 
-    // 알림 스케줄 데이터 삭제
     public void removeFromNotificationSchedule(Long buskingId) {
         redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
     }

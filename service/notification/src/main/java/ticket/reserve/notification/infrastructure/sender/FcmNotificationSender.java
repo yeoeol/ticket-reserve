@@ -1,4 +1,4 @@
-package ticket.reserve.notification.infrastructure.sender.impl;
+package ticket.reserve.notification.infrastructure.sender;
 
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import ticket.reserve.notification.application.dto.response.NotificationBatchResponseDto;
-import ticket.reserve.notification.infrastructure.sender.NotificationSender;
+import ticket.reserve.notification.application.port.out.SenderPort;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FcmNotificationSender implements NotificationSender {
+public class FcmNotificationSender implements SenderPort {
 
     private final FirebaseMessaging firebaseMessaging;
 

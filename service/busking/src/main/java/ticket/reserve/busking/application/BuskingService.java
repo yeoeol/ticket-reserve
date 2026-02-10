@@ -1,98 +1,20 @@
 package ticket.reserve.busking.application;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
-import ticket.reserve.busking.application.dto.response.ImageResponseDto;
-import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
-import ticket.reserve.busking.application.port.out.RedisPort;
-import ticket.reserve.busking.application.port.out.SubscriptionPort;
-import ticket.reserve.busking.domain.busking.Busking;
-import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
-import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
-import ticket.reserve.core.global.exception.CustomException;
-import ticket.reserve.core.global.exception.ErrorCode;
-import ticket.reserve.core.tsid.IdGenerator;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class BuskingService {
+public interface BuskingService {
+    BuskingResponseDto create(BuskingRequestDto request, MultipartFile file);
 
-    private final IdGenerator idGenerator;
-    private final BuskingPublishService buskingPublishService;
-    private final BuskingQueryService buskingQueryService;
-    private final BuskingRepository buskingRepository;
-    private final RedisPort redisPort;
-    private final ImagePort imagePort;
-    private final SubscriptionPort subscriptionPort;
+    List<BuskingResponseDto> getAll();
 
-    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
-        Busking busking = request.toEntity(idGenerator);
+    BuskingResponseDto getOne(Long buskingId, Long userId);
 
-        // 이미지가 있다면 저장
-        ImageResponseDto imageResponse = null;
-        if (file != null && !file.isEmpty()) {
-            imageResponse = imagePort.uploadImage(file);
-            if (imageResponse != null) {
-                busking.addEventImage(
-                        idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
-                        ImageType.THUMBNAIL, 1
-                );
-            }
-            // TODO: imageResponse가 null일 때 재시도 로직 구현
-        }
+    void update(Long id, BuskingUpdateRequestDto request);
 
-        // 버스킹 저장
-        try {
-            Busking savedBusking = buskingPublishService.publishBuskingCreatedEvent(busking);
-            redisPort.addToNotificationSchedule(
-                    savedBusking.getId(),
-                    savedBusking.getStartTime(),
-                    savedBusking.getEndTime()
-            );
-            return BuskingResponseDto.from(savedBusking);
-        } catch (Exception e) {
-            if (imageResponse != null) {
-                imagePort.deleteImage(imageResponse.getImageId());
-            }
-            throw new CustomException(ErrorCode.IMAGE_DELETE_FAIL);
-        }
-    }
-
-    public List<BuskingResponseDto> getAll() {
-        return buskingRepository.findAll().stream()
-                .map(BuskingResponseDto::from)
-                .toList();
-    }
-
-    public BuskingResponseDto getOne(Long buskingId, Long userId) {
-        boolean isSubscribed = subscriptionPort.isSubscribe(buskingId, userId);
-
-        return BuskingResponseDto.from(
-                buskingQueryService.findById(buskingId),
-                isSubscribed
-        );
-    }
-
-    @Transactional
-    public void update(Long id, BuskingUpdateRequestDto request) {
-        Busking busking = buskingQueryService.findById(id);
-        busking.update(
-                request.title(), request.description(), request.location(),
-                request.startTime(), request.endTime()
-        );
-    }
-
-    @Transactional(readOnly = true)
-    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
-        return buskingRepository.findAllByIdIn(buskingIds).stream()
-                .map(BuskingResponseDto::from)
-                .toList();
-    }
+    List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds);
 }

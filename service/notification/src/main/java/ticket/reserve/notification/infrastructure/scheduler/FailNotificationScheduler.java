@@ -3,7 +3,7 @@ package ticket.reserve.notification.infrastructure.scheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ticket.reserve.notification.application.NotificationCrudService;
+import ticket.reserve.notification.application.NotificationQueryService;
 import ticket.reserve.notification.application.NotificationService;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.enums.NotificationStatus;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FailNotificationScheduler {
 
-    private final NotificationCrudService notificationCrudService;
+    private final NotificationQueryService notificationQueryService;
     private final NotificationService notificationService;
 
     @Scheduled(initialDelay = 10, fixedDelay = 60, timeUnit = TimeUnit.SECONDS)
     public void retryFailedNotifications() {
-        List<Notification> failedNotifications = notificationCrudService.findByStatus(NotificationStatus.FAIL);
+        List<Notification> failedNotifications = notificationQueryService.findByStatus(NotificationStatus.FAIL);
 
         Map<Long, List<Notification>> groupedByBuskingId = failedNotifications.stream()
                 .collect(Collectors.groupingBy(Notification::getBuskingId));

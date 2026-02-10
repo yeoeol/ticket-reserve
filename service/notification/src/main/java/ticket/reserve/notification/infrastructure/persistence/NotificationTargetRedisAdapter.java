@@ -9,13 +9,13 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.domain.geo.GeoReference;
 import org.springframework.stereotype.Repository;
-import ticket.reserve.notification.application.port.out.RedisPort;
+import ticket.reserve.notification.application.port.out.NotificationTargetPort;
 
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisAdapter implements RedisPort {
+public class NotificationTargetRedisAdapter implements NotificationTargetPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 
