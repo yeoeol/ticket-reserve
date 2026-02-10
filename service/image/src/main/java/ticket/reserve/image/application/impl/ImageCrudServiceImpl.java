@@ -32,6 +32,7 @@ public class ImageCrudServiceImpl implements ImageCrudService {
 
     @Transactional
     public void deleteById(Long id) {
-        imageRepository.deleteById(id);
+        Image image = findById(id);
+        imageRepository.delete(image);
     }
 }

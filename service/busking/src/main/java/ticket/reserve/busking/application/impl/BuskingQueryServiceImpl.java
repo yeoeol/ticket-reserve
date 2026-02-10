@@ -25,7 +25,8 @@ public class BuskingQueryServiceImpl implements BuskingQueryService {
 
     @Transactional
     public void delete(Long id) {
-        buskingRepository.deleteById(id);
+        Busking busking = findById(id);
+        buskingRepository.delete(busking);
     }
 
     @Transactional(readOnly = true)

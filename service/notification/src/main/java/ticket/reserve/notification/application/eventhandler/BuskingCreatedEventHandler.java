@@ -25,7 +25,7 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
 
-        // 버스킹 위치 반경 radiumKm 내 사용자 조회
+        // 버스킹 위치 반경 radiusKm 내 사용자 조회
         List<Long> receiverIds = notificationTargetPort.findNearbyActiveUsers(
                 payload.getLongitude(), payload.getLatitude(), radiusKm
         );

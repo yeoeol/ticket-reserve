@@ -16,6 +16,7 @@ import ticket.reserve.notification.domain.notification.repository.BulkNotificati
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -41,18 +42,32 @@ public class NotificationServiceImpl implements NotificationService {
             List<Long> pUserIds = partition.stream()
                     .map(Notification::getReceiverId)
                     .toList();
-            List<String> fcmTokens = fcmTokenService.getTokensByUserIds(pUserIds);
+            Map<Long, String> tokenMap = fcmTokenService.getTokenMapByUserIds(pUserIds);
 
+            // 토큰이 있는 사용자의 알림 엔티티 추출
+            List<Notification> sendableNotifications = partition.stream()
+                    .filter(notification -> tokenMap.containsKey(notification.getReceiverId()))
+                    .toList();
+
+            // 알림을 보낼 FCM TOKEN 리스트 추출
+            List<String> fcmTokens = sendableNotifications.stream()
+                    .map(notification -> tokenMap.get(notification.getReceiverId()))
+                    .toList();
+
+            // 토큰이 없는 알림은 실패 처리
+            List<Notification> nonSendable = partition.stream()
+                    .filter(notification -> !tokenMap.containsKey(notification.getReceiverId()))
+                    .toList();
+            handleBatchFailure(nonSendable);
+
+            // 알림 발송 로직 수행
             senderPort.send(title, body, buskingId, fcmTokens)
-                    .thenAccept(response -> {
-                        handleBatchResult(partition, response);
-                        bulkNotificationRepository.bulkUpsert(partition);
-                    })
-                    .exceptionally(ex -> {
-                        handleBatchFailure(partition);
-                        bulkNotificationRepository.bulkUpsert(partition);
-                        return null;
-                    });
+                    .thenAccept(response ->
+                            handleBatchResult(sendableNotifications, response)
+                    );
+
+            // 알림 상태 업데이트
+            bulkNotificationRepository.bulkUpsert(partition);
         }
     }
 
@@ -63,10 +78,16 @@ public class NotificationServiceImpl implements NotificationService {
         notifications.forEach(Notification::incrementRetryCount);
     }
 
-    private void handleBatchResult(List<Notification> partition, NotificationBatchResponseDto response) {
+    private void handleBatchResult(List<Notification> notifications, NotificationBatchResponseDto response) {
         List<NotificationBatchResponseDto.NotificationSendResponseDto> responses = response.responses();
+        if (responses.size() != notifications.size()) {
+            log.error("[NotificationServiceImpl] 응답 수({})와 파티션 수({}) 불일치", responses.size(), notifications.size());
+            handleBatchFailure(notifications);
+            return;
+        }
+
         for (int i = 0; i < responses.size(); i++) {
-            Notification notification = partition.get(i);
+            Notification notification = notifications.get(i);
 
             if (responses.get(i).isSuccessful()) {
                 notification.markAsSuccess();
@@ -78,7 +99,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private void handleBatchFailure(List<Notification> partition) {
-        partition.forEach(Notification::markAsFail);
+    private void handleBatchFailure(List<Notification> notifications) {
+        notifications.forEach(Notification::markAsFail);
     }
 }
