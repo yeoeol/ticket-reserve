@@ -7,7 +7,7 @@ import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.notification.application.NotificationService;
-import ticket.reserve.notification.application.port.out.RedisPort;
+import ticket.reserve.notification.application.port.out.NotificationTargetPort;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
     private final NotificationService notificationService;
-    private final RedisPort redisPort;
+    private final NotificationTargetPort notificationTargetPort;
 
     private static final double radiusKm = 5; // 반경 5km
 
@@ -26,7 +26,7 @@ public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEv
         BuskingCreatedEventPayload payload = event.getPayload();
 
         // 버스킹 위치 반경 radiumKm 내 사용자 조회
-        List<Long> receiverIds = redisPort.findNearbyActiveUsers(
+        List<Long> receiverIds = notificationTargetPort.findNearbyActiveUsers(
                 payload.getLongitude(), payload.getLatitude(), radiusKm
         );
         if (receiverIds.isEmpty()) return;

@@ -1,8 +1,9 @@
-package ticket.reserve.notification.application;
+package ticket.reserve.notification.application.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.notification.application.NotificationQueryService;
 import ticket.reserve.notification.domain.notification.Notification;
 import ticket.reserve.notification.domain.notification.enums.NotificationStatus;
 import ticket.reserve.notification.domain.notification.repository.NotificationRepository;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationCrudService {
+public class NotificationQueryServiceImpl implements NotificationQueryService {
 
     private final NotificationRepository notificationRepository;
 
