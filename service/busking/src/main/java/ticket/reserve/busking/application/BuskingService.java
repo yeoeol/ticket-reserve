@@ -52,11 +52,9 @@ public class BuskingService {
         try {
             Busking savedBusking = buskingPublishService.publishBuskingCreatedEvent(busking);
             redisPort.addToNotificationSchedule(
-                    busking.getId(),
-                    savedBusking.getCoordinate().getY(),
-                    savedBusking.getCoordinate().getX(),
-                    busking.getStartTime(),
-                    busking.getEndTime()
+                    savedBusking.getId(),
+                    savedBusking.getStartTime(),
+                    savedBusking.getEndTime()
             );
             return BuskingResponseDto.from(savedBusking);
         } catch (Exception e) {

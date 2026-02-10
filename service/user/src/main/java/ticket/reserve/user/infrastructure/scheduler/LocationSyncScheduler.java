@@ -7,7 +7,6 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.user.domain.user.User;
 import ticket.reserve.user.domain.user.repository.BulkUserRepository;
 import ticket.reserve.user.domain.user.repository.UserRepository;
@@ -31,7 +30,6 @@ public class LocationSyncScheduler {
     private String geoKey;
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
-    @Transactional
     public void syncLocationFromRedisToDB() {
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] Redis 위치 데이터 MySQL 백업 시작");
 
@@ -44,15 +42,17 @@ public class LocationSyncScheduler {
 
         List<User> users = userRepository.findAllById(userIdList);
 
+        String[] userIdsArray = userIds.toArray(String[]::new);
+        List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdsArray);
+
         Map<Long, Point> pointMap = new HashMap<>();
+        int idx = 0;
         for (String userIdStr : userIds) {
-            List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdStr);
-
             if (positions != null && !positions.isEmpty()) {
-                Point pos = positions.getFirst();
-                Long userId = Long.valueOf(userIdStr);
-
-                pointMap.put(userId, pos);
+                Point pos = positions.get(idx++);
+                if (pos != null) {
+                    pointMap.put(Long.valueOf(userIdStr), pos);
+                }
             }
         }
 

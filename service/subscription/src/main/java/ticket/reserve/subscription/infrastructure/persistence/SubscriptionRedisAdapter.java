@@ -33,11 +33,12 @@ public class SubscriptionRedisAdapter implements NotificationSchedulePort {
         if (results == null) return Collections.emptySet();
 
         return results.stream()
-                .filter(tuple -> isNotNull(tuple))
+                .filter(SubscriptionRedisAdapter::isNotNull)
                 .map(tuple -> BuskingNotificationTarget.of(
                         Long.valueOf(tuple.getValue()),
                         convertToLocalDateTime(tuple.getScore().longValue())
-                )).collect(Collectors.toSet());
+                ))
+                .collect(Collectors.toSet());
     }
 
     // 알림 스케줄 데이터 삭제
