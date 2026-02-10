@@ -62,7 +62,7 @@ public class RedisAdapter implements RedisPort {
         redisTemplate.opsForSet().remove(generateSubscribersByBuskingIdKey(buskingId), String.valueOf(userId));
     }
 
-    // 알림 대상 버스킹ID 집합 추출
+    // 알림 대상 버스킹 정보 추출
     public Set<BuskingNotificationTarget> findBuskingIdsReadyToNotify(LocalDateTime time) {
         long maxScore = TimeConverterUtil.convertToMilli(time);
         Set<ZSetOperations.TypedTuple<String>> results = redisTemplate.opsForZSet()
