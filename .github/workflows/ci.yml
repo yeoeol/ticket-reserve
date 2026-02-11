@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [service:user, service:busking, service:inventory, service:reservation, service:payment, service:image, platform:gateway, platform:registry]
+        service: [service:busking, service:image, service:notification, service:payment, service:subscription, service:user, platform:gateway, platform:registry]
     runs-on: ubuntu-latest
 
     steps:
