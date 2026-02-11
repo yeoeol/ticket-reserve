@@ -1,6 +1,9 @@
 package ticket.reserve.core.global.exception;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,31 +13,30 @@ import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionRestHandler {
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.warn("비즈니스 예외 발생: {}", e.getMessage());
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())
-                .body(new ErrorResponse(e.getErrorCode().name(), e.getErrorCode().getMessage(), List.of()));
+                .body(new ErrorResponse(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
-        List<ErrorResponse.FieldErrorDetail> fieldErrors = e.getBindingResult().getFieldErrors()
-                .stream()
-                .map(error -> new ErrorResponse.FieldErrorDetail(
-                        error.getField(),
-                        error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
-                        error.getDefaultMessage()
-                ))
-                .toList();
+        String errorMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
 
-        String message = "입력 값 검증에 실패했습니다.";
-        log.warn("Validation 실패: {} 건", fieldErrors.size());
+        if (errorMessage.startsWith("{")) {
+            String key = errorMessage.substring(1, errorMessage.length() - 1);
+            errorMessage = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+        }
+
         return ResponseEntity
                 .badRequest()
-                .body(new ErrorResponse(e.getStatusCode().toString(), message, fieldErrors));
+                .body(new ErrorResponse("INVALID_INPUT", errorMessage));
     }
 }
