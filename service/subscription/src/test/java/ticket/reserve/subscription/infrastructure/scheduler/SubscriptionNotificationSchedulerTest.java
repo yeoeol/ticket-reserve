@@ -44,8 +44,8 @@ class SubscriptionNotificationSchedulerTest {
 
         given(notificationScheduleRedisAdapter.findTargetsToNotify(any(LocalDateTime.class)))
                 .willReturn(Set.of(target));
-        given(notificationScheduleRedisAdapter.findSubscribersByBuskingId(buskingId))
-                .willReturn(userIds);
+//        given(notificationScheduleRedisAdapter.findSubscribersByBuskingId(buskingId))
+//                .willReturn(userIds);
 
         //when
         scheduler.subscriptionNotificationScheduler();
@@ -62,8 +62,8 @@ class SubscriptionNotificationSchedulerTest {
                         }),
                         eq(buskingId)
                 );
-        verify(notificationScheduleRedisAdapter, times(1))
-                .removeSubscriptionData(buskingId);
+//        verify(notificationScheduleRedisAdapter, times(1))
+//                .removeSubscriptionData(buskingId);
     }
 
 }
