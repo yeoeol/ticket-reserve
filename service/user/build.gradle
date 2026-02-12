@@ -20,7 +20,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     testImplementation 'com.h2database:h2'
-    
+
     implementation project(':core:global')
     implementation project(':core:tsid')
 }

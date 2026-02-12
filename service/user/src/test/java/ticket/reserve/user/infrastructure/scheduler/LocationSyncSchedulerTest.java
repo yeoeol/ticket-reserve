@@ -32,7 +32,6 @@ class LocationSyncSchedulerTest {
         for (int i = 1; i <= 5; i++) {
             User user = createUser("testusername" + i, "testpassword" + i, "test" + i + "@gmail.com");
             userRepository.save(user);
-            tokenRedisAdapter.addLocation(user.getId(), 37.0, 127.0);
         }
 
         System.out.println("========================================");

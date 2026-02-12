@@ -1,4 +1,4 @@
-package ticket.reserve.user.application;
+package ticket.reserve.user.application.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +13,13 @@ import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.core.tsid.TsidIdGenerator;
+import ticket.reserve.user.application.UserService;
 import ticket.reserve.user.application.dto.request.UserRegisterRequestDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.port.out.GenerateTokenPort;
+import ticket.reserve.user.application.port.out.LocationPort;
 import ticket.reserve.user.application.port.out.TokenStorePort;
 import ticket.reserve.user.domain.role.Role;
 import ticket.reserve.user.domain.role.repository.RoleRepository;
@@ -27,24 +29,26 @@ import ticket.reserve.user.domain.userrole.UserRole;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @InjectMocks
-    UserService userService;
+    UserServiceImpl userService;
 
+    @Mock IdGenerator idGenerator;
     @Mock UserRepository userRepository;
     @Mock RoleRepository roleRepository;
     @Mock PasswordEncoder passwordEncoder;
     @Mock GenerateTokenPort generateTokenPort;
+    @Mock LocationPort locationPort;
     @Mock TokenStorePort tokenStorePort;
-    @Mock IdGenerator idGenerator;
 
     private Role role;
     private User user;
@@ -53,12 +57,12 @@ class UserServiceTest {
     void setUp() {
         idGenerator = new TsidIdGenerator();
         role = Role.create(
-                () -> 1L,
+                idGenerator,
                 "ROLE_USER",
                 "사용자"
         );
         user = User.create(
-                () -> 1234L,
+                idGenerator,
                 "testusername",
                 "encodedPassword",
                 "test@naver.com"
@@ -71,7 +75,7 @@ class UserServiceTest {
     void register_Success() {
         //given
         UserRegisterRequestDto request = new UserRegisterRequestDto(
-        "testusername", "rawPassword", "test@naver.com"
+                "testusername", "rawPassword", "test@naver.com"
         );
 
         given(roleRepository.findByRoleName("ROLE_USER"))
@@ -89,10 +93,10 @@ class UserServiceTest {
         //then
         User savedUser = userCaptor.getValue();
 
-        assertThat(registerId).isEqualTo(1234L);
-        assertThat(savedUser.getUsername()).isEqualTo("testusername");
+        assertThat(registerId).isEqualTo(user.getId());
+        assertThat(savedUser.getUsername()).isEqualTo(request.username());
         assertThat(savedUser.getPassword()).isEqualTo("encodedPassword");
-        assertThat(savedUser.getEmail()).isEqualTo("test@naver.com");
+        assertThat(savedUser.getEmail()).isEqualTo(request.email());
 
         assertThat(savedUser.getUserRoles()).hasSize(1);
         assertThat(savedUser.getUserRoles())
@@ -162,10 +166,10 @@ class UserServiceTest {
     void updateUserSuccess() {
         //given
         UserUpdateRequestDto request = new UserUpdateRequestDto(
-                1234L, "updateusername", "encodedPassword", "updateEmail@naver.com"
+                user.getId(), "updateusername", "encodedPassword", "updateEmail@naver.com"
         );
 
-        given(userRepository.findById(1234L))
+        given(userRepository.findById(user.getId()))
                 .willReturn(Optional.of(user));
         given(passwordEncoder.matches(request.password(), user.getPassword()))
                 .willReturn(true);
