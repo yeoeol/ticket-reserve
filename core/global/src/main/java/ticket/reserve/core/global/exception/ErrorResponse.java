@@ -10,13 +10,4 @@ import java.util.List;
 public class ErrorResponse {
     private String code;
     private String message;
-    private List<FieldErrorDetail> errors;
-
-    @Getter
-    @AllArgsConstructor
-    public static class FieldErrorDetail {
-        private String field;
-        private String value;
-        private String reason;
-    }
 }

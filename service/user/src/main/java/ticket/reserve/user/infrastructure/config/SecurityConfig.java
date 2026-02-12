@@ -11,7 +11,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ticket.reserve.user.infrastructure.security.filter.HeaderAuthenticationFilter;
+import ticket.reserve.core.global.security.filter.HeaderAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
