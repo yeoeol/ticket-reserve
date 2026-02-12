@@ -2,6 +2,7 @@ package ticket.reserve.user.domain.role.listener;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private final UserRepository userRepository;

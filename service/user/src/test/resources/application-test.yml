@@ -8,8 +8,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/test_db?rewriteBatchStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: test
-    password: test
+    username: ${USER_DB_USERNAME:root}
+    password: ${USER_DB_PASSWORD}
 
   jpa:
     open-in-view: false
@@ -20,7 +20,6 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
-        dialect: org.hibernate.spatial.dialect.mysql.MySQL8SpatialDialect
 
   data:
     redis:

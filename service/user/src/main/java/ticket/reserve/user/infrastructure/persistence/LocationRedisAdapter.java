@@ -9,7 +9,6 @@ import ticket.reserve.user.application.port.out.LocationPort;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
