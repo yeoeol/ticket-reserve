@@ -9,8 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -30,9 +28,13 @@ public class GlobalExceptionRestHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
 
-        if (errorMessage.startsWith("{")) {
+        if (errorMessage != null && errorMessage.startsWith("{") && errorMessage.endsWith("}")) {
             String key = errorMessage.substring(1, errorMessage.length() - 1);
-            errorMessage = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+            errorMessage = messageSource.getMessage(key, null, "유효하지 않은 입력입니다.", LocaleContextHolder.getLocale());
+        }
+
+        if (errorMessage == null) {
+            errorMessage = "유효하지 않은 입력입니다.";
         }
 
         return ResponseEntity
