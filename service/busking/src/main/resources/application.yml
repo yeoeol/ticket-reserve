@@ -44,8 +44,6 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 endpoints:
-  ticket-reserve-inventory-service:
-    url: ${INVENTORY_SERVICE_URL:http://127.0.0.1:30002}
   ticket-reserve-image-service:
     url: ${IMAGE_SERVICE_URL:http://127.0.0.1:33333}
   ticket-reserve-subscription-service:

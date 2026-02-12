@@ -6,7 +6,7 @@ spring:
     name: busking-service
 
   datasource:
-    url: ${BUSKING_DB_URL:jdbc:mysql://localhost:3306/ticket_events}
+    url: jdbc:mysql://localhost:3306/test_db
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${BUSKING_DB_USERNAME:root}
     password: ${BUSKING_DB_PASSWORD}
@@ -21,6 +21,11 @@ spring:
       hibernate:
         default_batch_fetch_size: 100
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
@@ -29,13 +34,17 @@ spring:
       max-file-size: 5MB      # 파일 한 개당 최대 용량
       max-request-size: 25MB  # 한 번의 요청에 담긴 총 용량 (최대 5장)
 
+app:
+  redis:
+    notification-schedule-key: "busking:notification_schedule"
+
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 endpoints:
-  ticket-reserve-inventory-service:
-    url: ${INVENTORY_SERVICE_URL:http://127.0.0.1:30002}
   ticket-reserve-image-service:
     url: ${IMAGE_SERVICE_URL:http://127.0.0.1:33333}
+  ticket-reserve-subscription-service:
+    url: ${SUBSCRIPTION_SERVICE_URL:http://127.0.0.1:35555}

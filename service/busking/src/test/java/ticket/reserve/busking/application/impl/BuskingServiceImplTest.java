@@ -1,4 +1,4 @@
-package ticket.reserve.busking.application;
+package ticket.reserve.busking.application.impl;
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +14,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import ticket.reserve.busking.application.BuskingPublishService;
+import ticket.reserve.busking.application.BuskingQueryService;
+import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
-import ticket.reserve.busking.application.port.out.InventoryPort;
+import ticket.reserve.busking.application.port.out.NotificationSchedulePort;
+import ticket.reserve.busking.application.port.out.SubscriptionPort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.global.exception.CustomException;
@@ -36,15 +40,24 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class BuskingServiceTest {
+class BuskingServiceImplTest {
     @InjectMocks
-    BuskingService buskingService;
+    BuskingServiceImpl buskingService;
 
-    @Mock BuskingQueryService buskingQueryService;
-    @Mock InventoryPort inventoryPort;
-    @Mock ImagePort imagePort;
-    @Mock IdGenerator idGenerator;
-    @Mock BuskingRepository buskingRepository;
+    @Mock
+    private IdGenerator idGenerator;
+    @Mock
+    private BuskingPublishService buskingPublishService;
+    @Mock
+    private BuskingQueryService buskingQueryService;
+    @Mock
+    private BuskingRepository buskingRepository;
+    @Mock
+    private NotificationSchedulePort notificationSchedulePort;
+    @Mock
+    private ImagePort imagePort;
+    @Mock
+    private SubscriptionPort subscriptionPort;
 
     private Busking busking;
 
@@ -54,7 +67,7 @@ class BuskingServiceTest {
         Point coordinate = geometryFactory.createPoint(new Coordinate(0, 0));
 
         busking = Busking.create(
-                () -> 1234L,
+                idGenerator,
                 "testTitle",
                 "testDesc",
                 "장소",
@@ -74,7 +87,7 @@ class BuskingServiceTest {
         );
 
         ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingRepository.save(buskingCaptor.capture()))
+        given(buskingPublishService.publishBuskingCreatedEvent(buskingCaptor.capture()))
                 .willReturn(busking);
 
         //when
@@ -117,7 +130,8 @@ class BuskingServiceTest {
                 .build();
 
         ArgumentCaptor<Busking> buskingCaptor = ArgumentCaptor.forClass(Busking.class);
-        given(buskingRepository.save(buskingCaptor.capture())).willReturn(busking);
+        given(buskingPublishService.publishBuskingCreatedEvent(buskingCaptor.capture()))
+                .willReturn(busking);
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
 
         //when
@@ -161,7 +175,8 @@ class BuskingServiceTest {
                 .build();
 
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
-        when(buskingRepository.save(any(Busking.class))).thenThrow(RuntimeException.class);
+        when(buskingPublishService.publishBuskingCreatedEvent(any(Busking.class)))
+                .thenThrow(RuntimeException.class);
 
         //when & then
         assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);
@@ -179,10 +194,10 @@ class BuskingServiceTest {
                 "updateEventTitle", "updateDesc", "테스트장소",
                 LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20)
         );
-        given(buskingRepository.findById(1234L)).willReturn(Optional.of(busking));
+        given(buskingQueryService.findById(busking.getId())).willReturn(busking);
 
         //when
-        buskingService.update(1234L, request);
+        buskingService.update(busking.getId(), request);
 
         //then
         assertThat(busking.getTitle()).isEqualTo(request.title());
@@ -200,8 +215,7 @@ class BuskingServiceTest {
                 "updateEventTitle", "updateDesc", "테스트장소",
                 LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20)
         );
-        given(buskingRepository.findById(9999L))
-                .willReturn(Optional.empty());
+        when(buskingQueryService.findById(9999L)).thenThrow(new CustomException(ErrorCode.BUSKING_NOT_FOUND));
 
         //when
         Throwable throwable = catchThrowable(() -> buskingService.update(9999L, request));
@@ -210,6 +224,7 @@ class BuskingServiceTest {
         assertThat(throwable)
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.BUSKING_NOT_FOUND.getMessage())
-                .extracting("errorCode").isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
+                .extracting("errorCode")
+                    .isEqualTo(ErrorCode.BUSKING_NOT_FOUND);
     }
 }

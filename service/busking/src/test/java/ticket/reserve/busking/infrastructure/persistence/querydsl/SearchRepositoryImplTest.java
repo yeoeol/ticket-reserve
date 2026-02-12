@@ -78,7 +78,7 @@ class SearchRepositoryImplTest {
 
         return Busking.create(
                 idGenerator, title, description, location,
-                startTime, endTime, totalInventoryCount, coordinate
+                startTime, endTime, coordinate
         );
     }
 
@@ -114,7 +114,6 @@ class SearchRepositoryImplTest {
         System.out.println("location = " + busking.getLocation());
         System.out.println("startTime = " + busking.getStartTime());
         System.out.println("endTime = " + busking.getEndTime());
-        System.out.println("totalInventoryCount = " + busking.getTotalInventoryCount());
         printImageLog(busking.getBuskingImages());
         System.out.println("========================");
     }
