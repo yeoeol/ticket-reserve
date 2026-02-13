@@ -16,7 +16,7 @@ public class PaymentQueryServiceImpl implements PaymentQueryService {
     private final PaymentRepository paymentRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Payment findByOrderId(String orderId) {
         return paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new CustomException(

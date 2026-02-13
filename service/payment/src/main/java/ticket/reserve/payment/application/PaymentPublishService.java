@@ -17,7 +17,7 @@ public class PaymentPublishService {
     private final PaymentQueryService paymentQueryService;
 
     @Transactional
-    public void updateInfoAndpublishPaymentConfirmedEvent(TossResponseDto response) {
+    public void updateInfoAndPublishPaymentConfirmedEvent(TossResponseDto response) {
         Payment payment = paymentQueryService.findByOrderId(response.orderId());
         updatePaymentInfo(payment, response);
 

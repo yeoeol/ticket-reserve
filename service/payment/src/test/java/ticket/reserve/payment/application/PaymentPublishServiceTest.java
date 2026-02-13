@@ -44,7 +44,7 @@ class PaymentPublishServiceTest {
         given(paymentQueryService.findByOrderId(anyString())).willReturn(payment);
 
         //when
-        paymentPublishService.updateInfoAndpublishPaymentConfirmedEvent(tossResponseDto);
+        paymentPublishService.updateInfoAndPublishPaymentConfirmedEvent(tossResponseDto);
 
         //then
         assertThat(payment.getPaymentKey()).isEqualTo(tossResponseDto.paymentKey());

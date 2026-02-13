@@ -21,6 +21,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final TossPaymentsPort tossPaymentsPort;
     private final PaymentPublishService paymentPublishService;
 
+    @Override
     @Transactional
     public void createPayment(String orderId, Long userId, Long reservationId, Long inventoryId) {
         Payment payment = Payment.create(
@@ -33,8 +34,9 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
     }
 
+    @Override
     public void confirmPayment(PaymentConfirmRequestDto request) {
         TossResponseDto tossResponseDto = tossPaymentsPort.confirmPayment(request);
-        paymentPublishService.updateInfoAndpublishPaymentConfirmedEvent(tossResponseDto);
+        paymentPublishService.updateInfoAndPublishPaymentConfirmedEvent(tossResponseDto);
     }
 }
