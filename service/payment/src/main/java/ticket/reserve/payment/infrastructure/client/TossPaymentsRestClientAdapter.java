@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.application.dto.response.TossResponseDto;
+import ticket.reserve.payment.application.port.out.PaymentPropertiesPort;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
-import ticket.reserve.payment.infrastructure.config.PaymentProperties;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -16,14 +16,14 @@ import java.util.Base64;
 public class TossPaymentsRestClientAdapter implements TossPaymentsPort {
 
     private final RestClient restClient;
-    private final PaymentProperties paymentProperties;
+    private final PaymentPropertiesPort paymentPropertiesPort;
 
     public TossPaymentsRestClientAdapter(
             @Value("${payment.base-url}") String baseUrl,
-            PaymentProperties paymentProperties
+            PaymentPropertiesPort paymentPropertiesPort
     ) {
         this.restClient = RestClient.create(baseUrl);
-        this.paymentProperties = paymentProperties;
+        this.paymentPropertiesPort = paymentPropertiesPort;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TossPaymentsRestClientAdapter implements TossPaymentsPort {
     }
 
     private String getAuthHeader() {
-        String secretKey = paymentProperties.getSecretKey();
+        String secretKey = paymentPropertiesPort.getSecretKey();
         return "Basic " + Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
     }
