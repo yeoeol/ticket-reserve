@@ -9,6 +9,7 @@ import ticket.reserve.user.application.port.out.LocationPort;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -31,8 +32,19 @@ public class LocationRedisAdapter implements LocationPort {
     }
 
     @Override
-    public Set<String> findUserIds() {
-        return redisTemplate.opsForZSet().range(geoKey, 0, -1);
+    public List<Long> findUserIds() {
+        Set<String> userIds = redisTemplate.opsForZSet().range(geoKey, 0, -1);
+        if (userIds == null || userIds.isEmpty()) return Collections.emptyList();
+
+        return userIds.stream()
+                .flatMap(userId -> {
+                    try {
+                        return Stream.of(Long.valueOf(userId));
+                    } catch (NumberFormatException e) {
+                        return Stream.empty();
+                    }
+                }).toList();
+
     }
 
     @Override

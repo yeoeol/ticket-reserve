@@ -62,7 +62,7 @@ class SubscriptionServiceImplTest {
         //given
         SubscriptionRequestDto requestDto =
                 new SubscriptionRequestDto(3L, 2L, LocalDateTime.of(2026, 1, 1, 12, 30));
-
+        subscription.cancel();
         given(subscriptionRepository.findByBuskingIdAndUserIdForUpdate(3L, 2L))
                 .willReturn(Optional.of(subscription));
 
@@ -71,6 +71,7 @@ class SubscriptionServiceImplTest {
 
         //then
         verify(subscriptionRepository, times(0)).save(any(Subscription.class));
+        assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.ACTIVATED);
     }
 
     @Test

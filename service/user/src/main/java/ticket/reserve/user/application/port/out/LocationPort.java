@@ -4,12 +4,11 @@ import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface LocationPort {
     void addLocation(Long userId, Double latitude, Double longitude);
 
-    Set<String> findUserIds();
+    List<Long> findUserIds();
 
     Map<Long, Point> getPointMapByUserIds(List<Long> userIds);
 }

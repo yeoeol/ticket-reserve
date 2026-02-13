@@ -32,7 +32,7 @@ class SubscriptionNotificationSchedulerTest {
     private SubscriptionQueryService subscriptionQueryService;
 
     @Test
-    @DisplayName("알림 대상이 존재하면 이벤트를 발행하고 Redis 데이터를 삭제해야 한다")
+    @DisplayName("알림 대상이 존재하면 이벤트를 발행하고 알림 스케줄 데이터를 삭제해야 한다")
     void scheduler_success() {
         //given
         Long buskingId1 = 1L;

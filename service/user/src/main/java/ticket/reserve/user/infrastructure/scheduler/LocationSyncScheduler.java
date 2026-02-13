@@ -28,16 +28,12 @@ public class LocationSyncScheduler {
     public void syncLocationFromRedisToDB() {
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] Redis 위치 데이터 MySQL 백업 시작");
 
-        Set<String> userIds = locationPort.findUserIds();
+        List<Long> userIds = locationPort.findUserIds();
         if (userIds == null || userIds.isEmpty()) return;
 
-        List<Long> userIdList = userIds.stream()
-                .map(Long::valueOf)
-                .toList();
+        Map<Long, Point> pointMap = locationPort.getPointMapByUserIds(userIds);
 
-        Map<Long, Point> pointMap = locationPort.getPointMapByUserIds(userIdList);
-
-        List<User> targetUsers = userRepository.findAllById(userIdList).stream()
+        List<User> targetUsers = userRepository.findAllById(userIds).stream()
                 .filter(user -> pointMap.containsKey(user.getId()))
                 .toList();
 

@@ -1,7 +1,5 @@
 package ticket.reserve.notification.application.impl;
 
-import ch.qos.logback.core.testUtil.RandomUtil;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -167,7 +165,7 @@ class NotificationServiceImplTest {
         List<Long> userIds = List.of(1L, 2L);
         String title = "버스킹 알림 제목";
         String body = "버스킹 알림 내용";
-        Long buksingId = 100L;
+        Long buskingId = 100L;
 
         given(fcmTokenService.getTokenMapByUserIds(anyList()))
                 .willReturn(Map.of(1L, "token1", 2L, "token2"));
@@ -176,7 +174,7 @@ class NotificationServiceImplTest {
                 .willReturn(CompletableFuture.failedFuture(new RuntimeException("FCM 서버 예외 발생")));
 
         //when
-        notificationService.sendBulkNotification(title, body, buksingId, userIds);
+        notificationService.sendBulkNotification(title, body, buskingId, userIds);
 
         //then
         ArgumentCaptor<List<Notification>> captor = ArgumentCaptor.forClass(List.class);

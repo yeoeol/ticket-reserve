@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import ticket.reserve.busking.application.BuskingPublishService;
 import ticket.reserve.busking.application.BuskingQueryService;
-import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.ImageResponseDto;
 import ticket.reserve.busking.application.port.out.ImagePort;
@@ -31,7 +30,6 @@ import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -175,8 +173,8 @@ class BuskingServiceImplTest {
                 .build();
 
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
-        when(buskingPublishService.publishBuskingCreatedEvent(any(Busking.class)))
-                .thenThrow(RuntimeException.class);
+        given(buskingPublishService.publishBuskingCreatedEvent(any(Busking.class)))
+                .willThrow(RuntimeException.class);
 
         //when & then
         assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);
@@ -215,7 +213,7 @@ class BuskingServiceImplTest {
                 "updateEventTitle", "updateDesc", "테스트장소",
                 LocalDateTime.now().plusDays(10), LocalDateTime.now().plusDays(20)
         );
-        when(buskingQueryService.findById(9999L)).thenThrow(new CustomException(ErrorCode.BUSKING_NOT_FOUND));
+        given(buskingQueryService.findById(9999L)).willThrow(new CustomException(ErrorCode.BUSKING_NOT_FOUND));
 
         //when
         Throwable throwable = catchThrowable(() -> buskingService.update(9999L, request));
