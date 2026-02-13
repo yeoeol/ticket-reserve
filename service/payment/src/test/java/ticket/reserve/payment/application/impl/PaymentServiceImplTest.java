@@ -1,4 +1,4 @@
-package ticket.reserve.payment.application;
+package ticket.reserve.payment.application.impl;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,42 +10,46 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.PaymentConfirmedEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
+import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.payment.application.PaymentService;
 import ticket.reserve.payment.application.dto.request.PaymentConfirmRequestDto;
 import ticket.reserve.payment.application.dto.response.TossResponseDto;
 import ticket.reserve.payment.application.port.out.TossPaymentsPort;
 import ticket.reserve.payment.domain.Payment;
 import ticket.reserve.payment.domain.repository.PaymentRepository;
-import ticket.reserve.core.tsid.IdGenerator;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class PaymentServiceTest {
+class PaymentServiceImplTest {
 
     @InjectMocks
-    PaymentService paymentService;
+    private PaymentServiceImpl paymentService;
 
-    @Mock PaymentRepository paymentRepository;
-    @Mock TossPaymentsPort tossPaymentsPort;
-    @Mock OutboxEventPublisher outboxEventPublisher;
-    @Mock IdGenerator idGenerator;
+    @Mock
+    private PaymentRepository paymentRepository;
+    @Mock
+    private TossPaymentsPort tossPaymentsPort;
+    @Mock
+    private OutboxEventPublisher outboxEventPublisher;
+    @Mock
+    private IdGenerator idGenerator;
 
     @Test
     @DisplayName("결제 생성 성공 - 파라미터 정보를 바탕으로 결제 엔티티가 생성된다")
-    void createPaymentSuccess() {
+    void create_payment_success() {
         //given
         Payment payment = createPayment(1L, 1L, 1L, 10L);
 
         ArgumentCaptor<Payment> captor = ArgumentCaptor.forClass(Payment.class);
-        given(paymentRepository.save(captor.capture()))
-                .willReturn(payment);
+        given(paymentRepository.save(captor.capture())).willReturn(payment);
 
         //when
         paymentService.createPayment(payment.getOrderId(), 1L, 1L, 10L);
