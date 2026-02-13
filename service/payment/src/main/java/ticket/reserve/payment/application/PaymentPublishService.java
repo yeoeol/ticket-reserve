@@ -18,7 +18,8 @@ public class PaymentPublishService {
 
     @Transactional
     public void updateInfoAndpublishPaymentConfirmedEvent(TossResponseDto response) {
-        Payment payment = updatePaymentInfo(response);
+        Payment payment = paymentQueryService.findByOrderId(response.orderId());
+        updatePaymentInfo(payment, response);
 
         outboxEventPublisher.publish(
                 EventType.PAYMENT_CONFIRMED,
@@ -33,8 +34,7 @@ public class PaymentPublishService {
         );
     }
 
-    private Payment updatePaymentInfo(TossResponseDto response) {
-        Payment payment = paymentQueryService.findByOrderId(response.orderId());
+    private void updatePaymentInfo(Payment payment, TossResponseDto response) {
         payment.confirmPayment(
                 response.paymentKey(),
                 response.orderName(),
@@ -43,6 +43,5 @@ public class PaymentPublishService {
                 response.approvedAt().toLocalDateTime(),
                 response.totalAmount()
         );
-        return payment;
     }
 }
