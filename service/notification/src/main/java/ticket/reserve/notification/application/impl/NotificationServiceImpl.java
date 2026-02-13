@@ -29,14 +29,14 @@ public class NotificationServiceImpl implements NotificationService {
     private final BulkNotificationRepository bulkNotificationRepository;
     private final NotificationQueryService notificationQueryService;
 
+    private static final int BATCH_SIZE = 500;
+
     @Override
     public void sendBulkNotification(String title, String body, Long buskingId, Collection<Long> userIds) {
-        List<Notification> pendingNotifications = userIds.stream()
-                .map(userId -> Notification.create(idGenerator, title, body, userId, buskingId))
-                .toList();
+        List<Notification> pendingNotifications = createPendingNotifications(title, body, buskingId, userIds);
         bulkNotificationRepository.bulkInsert(pendingNotifications);
 
-        List<List<Notification>> partitions = Lists.partition(pendingNotifications, 500);
+        List<List<Notification>> partitions = Lists.partition(pendingNotifications, BATCH_SIZE);
 
         for (List<Notification> partition : partitions) {
             List<Long> pUserIds = partition.stream()
@@ -109,5 +109,11 @@ public class NotificationServiceImpl implements NotificationService {
 
     private void handleBatchFailure(List<Notification> notifications) {
         notifications.forEach(Notification::markAsFail);
+    }
+
+    private List<Notification> createPendingNotifications(String title, String body, Long buskingId, Collection<Long> userIds) {
+        return userIds.stream()
+                .map(userId -> Notification.create(idGenerator, title, body, userId, buskingId))
+                .toList();
     }
 }

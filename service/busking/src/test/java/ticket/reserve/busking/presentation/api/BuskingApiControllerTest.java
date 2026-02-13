@@ -46,8 +46,8 @@ class BuskingApiControllerTest {
     void getEventsSuccess() throws Exception {
         given(searchService.search(null, null, null, null))
                 .willReturn(List.of(
-                        BuskingResponseDto.from(createBusking(123L), 0),
-                        BuskingResponseDto.from(createBusking(234L), 0)
+                        BuskingResponseDto.from(createBusking(123L), false),
+                        BuskingResponseDto.from(createBusking(234L), false)
                 ));
 
         assertThat(mvc.get().uri("/api/buskings"))
@@ -75,7 +75,6 @@ class BuskingApiControllerTest {
                 "test",
                 start,
                 start.plusDays(1),
-                10,
                 coordinate
         );
     }

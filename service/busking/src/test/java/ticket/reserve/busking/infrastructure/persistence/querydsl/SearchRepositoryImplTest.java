@@ -49,19 +49,19 @@ class SearchRepositoryImplTest {
     public void before() {
         queryFactory = new JPAQueryFactory(em);
         Busking busking1 = createBusking("title1", "desc1", "loc1",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(1), 10);
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         busking1.addEventImage(
                 idGenerator, "image1", "stored1",
                 ImageType.THUMBNAIL, 1
         );
         Busking busking2 = createBusking("title2", "desc2", "loc2",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(2), 20);
+                LocalDateTime.now(), LocalDateTime.now().plusDays(2));
         busking2.addEventImage(
                 idGenerator, "image2", "stored2",
                 ImageType.THUMBNAIL, 1
         );
         Busking busking3 = createBusking("title3", "desc3", "loc3",
-                LocalDateTime.now(), LocalDateTime.now().plusDays(3), 30);
+                LocalDateTime.now(), LocalDateTime.now().plusDays(3));
         busking3.addEventImage(
                 idGenerator, "image3", "stored3",
                 ImageType.THUMBNAIL, 1
@@ -71,14 +71,14 @@ class SearchRepositoryImplTest {
 
     private Busking createBusking(
             String title, String description, String location,
-            LocalDateTime startTime, LocalDateTime endTime, Integer totalInventoryCount
+            LocalDateTime startTime, LocalDateTime endTime
     ) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Point coordinate = geometryFactory.createPoint(new Coordinate(0, 0));
 
         return Busking.create(
                 idGenerator, title, description, location,
-                startTime, endTime, totalInventoryCount, coordinate
+                startTime, endTime, coordinate
         );
     }
 
@@ -114,7 +114,6 @@ class SearchRepositoryImplTest {
         System.out.println("location = " + busking.getLocation());
         System.out.println("startTime = " + busking.getStartTime());
         System.out.println("endTime = " + busking.getEndTime());
-        System.out.println("totalInventoryCount = " + busking.getTotalInventoryCount());
         printImageLog(busking.getBuskingImages());
         System.out.println("========================");
     }

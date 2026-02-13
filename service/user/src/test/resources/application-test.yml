@@ -6,10 +6,10 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/test_db?rewriteBatchStatements=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${USER_DB_USERNAME:root}
+    password: ${USER_DB_PASSWORD}
 
   jpa:
     open-in-view: false
@@ -27,10 +27,11 @@ spring:
       port: ${REDIS_PORT:6379}
 
 app:
-  scheduling:
-    enable: false
   redis:
-    geo-key: "users:location:test"
+    geo-key: "users:location"
+    active-user-key: "user:active"
+  jdbc:
+    batch-size: 100
 
 eureka:
   client:

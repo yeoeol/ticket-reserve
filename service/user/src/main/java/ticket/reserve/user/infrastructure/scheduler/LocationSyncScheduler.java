@@ -2,16 +2,14 @@ package ticket.reserve.user.infrastructure.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ticket.reserve.user.application.port.out.LocationPort;
 import ticket.reserve.user.domain.user.User;
 import ticket.reserve.user.domain.user.repository.BulkUserRepository;
 import ticket.reserve.user.domain.user.repository.UserRepository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,41 +20,20 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class LocationSyncScheduler {
 
-    private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final BulkUserRepository bulkUserRepository;
-
-    @Value("${app.redis.geo-key:users:location}")
-    private String geoKey;
+    private final LocationPort locationPort;
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void syncLocationFromRedisToDB() {
         log.info("[LocationSyncScheduler.syncLocationFromRedisToDB] Redis 위치 데이터 MySQL 백업 시작");
 
-        Set<String> userIds = redisTemplate.opsForZSet().range(geoKey, 0, -1);
+        List<Long> userIds = locationPort.findUserIds();
         if (userIds == null || userIds.isEmpty()) return;
 
-        List<Long> userIdList = userIds.stream()
-                .map(Long::valueOf)
-                .toList();
+        Map<Long, Point> pointMap = locationPort.getPointMapByUserIds(userIds);
 
-        List<User> users = userRepository.findAllById(userIdList);
-
-        String[] userIdsArray = userIds.toArray(String[]::new);
-        List<Point> positions = redisTemplate.opsForGeo().position(geoKey, userIdsArray);
-
-        Map<Long, Point> pointMap = new HashMap<>();
-        int idx = 0;
-        for (String userIdStr : userIds) {
-            if (positions != null && !positions.isEmpty()) {
-                Point pos = positions.get(idx++);
-                if (pos != null) {
-                    pointMap.put(Long.valueOf(userIdStr), pos);
-                }
-            }
-        }
-
-        List<User> targetUsers = users.stream()
+        List<User> targetUsers = userRepository.findAllById(userIds).stream()
                 .filter(user -> pointMap.containsKey(user.getId()))
                 .toList();
 
