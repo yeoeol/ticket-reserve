@@ -15,6 +15,7 @@ public enum EventType {
     RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION),
     SUBSCRIPTION_NOTIFICATION_SENT(SubscriptionNotificationSentEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
     SUBSCRIPTION_CREATED(SubscriptionCreatedEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
+    SUBSCRIPTION_CANCELLED(SubscriptionCancelledEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
     ;
 
     private final Class<? extends EventPayload> payloadClass;

@@ -35,7 +35,7 @@ spring:
 app:
   redis:
     hot-busking-subscription-count-key: "hot-busking:busking:%s:subscription-count"
-    hot-busking-list-key: "hot-busking:list:%s"
+    hot-busking-list-key: "hot-busking:list"
 
 eureka:
   client:

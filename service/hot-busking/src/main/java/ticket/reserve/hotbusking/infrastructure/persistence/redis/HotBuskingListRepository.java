@@ -15,21 +15,16 @@ public class HotBuskingListRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    @Value("${app.redis.hot-busking-list-key:hot-busking:list:%s}")
+    @Value("${app.redis.hot-busking-list-key:hot-busking:list}")
     private String hotBuskingListKey;
 
     public void add(Long buskingId, Long score, Long limit, Duration ttl) {
         redisTemplate.executePipelined((RedisCallback<?>) action -> {
             StringRedisConnection conn = (StringRedisConnection) action;
-            String key = generateKey(buskingId);
-            conn.zAdd(key, score, String.valueOf(buskingId));
-            conn.zRemRange(key, 0, -limit-1);
-            conn.expire(key, ttl.toSeconds());
+            conn.zAdd(hotBuskingListKey, score, String.valueOf(buskingId));
+            conn.zRemRange(hotBuskingListKey, 0, -limit-1);
+            conn.expire(hotBuskingListKey, ttl.toSeconds());
             return null;
         });
-    }
-
-    private String generateKey(Long buskingId) {
-        return hotBuskingListKey.formatted(buskingId);
     }
 }

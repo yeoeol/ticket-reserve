@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.EventType;
+import ticket.reserve.core.event.payload.SubscriptionCancelledEventPayload;
 import ticket.reserve.core.event.payload.SubscriptionCreatedEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 import ticket.reserve.core.tsid.IdGenerator;
@@ -71,6 +72,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = subscriptionQueryService
                 .getSubscription(request.buskingId(), request.userId());
         subscription.cancel();
+
+        outboxEventPublisher.publish(
+                EventType.SUBSCRIPTION_CANCELLED,
+                SubscriptionCancelledEventPayload.builder()
+                        .subscriptionId(subscription.getId())
+                        .userId(subscription.getUserId())
+                        .buskingId(subscription.getBuskingId())
+                        .startTime(subscription.getStartTime())
+                        .buskingSubscriptionCount(count(subscription.getBuskingId()))
+                        .build(),
+                subscription.getBuskingId()
+        );
     }
 
     @Transactional
