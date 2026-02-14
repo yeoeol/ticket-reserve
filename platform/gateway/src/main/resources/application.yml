@@ -48,6 +48,10 @@ spring:
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
                 - Path=/api/subscription/**
+            - id: hot-busking-service
+              uri: lb://HOT-BUSKING-SERVICE
+              predicates:
+                - Path=/api/hot-buskings/**
 
   data:
     redis:

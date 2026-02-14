@@ -39,13 +39,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Optional<Subscription> optionalSubscription = subscriptionRepository
                 .findByBuskingIdAndUserIdForUpdate(request.buskingId(), request.userId());
 
+        Subscription subscription = null;
         // 같은 버스킹에 대해 구독 내역이 있다면 구독 상태만 변경
         if (optionalSubscription.isPresent()) {
-            optionalSubscription.get().activate();
-            return;
+            subscription = optionalSubscription.get();
+            subscription.activate();
+        } else {
+            subscription = subscriptionRepository.save(request.toEntity(idGenerator));
         }
-
-        Subscription subscription = subscriptionRepository.save(request.toEntity(idGenerator));
 
         int result = buskingSubscriptionCountRepository.increase(subscription.getBuskingId());
         if (result == 0) {
@@ -72,6 +73,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = subscriptionQueryService
                 .getSubscription(request.buskingId(), request.userId());
         subscription.cancel();
+
+        buskingSubscriptionCountRepository.decrease(subscription.getBuskingId());
 
         outboxEventPublisher.publish(
                 EventType.SUBSCRIPTION_CANCELLED,

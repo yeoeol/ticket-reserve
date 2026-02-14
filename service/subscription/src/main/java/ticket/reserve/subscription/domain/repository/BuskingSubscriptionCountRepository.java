@@ -8,14 +8,18 @@ import ticket.reserve.subscription.domain.BuskingSubscriptionCount;
 
 public interface BuskingSubscriptionCountRepository extends JpaRepository<BuskingSubscriptionCount, Long> {
     @Query(
-            value = "update busking_subscription_count set subscription_count = subscription_count + 1 where busking_id = :buskingId",
+            value = "update busking_subscription_count " +
+                    "set subscription_count = subscription_count + 1 " +
+                    "where busking_id = :buskingId",
             nativeQuery = true
     )
     @Modifying
     int increase(@Param("buskingId") Long buskingId);
 
     @Query(
-            value = "update busking_subscription_count set subscription_count = subscription_count - 1 where busking_id = :boardId",
+            value = "update busking_subscription_count " +
+                    "set subscription_count = subscription_count - 1 " +
+                    "where busking_id = :buskingId",
             nativeQuery = true
     )
     @Modifying

@@ -3,7 +3,6 @@ package ticket.reserve.hotbusking.infrastructure.persistence.redis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -23,11 +22,13 @@ public class HotBuskingListRepository {
     private String hotBuskingListKey;
 
     public void add(Long buskingId, Long score, Long limit, Duration ttl) {
-        redisTemplate.executePipelined((RedisCallback<?>) action -> {
-            StringRedisConnection conn = (StringRedisConnection) action;
-            conn.zAdd(hotBuskingListKey, score, String.valueOf(buskingId));
-            conn.zRemRange(hotBuskingListKey, 0, -limit-1);
-            conn.expire(hotBuskingListKey, ttl.toSeconds());
+        redisTemplate.executePipelined((RedisCallback<?>) conn -> {
+            byte[] key = hotBuskingListKey.getBytes();
+            byte[] value = String.valueOf(buskingId).getBytes();
+
+            conn.zAdd(key, score, value);
+            conn.zSetCommands().zRemRange(key, 0, -(limit+1));
+            conn.keyCommands().expire(key, ttl.toSeconds());
             return null;
         });
     }

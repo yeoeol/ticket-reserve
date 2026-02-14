@@ -16,9 +16,9 @@ public record HotBuskingResponseDto(
         List<String> imageUrls,
         Double latitude,
         Double longitude,
-        boolean isSubscribed
+        Long subscriptionCount
 ) {
-    public static HotBuskingResponseDto from(BuskingResponseDto buskingResponse) {
+    public static HotBuskingResponseDto from(BuskingResponseDto buskingResponse, Long subscriptionCount) {
         return HotBuskingResponseDto.builder()
                 .id(buskingResponse.id())
                 .title(buskingResponse.title())
@@ -29,7 +29,7 @@ public record HotBuskingResponseDto(
                 .imageUrls(buskingResponse.imageUrls())
                 .latitude(buskingResponse.latitude())
                 .longitude(buskingResponse.longitude())
-                .isSubscribed(buskingResponse.isSubscribed())
+                .subscriptionCount(subscriptionCount)
                 .build();
     }
 }
