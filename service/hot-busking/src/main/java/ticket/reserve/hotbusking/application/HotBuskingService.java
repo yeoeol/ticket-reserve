@@ -10,9 +10,13 @@ import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.inbox.Inbox;
 import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.hotbusking.application.dto.response.HotBuskingResponseDto;
 import ticket.reserve.hotbusking.application.eventhandler.EventHandler;
+import ticket.reserve.hotbusking.application.port.out.BuskingPort;
+import ticket.reserve.hotbusking.infrastructure.persistence.redis.HotBuskingListRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -23,6 +27,8 @@ public class HotBuskingService {
     private final List<EventHandler> eventHandlers;
     private final InboxRepository inboxRepository;
     private final HotBuskingScoreUpdater hotBuskingScoreUpdater;
+    private final HotBuskingListRepository hotBuskingListRepository;
+    private final BuskingPort buskingPort;
 
     public void handleEvent(Event<EventPayload> event) {
         if (inboxRepository.existsByEventId(event.getEventId())) {
@@ -55,5 +61,13 @@ public class HotBuskingService {
                 .filter(eventHandler -> eventHandler.supports(event))
                 .findAny()
                 .orElse(null);
+    }
+
+    public List<HotBuskingResponseDto> readAll() {
+        return hotBuskingListRepository.readAll().stream()
+                .map(buskingPort::get)
+                .filter(Objects::nonNull)
+                .map(HotBuskingResponseDto::from)
+                .toList();
     }
 }
