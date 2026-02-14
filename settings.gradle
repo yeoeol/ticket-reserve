@@ -17,6 +17,7 @@ include 'core:tsid'
 
 include 'service:user'
 include 'service:busking'
+include 'service:hot-busking'
 include 'service:payment'
 include 'service:image'
 include 'service:notification'
