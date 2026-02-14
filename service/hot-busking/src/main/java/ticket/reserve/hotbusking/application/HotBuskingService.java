@@ -1,28 +1,29 @@
-package ticket.reserve.hotbusking.application.eventhandler;
+package ticket.reserve.hotbusking.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.inbox.Inbox;
 import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.core.tsid.IdGenerator;
+import ticket.reserve.hotbusking.application.eventhandler.EventHandler;
 
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventHandlerService {
+public class HotBuskingService {
 
     private final IdGenerator idGenerator;
     private final List<EventHandler> eventHandlers;
     private final InboxRepository inboxRepository;
+    private final HotBuskingScoreUpdater hotBuskingScoreUpdater;
 
-    @Transactional
     public void handleEvent(Event<EventPayload> event) {
         if (inboxRepository.existsByEventId(event.getEventId())) {
             return;
@@ -34,11 +35,19 @@ public class EventHandlerService {
         }
 
         try {
-            eventHandler.handle(event);
-            inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
+            if (isSubscriptionCreatedOrDeleted(event)) {
+                eventHandler.handle(event);
+                inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
+            } else {
+                hotBuskingScoreUpdater.update(event, eventHandler);
+            }
         } catch (DataIntegrityViolationException e) {
-            log.warn("[EventHandlerService.handleEvent] 중복 이벤트 감지: eventId={}, eventType={}", event.getEventId(), event.getType());
+            log.warn("[HotBuskingService.handleEvent] 중복 이벤트 감지: eventId={}, eventType={}", event.getEventId(), event.getType());
         }
+    }
+
+    private boolean isSubscriptionCreatedOrDeleted(Event<EventPayload> event) {
+        return EventType.SUBSCRIPTION_CREATED == event.getType();
     }
 
     private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {

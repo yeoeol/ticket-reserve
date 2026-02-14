@@ -5,6 +5,18 @@ spring:
   application:
     name: hot-busking-service
 
+  datasource:
+    url: ${HOT_BUSKING_DB_URL:jdbc:mysql://localhost:3306/hot_buskings?rewriteBatchedStatements=true}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${HOT_BUSKING_DB_USERNAME:root}
+    password: ${HOT_BUSKING_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -22,7 +34,8 @@ spring:
 
 app:
   redis:
-    hot-busking-key: "hot-busking:list:%s"
+    hot-busking-subscription-count-key: "hot-busking:busking:%s:subscription-count"
+    hot-busking-list-key: "hot-busking:list:%s"
 
 eureka:
   client:
