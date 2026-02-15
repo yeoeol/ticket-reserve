@@ -7,6 +7,10 @@ public class TimeCalculatorUtils {
 
     public static Duration calculateDurationToStartTime(LocalDateTime startTime) {
         LocalDateTime now = LocalDateTime.now();
-        return Duration.between(now, startTime);
+        Duration between = Duration.between(now, startTime);
+        if (between.isNegative()) {
+            return Duration.ZERO;
+        }
+        return between;
     }
 }

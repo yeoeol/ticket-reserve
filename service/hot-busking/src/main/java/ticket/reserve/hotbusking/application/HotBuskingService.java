@@ -42,8 +42,8 @@ public class HotBuskingService {
         }
 
         try {
-            inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
             hotBuskingScoreUpdater.update(event, eventHandler);
+            inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
         } catch (DataIntegrityViolationException e) {
             log.warn("[HotBuskingService.handleEvent] 중복 이벤트 감지: eventId={}, eventType={}", event.getEventId(), event.getType());
         }

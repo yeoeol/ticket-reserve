@@ -25,6 +25,10 @@ public class HotBuskingScoreUpdater {
         LocalDateTime startTime = eventHandler.findStartTime(event);
         Duration ttl = TimeCalculatorUtils.calculateDurationToStartTime(startTime);
 
+        if (ttl.isZero()) {
+            return;
+        }
+
         eventHandler.handle(event);
 
         long score = hotBuskingScoreCalculator.calculate(buskingId);
