@@ -17,7 +17,7 @@ public class HotBuskingApiController {
 
     private final HotBuskingService hotBuskingService;
 
-    @GetMapping("/buskings")
+    @GetMapping
     public ResponseEntity<List<HotBuskingResponseDto>> readAll() {
         return ResponseEntity.ok(hotBuskingService.readAll());
     }

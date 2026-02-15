@@ -19,7 +19,8 @@ public interface BuskingSubscriptionCountRepository extends JpaRepository<Buskin
     @Query(
             value = "update busking_subscription_count " +
                     "set subscription_count = subscription_count - 1 " +
-                    "where busking_id = :buskingId",
+                    "where busking_id = :buskingId " +
+                    "AND subscription_count > 0",
             nativeQuery = true
     )
     @Modifying

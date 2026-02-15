@@ -18,6 +18,7 @@ public class HotBuskingEventConsumer {
     private final HotBuskingService hotBuskingService;
 
     @KafkaListener(topics = {
+            EventType.Topic.TICKET_RESERVE_BUSKING,
             EventType.Topic.TICKET_RESERVE_SUBSCRIPTION
     })
     public void listen(String message, Acknowledgment ack) {
