@@ -172,12 +172,12 @@ services:
       - tr-network
 
   hot-busking-service:
-    image: ${DOCKERHUB_USERNAME}/tr-subscription:latest
-    container_name: tr-subscription-service
+    image: ${DOCKERHUB_USERNAME}/tr-hot-busking:latest
+    container_name: tr-hot-busking-service
     env_file:
       - ./.env
     ports:
-      - "35555:35555"
+      - "36666:36666"
     depends_on:
       registry:
         condition: service_started
