@@ -2,10 +2,12 @@ package ticket.reserve.busking.infrastructure.persistence.querydsl;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.response.QBuskingResponseDto;
 
@@ -20,7 +22,7 @@ import static ticket.reserve.busking.domain.buskingimage.QBuskingImage.buskingIm
 
 @Repository
 @RequiredArgsConstructor
-public class SearchRepositoryImpl implements SearchRepositoryCustom {
+public class SearchRepositoryImpl implements SearchService {
 
     private final JPAQueryFactory queryFactory;
 
@@ -55,6 +57,24 @@ public class SearchRepositoryImpl implements SearchRepositoryCustom {
                                 )
                         )
                 );
+    }
+
+    @Override
+    public List<BuskingResponseDto> readAllWithCursor(Long lastBuskingId, int size) {
+        return queryFactory
+                .selectFrom(busking)
+                .leftJoin(busking.buskingImages, buskingImage)
+                .where(ltBuskingId(lastBuskingId))
+                .orderBy(busking.id.desc())
+                .limit(size)
+                .fetch()
+                .stream()
+                .map(BuskingResponseDto::from)
+                .toList();
+    }
+
+    private BooleanExpression ltBuskingId(Long lastBuskingId) {
+        return lastBuskingId == null ? null : busking.id.lt(lastBuskingId);
     }
 
     private BooleanExpression titleLike(String title) {
