@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticket.reserve.busking.application.BuskingQueryService;
+import ticket.reserve.busking.application.SearchService;
+import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.global.exception.CustomException;
@@ -16,6 +18,7 @@ import java.util.List;
 public class BuskingQueryServiceImpl implements BuskingQueryService {
     
     private final BuskingRepository buskingRepository;
+    private final SearchService searchService;
 
     @Transactional(readOnly = true)
     public Busking findById(Long id) {
@@ -32,5 +35,11 @@ public class BuskingQueryServiceImpl implements BuskingQueryService {
     @Transactional(readOnly = true)
     public List<Long> getIds() {
         return buskingRepository.findIds();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BuskingResponseDto> readAllWithCursor(Long lastBuskingId, int size) {
+        return searchService.readAllWithCursor(lastBuskingId, size);
     }
 }

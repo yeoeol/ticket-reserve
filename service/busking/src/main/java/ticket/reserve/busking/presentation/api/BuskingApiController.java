@@ -12,6 +12,7 @@ import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.BuskingService;
+import ticket.reserve.busking.infrastructure.persistence.querydsl.BuskingSearchCondition;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +35,16 @@ public class BuskingApiController {
             @RequestParam(value = "startTime", required = false) LocalDateTime startTime,
             @RequestParam(value = "endTime", required = false) LocalDateTime endTime
     ) {
-        return ResponseEntity.ok(searchService.search(title, location, startTime, endTime));
+        BuskingSearchCondition searchCondition = new BuskingSearchCondition(title, location, startTime, endTime);
+        return ResponseEntity.ok(searchService.search(searchCondition));
+    }
+
+    @GetMapping("/cursor")
+    public ResponseEntity<List<BuskingResponseDto>> getAllWithCursor(
+            @RequestParam(value = "lastBuskingId", required = false) Long lastBuskingId,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(buskingQueryService.readAllWithCursor(lastBuskingId, size));
     }
 
     @GetMapping("/{id}")
