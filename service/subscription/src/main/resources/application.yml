@@ -21,7 +21,9 @@ spring:
     redis:
       cluster:
         nodes: ${REDIS_HOST}:6379
-#      host: ${REDIS_HOST:localhost}
+      ssl:
+        enabled: true
+  #      host: ${REDIS_HOST:localhost}
 #      port: ${REDIS_PORT:6379}
 
   kafka:
