@@ -19,8 +19,8 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: tr-kafka
-    depends_on:
-      - zookeeper
+#    depends_on:
+#      - zookeeper
     ports:
       - "9092:9092"
     environment:
@@ -81,8 +81,8 @@ services:
     ports:
       - "30000:30000"
     depends_on:
-      redis:
-        condition: service_started
+#      redis:
+#        condition: service_started
       registry:
         condition: service_started
       gateway-platform:
@@ -98,8 +98,8 @@ services:
     ports:
       - "30001:30001"
     depends_on:
-      redis:
-        condition: service_started
+#      redis:
+#        condition: service_started
       kafka-setup:
         condition: service_started
       registry:
