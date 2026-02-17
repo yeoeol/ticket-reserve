@@ -1,6 +1,3 @@
 spring:
   application:
     name: busking-service
-  config:
-    activate:
-      on-profile: local

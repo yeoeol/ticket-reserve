@@ -2,12 +2,6 @@ server:
   port: 30001
 
 spring:
-  application:
-    name: busking-service
-  config:
-    activate:
-      on-profile: local
-
   datasource:
     url: ${BUSKING_DB_URL:jdbc:mysql://localhost:3306/ticket_events}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -26,8 +20,8 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: localhost
+      port: 6379
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}

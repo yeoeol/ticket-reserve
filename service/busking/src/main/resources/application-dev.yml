@@ -2,12 +2,6 @@ server:
   port: 30001
 
 spring:
-  application:
-    name: busking-service
-  config:
-    activate:
-      on-profile: dev
-
   datasource:
     url: ${BUSKING_DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,6 +22,10 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
