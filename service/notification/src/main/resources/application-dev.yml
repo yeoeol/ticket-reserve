@@ -1,0 +1,56 @@
+server:
+  port: 34444
+
+spring:
+  datasource:
+    url: ${NOTIFICATION_DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${NOTIFICATION_DB_USERNAME}
+    password: ${NOTIFICATION_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    listener:
+      ack-mode: manual
+    consumer:
+      group-id: notification-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+
+app:
+  redis:
+    geo-key: ${APP_REDIS_GEO_KEY}
+    active-user-key: ${APP_REDIS_ACTIVE_USER_KEY}
+  jdbc:
+    batch-size: 100
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+
+firebase:
+  service-account:
+    path: "/firebase/service-account.json"
