@@ -1,0 +1,43 @@
+server:
+  port: 35555
+
+spring:
+  application:
+    name: subscription-service
+
+  datasource:
+    url: ${SUBSCRIPTION_DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SUBSCRIPTION_DB_USERNAME}
+    password: ${SUBSCRIPTION_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+app:
+  redis:
+    notification-schedule-key: ${APP_REDIS_NOTIFICATION_SCHEDULE_KEY}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+
+endpoints:
+  ticket-reserve-busking-service:
+    url: ${BUSKING_SERVICE_URL}
