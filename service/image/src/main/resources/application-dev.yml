@@ -1,0 +1,32 @@
+server:
+  port: 33333
+
+spring:
+  datasource:
+    url: ${IMAGE_DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${IMAGE_DB_USERNAME}
+    password: ${IMAGE_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+
+  servlet:
+    multipart:
+      max-file-size: 5MB      # 파일 한 개당 최대 용량
+      max-request-size: 25MB  # 한 번의 요청에 담긴 총 용량 (최대 5장)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}

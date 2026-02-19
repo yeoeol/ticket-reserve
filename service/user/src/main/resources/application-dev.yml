@@ -1,0 +1,44 @@
+server:
+  port: 30000
+
+spring:
+  datasource:
+    url: ${USER_DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${USER_DB_USERNAME}
+    password: ${USER_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
+
+app:
+  redis:
+    geo-key: ${APP_REDIS_GEO_KEY}
+    active-user-key: ${APP_REDIS_ACTIVE_USER_KEY}
+  jdbc:
+    batch-size: 100
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
                 )
         }
 )
-public class Subscription {
+public class Subscription extends BaseTimeEntity {
 
     @Id
     @Column(name = "subscription_id")

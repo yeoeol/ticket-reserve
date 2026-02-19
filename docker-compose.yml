@@ -1,12 +1,4 @@
 services:
-  redis:
-    image: redis:alpine
-    container_name: tr-redis
-    ports:
-      - "6379:6379"
-    networks:
-      - tr-network
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: tr-zookeeper
@@ -45,12 +37,10 @@ services:
       echo 'Waiting for Kafka to be ready...';
       cub kafka-ready -b kafka:29092 1 30;
       echo 'Creating topics...';
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-admin;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-event;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-inventory;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-busking;
       kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-payment;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-reservation;
       kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-user;
+      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-subscription;
       echo 'Successfully created topics';
       " ]
 
@@ -83,8 +73,6 @@ services:
     ports:
       - "30000:30000"
     depends_on:
-      redis:
-        condition: service_started
       registry:
         condition: service_started
       gateway-platform:
@@ -100,46 +88,6 @@ services:
     ports:
       - "30001:30001"
     depends_on:
-      redis:
-        condition: service_started
-      kafka-setup:
-        condition: service_started
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
-    networks:
-      - tr-network
-
-  inventory-service:
-    image: ${DOCKERHUB_USERNAME}/tr-inventory:latest
-    container_name: tr-inventory-service
-    env_file:
-      - ./.env
-    ports:
-      - "30002:30002"
-    depends_on:
-      redis:
-        condition: service_started
-      kafka-setup:
-        condition: service_started
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
-    networks:
-      - tr-network
-
-  reservation-service:
-    image: ${DOCKERHUB_USERNAME}/tr-reservation:latest
-    container_name: tr-reservation-service
-    env_file:
-      - ./.env
-    ports:
-      - "30003:30003"
-    depends_on:
-      redis:
-        condition: service_started
       kafka-setup:
         condition: service_started
       registry:
@@ -173,6 +121,51 @@ services:
       - ./.env
     ports:
       - "33333:33333"
+    depends_on:
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  notification-service:
+    image: ${DOCKERHUB_USERNAME}/tr-notification:latest
+    container_name: tr-notification-service
+    env_file:
+      - ./.env
+    ports:
+      - "34444:34444"
+    depends_on:
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  subscription-service:
+    image: ${DOCKERHUB_USERNAME}/tr-subscription:latest
+    container_name: tr-subscription-service
+    env_file:
+      - ./.env
+    ports:
+      - "35555:35555"
+    depends_on:
+      registry:
+        condition: service_started
+      gateway-platform:
+        condition: service_started
+    networks:
+      - tr-network
+
+  hot-busking-service:
+    image: ${DOCKERHUB_USERNAME}/tr-hot-busking:latest
+    container_name: tr-hot-busking-service
+    env_file:
+      - ./.env
+    ports:
+      - "36666:36666"
     depends_on:
       registry:
         condition: service_started

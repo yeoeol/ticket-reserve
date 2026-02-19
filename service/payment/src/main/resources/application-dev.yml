@@ -1,0 +1,30 @@
+server:
+  port: 30004
+
+spring:
+  datasource:
+    url: ${PAYMENT_DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${PAYMENT_DB_USERNAME}
+    password: ${PAYMENT_DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+
+payment:
+  client-key: ${PAYMENT_CLIENT_KEY}
+  secret-key: ${PAYMENT_SECRET_KEY}
+  base-url: https://api.tosspayments.com
+  confirm-endpoint: /confirm
+  gateway-url: ${GATEWAY_URL}
