@@ -19,9 +19,12 @@ import ticket.reserve.subscription.domain.Subscription;
 import ticket.reserve.subscription.domain.repository.BuskingSubscriptionCountRepository;
 import ticket.reserve.subscription.domain.repository.SubscriptionRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor
@@ -100,6 +103,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         List<Long> buskingIds = subscriptionQueryService.findBuskingIdsByUserIdWithActivated(userId);
 
         return buskingPort.getAllByBuskingIds(buskingIds).stream()
+                .sorted(comparing(BuskingResponseDto::startTime).reversed())
                 .map(busking -> busking.withSubscribed(true))
                 .toList();
     }
@@ -109,4 +113,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .map(BuskingSubscriptionCount::getSubscriptionCount)
                 .orElse(0L);
     }
+
+
 }
