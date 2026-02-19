@@ -16,13 +16,21 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
 
     private final NotificationRepository notificationRepository;
 
+    @Override
     @Transactional(readOnly = true)
     public List<Notification> findByStatus(NotificationStatus status) {
         return notificationRepository.findByStatus(status);
     }
 
-    @Transactional
+    @Override
+    @Transactional(readOnly = true)
     public List<Notification> findAllByIds(List<Long> notificationIds) {
         return notificationRepository.findAllById(notificationIds);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notification> findHistoriesByUserId(Long userId) {
+        return notificationRepository.findAllByReceiverIdOrderByCreatedAtDesc(userId);
     }
 }

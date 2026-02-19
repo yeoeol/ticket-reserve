@@ -1,5 +1,7 @@
 package ticket.reserve.user.presentation.api;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import ticket.reserve.user.application.dto.response.UserLoginResponseDto;
 import ticket.reserve.user.application.dto.response.UserResponseDto;
 import ticket.reserve.user.application.dto.request.UserUpdateRequestDto;
 import ticket.reserve.user.application.UserService;
+import ticket.reserve.user.global.util.CookieUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +39,17 @@ public class UserApiController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDto> login(
-            @Valid @RequestBody UserLoginRequestDto requestDto
+            @Valid @RequestBody UserLoginRequestDto requestDto,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(userService.login(requestDto.username(), requestDto.password()));
+        UserLoginResponseDto loginResponseDto = userService.login(requestDto.username(), requestDto.password());
+
+        Cookie accessTokenCookie = CookieUtil.setHttpOnlyCookie(
+                "accessToken", loginResponseDto.accessToken(), 60 * 60 * 24 // 1일
+        );
+        response.addCookie(accessTokenCookie);
+
+        return ResponseEntity.ok(loginResponseDto);
     }
 
     @PostMapping("/logout")
