@@ -53,4 +53,4 @@ eureka:
 
 firebase:
   service-account:
-    path: "/firebase/service-account.json"
+    json: ${FIREBASE_SERVICE_ACCOUNT_JSON}

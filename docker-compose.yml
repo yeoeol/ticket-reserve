@@ -1,31 +1,23 @@
 services:
-#  redis:
-#    image: redis:alpine
-#    container_name: tr-redis
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      - tr-network
-
-#  zookeeper:
-#    image: confluentinc/cp-zookeeper:7.5.0
-#    container_name: tr-zookeeper
-#    environment:
-#      ZOOKEEPER_CLIENT_PORT: 2181
-#      ZOOKEEPER_TICK_TIME: 2000
-#    networks:
-#      - tr-network
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: tr-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - tr-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: tr-kafka
-#    depends_on:
-#      - zookeeper
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
-#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
@@ -81,8 +73,6 @@ services:
     ports:
       - "30000:30000"
     depends_on:
-#      redis:
-#        condition: service_started
       registry:
         condition: service_started
       gateway-platform:
@@ -98,8 +88,6 @@ services:
     ports:
       - "30001:30001"
     depends_on:
-#      redis:
-#        condition: service_started
       kafka-setup:
         condition: service_started
       registry:
