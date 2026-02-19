@@ -31,6 +31,6 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
     @Override
     @Transactional(readOnly = true)
     public List<Notification> findHistoriesByUserId(Long userId) {
-        return notificationRepository.findAllByReceiverId(userId);
+        return notificationRepository.findAllByReceiverIdOrderByCreatedAtDesc(userId);
     }
 }
