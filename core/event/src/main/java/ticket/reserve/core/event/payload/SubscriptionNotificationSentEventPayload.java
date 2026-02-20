@@ -12,6 +12,8 @@ import java.util.Set;
 @ToString
 public class SubscriptionNotificationSentEventPayload implements EventPayload {
     private Long buskingId;
+    private String title;
+    private String location;
     private Set<Long> userIds;
     private long remainingMinutes;
 }

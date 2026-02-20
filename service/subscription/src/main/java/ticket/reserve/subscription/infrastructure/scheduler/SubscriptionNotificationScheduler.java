@@ -43,7 +43,14 @@ public class SubscriptionNotificationScheduler {
             if (targetUserIds == null || targetUserIds.isEmpty()) continue;
 
             // 알림 발송 이벤트 발행 및 구독 엔티티 알림 여부 변경
-            notificationPublishService.publishNotificationEvent(target.buskingId(), targetUserIds, max(0, remainingMinutes));
+            notificationPublishService.publishNotificationEvent(
+                    target.buskingId(),
+                    target.title(),
+                    target.location(),
+                    targetUserIds,
+                    max(0, remainingMinutes)
+            );
+
             // 스케줄링 목록에서 제거
             notificationSchedulePort.removeFromNotificationSchedule(target.buskingId());
         }

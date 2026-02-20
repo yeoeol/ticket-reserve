@@ -17,11 +17,13 @@ public class NotificationPublishService {
     private final SubscriptionService subscriptionService;
 
     @Transactional
-    public void publishNotificationEvent(Long buskingId, Set<Long> userIds, long remainingMinutes) {
+    public void publishNotificationEvent(Long buskingId, String title, String location, Set<Long> userIds, long remainingMinutes) {
         outboxEventPublisher.publish(
                 EventType.SUBSCRIPTION_NOTIFICATION_SENT,
                 SubscriptionNotificationSentEventPayload.builder()
                         .buskingId(buskingId)
+                        .title(title)
+                        .location(location)
                         .userIds(userIds)
                         .remainingMinutes(remainingMinutes)
                         .build(),
