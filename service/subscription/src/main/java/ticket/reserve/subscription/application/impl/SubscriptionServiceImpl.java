@@ -64,6 +64,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                         .subscriptionId(subscription.getId())
                         .userId(subscription.getUserId())
                         .buskingId(subscription.getBuskingId())
+                        .title(request.title())
+                        .location(request.location())
                         .startTime(subscription.getStartTime())
                         .buskingSubscriptionCount(count(subscription.getBuskingId()))
                         .build(),
