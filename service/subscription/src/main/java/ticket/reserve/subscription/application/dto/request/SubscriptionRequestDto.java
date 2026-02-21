@@ -1,6 +1,5 @@
 package ticket.reserve.subscription.application.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.subscription.domain.Subscription;
@@ -11,10 +10,6 @@ import java.time.LocalDateTime;
 public record SubscriptionRequestDto(
         @NotNull(message = "{busking.id.not_null}")
         Long buskingId,
-        @NotBlank(message = "{busking.title.not_blank}")
-        String title,
-        @NotBlank(message = "{busking.location.not_blank}")
-        String location,
         @NotNull(message = "{user.id.not_null}")
         Long userId,
         @NotNull(message = "{busking.startTime.not_null}")

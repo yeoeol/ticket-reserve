@@ -31,8 +31,9 @@ public class SubscriptionNotificationSentEventHandler implements EventHandler<Su
     }
 
     private String generateBody(SubscriptionNotificationSentEventPayload payload) {
+        String title = payload.getTitle() != null ? payload.getTitle() : "버스킹";
         return "[구독 알림] %s이(가) %d분 후 시작합니다!"
-                .formatted(payload.getTitle(), payload.getRemainingMinutes());
+                .formatted(title, payload.getRemainingMinutes());
     }
 
     @Override

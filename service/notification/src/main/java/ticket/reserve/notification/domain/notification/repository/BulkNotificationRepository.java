@@ -36,7 +36,8 @@ public class BulkNotificationRepository {
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE " +
                             "status = VALUES(status), " +
-                            "retry_count = VALUES(retry_count)";
+                            "retry_count = VALUES(retry_count), " +
+                            "updated_at = VALUES(updated_at)";
 
         return batchExecute(notifications, sql);
     }

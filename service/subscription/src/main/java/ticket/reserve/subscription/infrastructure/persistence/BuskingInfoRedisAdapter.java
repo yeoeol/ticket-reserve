@@ -1,6 +1,7 @@
 package ticket.reserve.subscription.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BuskingInfoRedisAdapter implements BuskingInfoPort {
@@ -26,6 +28,8 @@ public class BuskingInfoRedisAdapter implements BuskingInfoPort {
 
         if (buskingNotificationTargetJson != null) {
             redisTemplate.opsForValue().set(generateKey(buskingId), buskingNotificationTargetJson);
+        } else {
+            log.warn("[BuskingInfoRedisAdapter.createOrUpdate] buskingId={} 직렬화 실패", buskingId);
         }
     }
 
