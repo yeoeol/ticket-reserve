@@ -23,7 +23,12 @@ public class BuskingInfoRedisAdapter implements BuskingInfoPort {
 
     @Override
     public void createOrUpdate(Long buskingId, String title, String location, LocalDateTime startTime) {
-        BuskingNotificationTarget target = new BuskingNotificationTarget(buskingId, title, location, startTime);
+        BuskingNotificationTarget target = BuskingNotificationTarget.of(
+                buskingId,
+                title,
+                location,
+                startTime
+        );
         String buskingNotificationTargetJson = DataSerializer.serialize(target);
 
         if (buskingNotificationTargetJson != null) {
