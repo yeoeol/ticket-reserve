@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
+import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
 import ticket.reserve.subscription.application.port.out.NotificationSchedulePort;
 import ticket.reserve.subscription.global.util.TimeConverterUtil;
 
@@ -20,6 +21,7 @@ import static ticket.reserve.subscription.global.util.TimeConverterUtil.convertT
 @RequiredArgsConstructor
 public class NotificationScheduleRedisAdapter implements NotificationSchedulePort {
 
+    private final BuskingInfoPort buskingInfoPort;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${app.redis.notification-schedule-key:busking:notification_schedule}")
@@ -33,10 +35,17 @@ public class NotificationScheduleRedisAdapter implements NotificationSchedulePor
 
         return results.stream()
                 .filter(NotificationScheduleRedisAdapter::isNotNull)
-                .map(tuple -> BuskingNotificationTarget.of(
-                        Long.valueOf(tuple.getValue()),
-                        convertToLocalDateTime(tuple.getScore().longValue())
-                ))
+                .map(tuple -> {
+                    Long buskingId = Long.valueOf(tuple.getValue());
+                    BuskingNotificationTarget target = buskingInfoPort.read(buskingId);
+
+                    return BuskingNotificationTarget.of(
+                            buskingId,
+                            target.title(),
+                            target.location(),
+                            convertToLocalDateTime(tuple.getScore().longValue())
+                    );
+                })
                 .collect(Collectors.toSet());
     }
 

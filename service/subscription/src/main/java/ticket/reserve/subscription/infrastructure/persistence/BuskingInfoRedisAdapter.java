@@ -8,7 +8,6 @@ import ticket.reserve.core.dataserializer.DataSerializer;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Repository
@@ -21,12 +20,22 @@ public class BuskingInfoRedisAdapter implements BuskingInfoPort {
     private String buskingInfoKey;
 
     @Override
-    public void createOrUpdate(Long buskingId, String title, String location, LocalDateTime startTime, Duration ttl) {
+    public void createOrUpdate(Long buskingId, String title, String location, LocalDateTime startTime) {
         BuskingNotificationTarget target = new BuskingNotificationTarget(buskingId, title, location, startTime);
         String buskingNotificationTargetJson = DataSerializer.serialize(target);
 
         if (buskingNotificationTargetJson != null) {
-            redisTemplate.opsForValue().set(generateKey(buskingId), buskingNotificationTargetJson, ttl);
+            redisTemplate.opsForValue().set(generateKey(buskingId), buskingNotificationTargetJson);
+        }
+    }
+
+    @Override
+    public BuskingNotificationTarget read(Long buskingId) {
+        String result = redisTemplate.opsForValue().get(generateKey(buskingId));
+        if (result != null) {
+            return DataSerializer.deserialize(result, BuskingNotificationTarget.class);
+        } else {
+            return null;
         }
     }
 
