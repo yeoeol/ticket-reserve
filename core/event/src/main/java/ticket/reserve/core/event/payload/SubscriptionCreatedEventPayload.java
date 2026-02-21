@@ -14,6 +14,8 @@ public class SubscriptionCreatedEventPayload implements EventPayload {
     private Long subscriptionId;
     private Long userId;
     private Long buskingId;
+    private String title;
+    private String location;
     private LocalDateTime startTime;
     private Long buskingSubscriptionCount;
 }

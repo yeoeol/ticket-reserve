@@ -21,13 +21,19 @@ public class SubscriptionNotificationSentEventHandler implements EventHandler<Su
         if (payload.getUserIds().isEmpty()) return;
 
         String title = "버스킹 시작 전 알림";
-        String body = "[구독 알림] 버스킹이 %d분 후 시작합니다!".formatted(payload.getRemainingMinutes());
+        String body = generateBody(payload);
         notificationService.sendBulkNotification(
                 title, body, payload.getBuskingId(), payload.getUserIds()
         );
 
         log.info("[SubscriptionNotificationSentEventHandler.handle] 버스킹 시작 전 알림 발송 " +
                 "- buskingId={} : 총 알림 {}건", payload.getBuskingId(), payload.getUserIds().size());
+    }
+
+    private String generateBody(SubscriptionNotificationSentEventPayload payload) {
+        String title = payload.getTitle() != null ? payload.getTitle() : "버스킹";
+        return "[구독 알림] %s이(가) %d분 후 시작합니다!"
+                .formatted(title, payload.getRemainingMinutes());
     }
 
     @Override

@@ -13,7 +13,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     implementation project(':core:event')
+    implementation project(':core:data-serializer')
     implementation project(':core:global')
     implementation project(':core:outbox-message-relay')
+    implementation project(':core:inbox')
     implementation project(':core:tsid')
 }
