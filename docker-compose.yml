@@ -22,6 +22,11 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - tr-network
 
@@ -30,7 +35,8 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     container_name: tr-kafka-setup
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
     networks:
       - tr-network
     entrypoint: [ "sh", "-c", "
@@ -49,6 +55,12 @@ services:
     container_name: tr-registry
     ports:
       - "8761:8761"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - tr-network
 
@@ -61,7 +73,7 @@ services:
       - "80:80"
     depends_on:
       registry:
-        condition: service_started
+        condition: service_healthy
     networks:
       - tr-network
 
@@ -74,9 +86,15 @@ services:
       - "30000:30000"
     depends_on:
       registry:
-        condition: service_started
+        condition: service_healthy
       gateway-platform:
         condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:30000/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     networks:
       - tr-network
 
@@ -88,12 +106,16 @@ services:
     ports:
       - "30001:30001"
     depends_on:
+      user-service:
+        condition: service_healthy
       kafka-setup:
         condition: service_started
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:30001/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     networks:
       - tr-network
 
@@ -105,12 +127,8 @@ services:
     ports:
       - "30004:30004"
     depends_on:
-      kafka-setup:
-        condition: service_started
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+      user-service:
+        condition: service_healthy
     networks:
       - tr-network
 
@@ -122,10 +140,8 @@ services:
     ports:
       - "33333:33333"
     depends_on:
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+      busking-service:
+        condition: service_healthy
     networks:
       - tr-network
 
@@ -137,10 +153,8 @@ services:
     ports:
       - "34444:34444"
     depends_on:
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+      subscription-service:
+        condition: service_healthy
     networks:
       - tr-network
 
@@ -152,10 +166,14 @@ services:
     ports:
       - "35555:35555"
     depends_on:
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+      busking-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:35555/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     networks:
       - tr-network
 
@@ -167,10 +185,8 @@ services:
     ports:
       - "36666:36666"
     depends_on:
-      registry:
-        condition: service_started
-      gateway-platform:
-        condition: service_started
+      busking-service:
+        condition: service_healthy
     networks:
       - tr-network
 
