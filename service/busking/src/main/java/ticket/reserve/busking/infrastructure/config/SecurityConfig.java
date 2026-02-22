@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/buskings/css/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/buskings", "/api/buskings/{id:\\d+}", "/api/buskings/ids", "/buskings", "/buskings/{id:\\d+}").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new HeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
