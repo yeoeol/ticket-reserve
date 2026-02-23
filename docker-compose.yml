@@ -23,10 +23,11 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: [ "CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092" ]
-      interval: 10s
-      timeout: 5s
+      test: [ "CMD-SHELL", "nc -z localhost 9092 || exit 1" ]
+      interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 60s
     networks:
       - tr-network
 
@@ -36,7 +37,7 @@ services:
     container_name: tr-kafka-setup
     depends_on:
       kafka:
-        condition: service_healthy
+        condition: service_started
     networks:
       - tr-network
     entrypoint: [ "sh", "-c", "
@@ -55,12 +56,14 @@ services:
     container_name: tr-registry
     ports:
       - "8761:8761"
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m # 레지스트리도 메모리 제한 추가
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 10s
       retries: 10
-      start_period: 30s
+      start_period: 60s
     networks:
       - tr-network
 
@@ -69,11 +72,13 @@ services:
     container_name: tr-gateway-platform
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "80:80"
     depends_on:
       registry:
-        condition: service_healthy
+        condition: service_started
     networks:
       - tr-network
 
@@ -82,19 +87,19 @@ services:
     container_name: tr-user-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "30000:30000"
     depends_on:
       registry:
-        condition: service_healthy
-      gateway-platform:
         condition: service_started
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:30000/actuator/health" ]
-      interval: 15s
-      timeout: 5s
+      interval: 30s
+      timeout: 15s
       retries: 5
-      start_period: 40s
+      start_period: 120s
     networks:
       - tr-network
 
@@ -103,19 +108,19 @@ services:
     container_name: tr-busking-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "30001:30001"
     depends_on:
       user-service:
-        condition: service_healthy
-      kafka-setup:
         condition: service_started
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:30001/actuator/health" ]
-      interval: 15s
-      timeout: 5s
+      interval: 30s
+      timeout: 15s
       retries: 5
-      start_period: 40s
+      start_period: 120s
     networks:
       - tr-network
 
@@ -124,11 +129,19 @@ services:
     container_name: tr-payment-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "30004:30004"
     depends_on:
-      user-service:
-        condition: service_healthy
+      busking-service:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:30004/actuator/health" ]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 120s
     networks:
       - tr-network
 
@@ -137,11 +150,19 @@ services:
     container_name: tr-image-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "33333:33333"
     depends_on:
-      busking-service:
-        condition: service_healthy
+      payment-service:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:33333/actuator/health" ]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 120s
     networks:
       - tr-network
 
@@ -150,11 +171,19 @@ services:
     container_name: tr-notification-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "34444:34444"
     depends_on:
-      subscription-service:
-        condition: service_healthy
+      image-service:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:34444/actuator/health" ]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 120s
     networks:
       - tr-network
 
@@ -163,17 +192,19 @@ services:
     container_name: tr-subscription-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "35555:35555"
     depends_on:
-      busking-service:
-        condition: service_healthy
+      notification-service:
+        condition: service_started
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:35555/actuator/health" ]
-      interval: 15s
-      timeout: 5s
+      interval: 30s
+      timeout: 15s
       retries: 5
-      start_period: 40s
+      start_period: 150s
     networks:
       - tr-network
 
@@ -182,11 +213,13 @@ services:
     container_name: tr-hot-busking-service
     env_file:
       - ./.env
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "36666:36666"
     depends_on:
-      busking-service:
-        condition: service_healthy
+      subscription-service:
+        condition: service_started
     networks:
       - tr-network
 
