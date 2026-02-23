@@ -65,8 +65,11 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 10m
           script: |
             cd /home/${{ secrets.EC2_USERNAME }}/app
+            
+            docker compose pull
             
             docker compose up -d zookeeper kafka registry
             sleep 30
