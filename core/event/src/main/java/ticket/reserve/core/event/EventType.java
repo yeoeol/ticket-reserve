@@ -12,6 +12,7 @@ public enum EventType {
 
     PAYMENT_CONFIRMED(PaymentConfirmedEventPayload.class, Topic.TICKET_RESERVE_PAYMENT),
     BUSKING_CREATED(BuskingCreatedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
+    BUSKING_DELETED(BuskingDeletedEventPayload.class, Topic.TICKET_RESERVE_BUSKING),
     RESERVATION_EXPIRED(ReservationExpiredPayload.class, Topic.TICKET_RESERVE_RESERVATION),
     SUBSCRIPTION_NOTIFICATION_SENT(SubscriptionNotificationSentEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),
     SUBSCRIPTION_CREATED(SubscriptionCreatedEventPayload.class, Topic.TICKET_RESERVE_SUBSCRIPTION),

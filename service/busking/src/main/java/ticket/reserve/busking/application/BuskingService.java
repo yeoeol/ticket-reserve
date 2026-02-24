@@ -10,11 +10,10 @@ import java.util.List;
 public interface BuskingService {
     BuskingResponseDto create(BuskingRequestDto request, MultipartFile file);
 
-    List<BuskingResponseDto> getAll();
+    void delete(Long id);
 
     BuskingResponseDto getOne(Long buskingId, Long userId);
 
     void update(Long id, BuskingUpdateRequestDto request);
 
-    List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds);
 }

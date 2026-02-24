@@ -37,6 +37,7 @@ public class BuskingServiceImpl implements BuskingService {
     private final ImagePort imagePort;
     private final SubscriptionPort subscriptionPort;
 
+    @Override
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
 
@@ -75,10 +76,11 @@ public class BuskingServiceImpl implements BuskingService {
         }
     }
 
-    public List<BuskingResponseDto> getAll() {
-        return buskingRepository.findAll().stream()
-                .map(BuskingResponseDto::from)
-                .toList();
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Busking busking = buskingQueryService.findById(id);
+        buskingRepository.delete(busking);
     }
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {
@@ -90,6 +92,7 @@ public class BuskingServiceImpl implements BuskingService {
         );
     }
 
+    @Override
     @Transactional
     public void update(Long id, BuskingUpdateRequestDto request) {
         Busking busking = buskingQueryService.findById(id);
@@ -97,12 +100,5 @@ public class BuskingServiceImpl implements BuskingService {
                 request.title(), request.description(), request.location(),
                 request.startTime(), request.endTime()
         );
-    }
-
-    @Transactional(readOnly = true)
-    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
-        return buskingRepository.findAllByIdIn(buskingIds).stream()
-                .map(BuskingResponseDto::from)
-                .toList();
     }
 }
