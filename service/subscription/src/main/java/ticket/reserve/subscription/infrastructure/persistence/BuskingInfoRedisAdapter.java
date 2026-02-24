@@ -48,6 +48,11 @@ public class BuskingInfoRedisAdapter implements BuskingInfoPort {
         }
     }
 
+    @Override
+    public void delete(Long buskingId) {
+        redisTemplate.delete(generateKey(buskingId));
+    }
+
     private String generateKey(Long buskingId) {
         return buskingInfoKey.formatted(buskingId);
     }

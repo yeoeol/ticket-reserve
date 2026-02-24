@@ -13,4 +13,8 @@ public interface BuskingInfoPort {
      *  버스킹 정보 조회
      */
     BuskingNotificationTarget read(Long buskingId);
+    /**
+     * 버스킹 정보 삭제
+     */
+    void delete(Long buskingId);
 }

@@ -5,8 +5,6 @@ import ticket.reserve.busking.application.dto.request.BuskingUpdateRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 
-import java.util.List;
-
 public interface BuskingService {
     BuskingResponseDto create(BuskingRequestDto request, MultipartFile file);
 
