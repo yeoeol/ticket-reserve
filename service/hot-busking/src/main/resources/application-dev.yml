@@ -7,6 +7,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${HOT_BUSKING_DB_USERNAME}
     password: ${HOT_BUSKING_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
 
   jpa:
     open-in-view: false
