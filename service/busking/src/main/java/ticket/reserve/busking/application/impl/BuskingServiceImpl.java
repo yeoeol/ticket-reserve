@@ -77,10 +77,17 @@ public class BuskingServiceImpl implements BuskingService {
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         Busking busking = buskingQueryService.findById(id);
-        buskingRepository.delete(busking);
+        try {
+            buskingPublishService.publishBuskingDeletedEvent(busking);
+            notificationSchedulePort.removeToNotificationSchedule(busking.getId());
+            if (!busking.getBuskingImages().isEmpty()) {
+                imagePort.deleteImage(busking.getBuskingImages().getFirst().getId());
+            }
+        } catch (Exception e) {
+            log.error("[BuskingService.delete] 버스킹 삭제 실패", e);
+        }
     }
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {

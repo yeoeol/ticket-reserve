@@ -24,4 +24,9 @@ public class NotificationScheduleRedisAdapter implements NotificationSchedulePor
         long startTimeMillis = TimeConverterUtil.convertToMilli(startTime);
         redisTemplate.opsForZSet().add(notificationScheduleKey, String.valueOf(buskingId), startTimeMillis);
     }
+
+    @Override
+    public void removeToNotificationSchedule(Long buskingId) {
+        redisTemplate.opsForZSet().remove(notificationScheduleKey, String.valueOf(buskingId));
+    }
 }

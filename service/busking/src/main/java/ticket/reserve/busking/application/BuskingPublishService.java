@@ -35,4 +35,23 @@ public class BuskingPublishService {
         );
         return savedBusking;
     }
+
+    @Transactional
+    public void publishBuskingDeletedEvent(Busking busking) {
+        buskingRepository.delete(busking);
+        outboxEventPublisher.publish(
+                EventType.BUSKING_DELETED,
+                BuskingCreatedEventPayload.builder()
+                        .buskingId(busking.getId())
+                        .title(busking.getTitle())
+                        .description(busking.getDescription())
+                        .location(busking.getLocation())
+                        .startTime(busking.getStartTime())
+                        .endTime(busking.getEndTime())
+                        .latitude(busking.getCoordinate().getY())
+                        .longitude(busking.getCoordinate().getX())
+                        .build(),
+                busking.getId()
+        );
+    }
 }
