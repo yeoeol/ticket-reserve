@@ -44,17 +44,6 @@ public class HotBuskingListRepository {
     }
 
     public void remove(Long buskingId) {
-        try {
-            Long result = redisTemplate.opsForZSet()
-                    .remove(hotBuskingListKey, String.valueOf(buskingId));
-
-            if (result != null && result > 0) {
-                log.info("[HotBuskingListRepository.remove] 성공: buskingId={}", buskingId);
-            } else {
-                log.warn("[HotBuskingListRepository.remove] 삭제 대상 없음: buskingId={}", buskingId);
-            }
-        } catch (Exception e) {
-            log.error("[HotBuskingListRepository.remove] 실패: buskingId={}, error={}", buskingId, e.getMessage());
-        }
+        redisTemplate.opsForZSet().remove(hotBuskingListKey, String.valueOf(buskingId));
     }
 }

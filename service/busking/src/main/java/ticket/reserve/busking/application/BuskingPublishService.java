@@ -3,6 +3,7 @@ package ticket.reserve.busking.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.event.EventType;
@@ -15,6 +16,7 @@ public class BuskingPublishService {
 
     private final BuskingRepository buskingRepository;
     private final OutboxEventPublisher outboxEventPublisher;
+    private final ImagePort imagePort;
 
     @Transactional
     public Busking publishBuskingCreatedEvent(Busking busking) {

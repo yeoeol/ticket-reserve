@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
+import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.inbox.Inbox;
 import ticket.reserve.core.inbox.InboxRepository;
 import ticket.reserve.core.tsid.IdGenerator;
@@ -41,12 +42,21 @@ public class HotBuskingService {
             return;
         }
 
+
         try {
-            hotBuskingScoreUpdater.update(event, eventHandler);
+            if (isBuskingDeleted(event)) {
+                eventHandler.handle(event);
+            } else {
+                hotBuskingScoreUpdater.update(event, eventHandler);
+            }
             inboxRepository.saveAndFlush(Inbox.create(idGenerator, event.getEventId(), event.getType()));
         } catch (DataIntegrityViolationException e) {
             log.warn("[HotBuskingService.handleEvent] 중복 이벤트 감지: eventId={}, eventType={}", event.getEventId(), event.getType());
         }
+    }
+
+    private boolean isBuskingDeleted(Event<EventPayload> event) {
+        return EventType.BUSKING_DELETED == event.getType();
     }
 
     private EventHandler<EventPayload> findEventHandler(Event<EventPayload> event) {
