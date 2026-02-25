@@ -67,14 +67,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public void removeSubscriptionData(Long buskingId) {
-        // 알림 스케줄 목록에서 삭제
-        notificationSchedulePort.removeFromNotificationSchedule(buskingId);
-        // 버스킹 정보 삭제
-        buskingInfoPort.delete(buskingId);
         // 구독 정보 삭제 (DB)
         subscriptionRepository.deleteAllByBuskingId(buskingId);
         // 구독 개수 정보 삭제 (DB)
         buskingSubscriptionCountRepository.deleteById(buskingId);
+
+        // 알림 스케줄 목록에서 삭제
+        notificationSchedulePort.removeFromNotificationSchedule(buskingId);
+        // 버스킹 정보 삭제
+        buskingInfoPort.delete(buskingId);
     }
 }
