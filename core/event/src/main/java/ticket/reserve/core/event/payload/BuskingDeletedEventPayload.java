@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class BuskingCreatedEventPayload implements EventPayload {
+public class BuskingDeletedEventPayload implements EventPayload {
 
     private Long buskingId;
     private String title;

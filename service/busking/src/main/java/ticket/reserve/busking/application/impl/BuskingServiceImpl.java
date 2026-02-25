@@ -16,13 +16,10 @@ import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.application.port.out.NotificationSchedulePort;
 import ticket.reserve.busking.application.port.out.SubscriptionPort;
 import ticket.reserve.busking.domain.busking.Busking;
-import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.busking.domain.buskingimage.enums.ImageType;
 import ticket.reserve.core.global.exception.CustomException;
 import ticket.reserve.core.global.exception.ErrorCode;
 import ticket.reserve.core.tsid.IdGenerator;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -32,11 +29,11 @@ public class BuskingServiceImpl implements BuskingService {
     private final IdGenerator idGenerator;
     private final BuskingPublishService buskingPublishService;
     private final BuskingQueryService buskingQueryService;
-    private final BuskingRepository buskingRepository;
     private final NotificationSchedulePort notificationSchedulePort;
     private final ImagePort imagePort;
     private final SubscriptionPort subscriptionPort;
 
+    @Override
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
         Busking busking = request.toEntity(idGenerator);
 
@@ -46,7 +43,8 @@ public class BuskingServiceImpl implements BuskingService {
             imageResponse = imagePort.uploadImage(file);
             if (imageResponse != null) {
                 busking.addEventImage(
-                        idGenerator, imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
+                        idGenerator, imageResponse.getImageId(),
+                        imageResponse.getOriginalFileName(), imageResponse.getStoredPath(),
                         ImageType.THUMBNAIL, 1
                 );
             }
@@ -75,10 +73,19 @@ public class BuskingServiceImpl implements BuskingService {
         }
     }
 
-    public List<BuskingResponseDto> getAll() {
-        return buskingRepository.findAll().stream()
-                .map(BuskingResponseDto::from)
-                .toList();
+    @Override
+    public void delete(Long id) {
+        Busking busking = buskingQueryService.findById(id);
+        try {
+            if (!busking.getBuskingImages().isEmpty()) {
+                imagePort.deleteImage(busking.getBuskingImages().getFirst().getImageId());
+            }
+
+            buskingPublishService.publishBuskingDeletedEvent(busking);
+            notificationSchedulePort.removeToNotificationSchedule(busking.getId());
+        } catch (Exception e) {
+            log.error("[BuskingService.delete] 버스킹 삭제 실패", e);
+        }
     }
 
     public BuskingResponseDto getOne(Long buskingId, Long userId) {
@@ -90,6 +97,7 @@ public class BuskingServiceImpl implements BuskingService {
         );
     }
 
+    @Override
     @Transactional
     public void update(Long id, BuskingUpdateRequestDto request) {
         Busking busking = buskingQueryService.findById(id);
@@ -97,12 +105,5 @@ public class BuskingServiceImpl implements BuskingService {
                 request.title(), request.description(), request.location(),
                 request.startTime(), request.endTime()
         );
-    }
-
-    @Transactional(readOnly = true)
-    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
-        return buskingRepository.findAllByIdIn(buskingIds).stream()
-                .map(BuskingResponseDto::from)
-                .toList();
     }
 }

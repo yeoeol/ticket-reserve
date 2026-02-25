@@ -19,6 +19,9 @@ public class BuskingImage extends BaseTimeEntity {
     @Id
     @Column(name = "busking_image_id")
     private Long id;
+
+    private Long imageId;
+
     private String originalFileName;
     private String storedPath;
 
@@ -32,10 +35,11 @@ public class BuskingImage extends BaseTimeEntity {
 
     @Builder
     private BuskingImage(
-            IdGenerator idGenerator, String originalFileName, String storedPath,
+            IdGenerator idGenerator, Long imageId, String originalFileName, String storedPath,
             ImageType type, Integer sortOrder, Busking busking
     ) {
         this.id = idGenerator.nextId();
+        this.imageId = imageId;
         this.originalFileName = originalFileName;
         this.storedPath = storedPath;
         this.type = type;
@@ -44,11 +48,12 @@ public class BuskingImage extends BaseTimeEntity {
     }
 
     public static BuskingImage create(
-            IdGenerator idGenerator, String originalFileName, String storedPath,
+            IdGenerator idGenerator, Long imageId, String originalFileName, String storedPath,
             ImageType type, Integer sortOrder, Busking busking
     ) {
         return BuskingImage.builder()
                 .idGenerator(idGenerator)
+                .imageId(imageId)
                 .originalFileName(originalFileName)
                 .storedPath(storedPath)
                 .type(type)

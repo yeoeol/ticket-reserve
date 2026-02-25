@@ -20,18 +20,14 @@ public class BuskingQueryServiceImpl implements BuskingQueryService {
     private final BuskingRepository buskingRepository;
     private final SearchService searchService;
 
+    @Override
     @Transactional(readOnly = true)
     public Busking findById(Long id) {
         return buskingRepository.findByIdWithImage(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.BUSKING_NOT_FOUND));
     }
 
-    @Transactional
-    public void delete(Long id) {
-        Busking busking = findById(id);
-        buskingRepository.delete(busking);
-    }
-
+    @Override
     @Transactional(readOnly = true)
     public List<Long> getIds() {
         return buskingRepository.findIds();
@@ -41,5 +37,21 @@ public class BuskingQueryServiceImpl implements BuskingQueryService {
     @Transactional(readOnly = true)
     public List<BuskingResponseDto> readAllWithCursor(Long lastBuskingId, int size) {
         return searchService.readAllWithCursor(lastBuskingId, size);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BuskingResponseDto> getAll() {
+        return buskingRepository.findAll().stream()
+                .map(BuskingResponseDto::from)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BuskingResponseDto> findAllByBulk(List<Long> buskingIds) {
+        return buskingRepository.findAllByIdIn(buskingIds).stream()
+                .map(BuskingResponseDto::from)
+                .toList();
     }
 }

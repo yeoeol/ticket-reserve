@@ -12,7 +12,9 @@ import ticket.reserve.subscription.application.dto.response.BuskingNotificationT
 import ticket.reserve.subscription.application.dto.response.BuskingResponseDto;
 import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
 import ticket.reserve.subscription.application.port.out.BuskingPort;
+import ticket.reserve.subscription.application.port.out.NotificationSchedulePort;
 import ticket.reserve.subscription.domain.Subscription;
+import ticket.reserve.subscription.domain.repository.BuskingSubscriptionCountRepository;
 import ticket.reserve.subscription.domain.repository.SubscriptionRepository;
 
 import java.util.List;
@@ -26,8 +28,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final SubscriptionQueryService subscriptionQueryService;
     private final SubscriptionRepository subscriptionRepository;
+    private final BuskingSubscriptionCountRepository buskingSubscriptionCountRepository;
     private final BuskingPort buskingPort;
     private final BuskingInfoPort buskingInfoPort;
+    private final NotificationSchedulePort notificationSchedulePort;
     private final SubscriptionUseCase subscriptionUseCase;
 
     @Override
@@ -60,5 +64,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .sorted(comparing(BuskingResponseDto::startTime).reversed())
                 .map(busking -> busking.withSubscribed(true))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void removeSubscriptionData(Long buskingId) {
+        // 구독 정보 삭제 (DB)
+        subscriptionRepository.deleteAllByBuskingId(buskingId);
+        // 구독 개수 정보 삭제 (DB)
+        buskingSubscriptionCountRepository.deleteById(buskingId);
+
+        // 알림 스케줄 목록에서 삭제
+        notificationSchedulePort.removeFromNotificationSchedule(buskingId);
+        // 버스킹 정보 삭제
+        buskingInfoPort.delete(buskingId);
     }
 }

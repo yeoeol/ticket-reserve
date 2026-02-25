@@ -74,11 +74,11 @@ public class Busking extends BaseTimeEntity {
     }
 
     public void addEventImage(
-            IdGenerator idGenerator, String originalFileName, String storedPath,
+            IdGenerator idGenerator, Long imageId, String originalFileName, String storedPath,
             ImageType type, Integer sortOrder
     ) {
         BuskingImage buskingImage = BuskingImage.create(
-                idGenerator, originalFileName, storedPath,
+                idGenerator, imageId, originalFileName, storedPath,
                 type, sortOrder, this
         );
         this.buskingImages.add(buskingImage);

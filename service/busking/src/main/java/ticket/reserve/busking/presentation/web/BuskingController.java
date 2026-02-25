@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ticket.reserve.busking.application.BuskingQueryService;
 import ticket.reserve.busking.application.dto.request.BuskingRequestDto;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.application.BuskingService;
@@ -18,10 +19,11 @@ import java.util.List;
 public class BuskingController {
 
     private final BuskingService buskingService;
+    private final BuskingQueryService buskingQueryService;
 
     @GetMapping
     public String getAll(Model model) {
-        List<BuskingResponseDto> buskingList = buskingService.getAll();
+        List<BuskingResponseDto> buskingList = buskingQueryService.getAll();
         model.addAttribute("buskingList", buskingList);
 
         return "busking-list";

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.hotbusking.application.port.out.HotBuskingListPort;
 import ticket.reserve.hotbusking.global.util.TimeCalculatorUtils;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.HotBuskingListRepository;
 
 import java.time.LocalDateTime;
 
@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BuskingCreatedEventHandler implements EventHandler<BuskingCreatedEventPayload> {
 
-    private final HotBuskingListRepository hotBuskingListRepository;
+    private final HotBuskingListPort hotBuskingListPort;
 
     private static final long HOT_BUSKING_COUNT = 5;
 
     @Override
     public void handle(Event<BuskingCreatedEventPayload> event) {
         BuskingCreatedEventPayload payload = event.getPayload();
-        hotBuskingListRepository.add(
+        hotBuskingListPort.add(
                 payload.getBuskingId(),
                 0L,
                 HOT_BUSKING_COUNT,

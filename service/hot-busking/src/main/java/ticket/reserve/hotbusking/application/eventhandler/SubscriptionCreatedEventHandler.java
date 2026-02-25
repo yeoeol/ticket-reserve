@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.SubscriptionCreatedEventPayload;
+import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
 import ticket.reserve.hotbusking.global.util.TimeCalculatorUtils;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.BuskingSubscriptionCountRepository;
 
 import java.time.LocalDateTime;
 
@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class SubscriptionCreatedEventHandler implements EventHandler<SubscriptionCreatedEventPayload> {
 
-    private final BuskingSubscriptionCountRepository buskingSubscriptionCountRepository;
+    private final BuskingSubscriptionCountPort buskingSubscriptionCountPort;
 
     @Override
     public void handle(Event<SubscriptionCreatedEventPayload> event) {
         SubscriptionCreatedEventPayload payload = event.getPayload();
-        buskingSubscriptionCountRepository.createOrUpdate(
+        buskingSubscriptionCountPort.createOrUpdate(
                 payload.getBuskingId(),
                 payload.getBuskingSubscriptionCount(),
                 TimeCalculatorUtils.calculateDurationToStartTime(payload.getStartTime())
