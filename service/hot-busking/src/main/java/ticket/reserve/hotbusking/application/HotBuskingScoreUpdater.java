@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.hotbusking.application.eventhandler.EventHandler;
+import ticket.reserve.hotbusking.application.port.out.HotBuskingListPort;
 import ticket.reserve.hotbusking.global.util.TimeCalculatorUtils;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.HotBuskingListRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class HotBuskingScoreUpdater {
 
-    private final HotBuskingListRepository hotBuskingListRepository;
+    private final HotBuskingListPort hotBuskingListPort;
     private final HotBuskingScoreCalculator hotBuskingScoreCalculator;
 
     private static final long HOT_BUSKING_COUNT = 5;
@@ -32,7 +32,7 @@ public class HotBuskingScoreUpdater {
         eventHandler.handle(event);
 
         long score = hotBuskingScoreCalculator.calculate(buskingId);
-        hotBuskingListRepository.add(
+        hotBuskingListPort.add(
                 buskingId,
                 score,
                 HOT_BUSKING_COUNT,

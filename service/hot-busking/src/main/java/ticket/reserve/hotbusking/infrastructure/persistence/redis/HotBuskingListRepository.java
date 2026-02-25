@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
+import ticket.reserve.hotbusking.application.port.out.HotBuskingListPort;
 
 import java.time.Duration;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class HotBuskingListRepository {
+public class HotBuskingListRepository implements HotBuskingListPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 

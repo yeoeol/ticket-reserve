@@ -14,7 +14,7 @@ import ticket.reserve.hotbusking.application.dto.response.HotBuskingResponseDto;
 import ticket.reserve.hotbusking.application.eventhandler.EventHandler;
 import ticket.reserve.hotbusking.application.port.out.BuskingPort;
 import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.HotBuskingListRepository;
+import ticket.reserve.hotbusking.application.port.out.HotBuskingListPort;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +28,7 @@ public class HotBuskingService {
     private final List<EventHandler> eventHandlers;
     private final InboxRepository inboxRepository;
     private final HotBuskingScoreUpdater hotBuskingScoreUpdater;
-    private final HotBuskingListRepository hotBuskingListRepository;
+    private final HotBuskingListPort hotBuskingListPort;
     private final BuskingSubscriptionCountPort buskingSubscriptionCountPort;
     private final BuskingPort buskingPort;
 
@@ -67,7 +67,7 @@ public class HotBuskingService {
     }
 
     public List<HotBuskingResponseDto> readAll() {
-        return hotBuskingListRepository.readAll().stream()
+        return hotBuskingListPort.readAll().stream()
                 .map(buskingPort::get)
                 .filter(Objects::nonNull)
                 .map(buskingResponseDto -> {
