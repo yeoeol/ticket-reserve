@@ -51,4 +51,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             @Param("userId") Long userId,
             @Param("status") SubscriptionStatus status
     );
+
+    void deleteAllByBuskingId(Long buskingId);
 }

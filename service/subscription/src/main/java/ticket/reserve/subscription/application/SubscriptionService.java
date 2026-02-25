@@ -19,4 +19,7 @@ public interface SubscriptionService {
 
     // 구독한 버스킹 목록 조회
     List<BuskingResponseDto> getAllByUserId(Long userId);
+
+    // 특정 버스킹에 대한 구독 정보 삭제
+    void removeSubscriptionData(Long buskingId);
 }

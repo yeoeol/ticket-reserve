@@ -18,7 +18,6 @@ public class BuskingDeletedEventPayload implements EventPayload {
     private String location;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Integer totalInventoryCount;
     private Double latitude;
     private Double longitude;
 }

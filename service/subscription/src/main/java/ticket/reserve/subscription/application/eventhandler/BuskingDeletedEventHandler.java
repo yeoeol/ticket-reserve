@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.core.event.payload.BuskingDeletedEventPayload;
-import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
+import ticket.reserve.subscription.application.SubscriptionService;
 
 import java.time.LocalDateTime;
 
@@ -14,12 +13,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BuskingDeletedEventHandler implements EventHandler<BuskingDeletedEventPayload> {
 
-    private final BuskingInfoPort buskingInfoPort;
+    private final SubscriptionService subscriptionService;
 
     @Override
     public void handle(Event<BuskingDeletedEventPayload> event) {
         BuskingDeletedEventPayload payload = event.getPayload();
-        buskingInfoPort.delete(payload.getBuskingId());
+        subscriptionService.removeSubscriptionData(payload.getBuskingId());
     }
 
     @Override

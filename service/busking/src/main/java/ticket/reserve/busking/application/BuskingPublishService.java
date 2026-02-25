@@ -3,11 +3,11 @@ package ticket.reserve.busking.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticket.reserve.busking.application.port.out.ImagePort;
 import ticket.reserve.busking.domain.busking.Busking;
 import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
+import ticket.reserve.core.event.payload.BuskingDeletedEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 
 @Service
@@ -16,7 +16,6 @@ public class BuskingPublishService {
 
     private final BuskingRepository buskingRepository;
     private final OutboxEventPublisher outboxEventPublisher;
-    private final ImagePort imagePort;
 
     @Transactional
     public Busking publishBuskingCreatedEvent(Busking busking) {
@@ -43,7 +42,7 @@ public class BuskingPublishService {
         buskingRepository.delete(busking);
         outboxEventPublisher.publish(
                 EventType.BUSKING_DELETED,
-                BuskingCreatedEventPayload.builder()
+                BuskingDeletedEventPayload.builder()
                         .buskingId(busking.getId())
                         .title(busking.getTitle())
                         .description(busking.getDescription())

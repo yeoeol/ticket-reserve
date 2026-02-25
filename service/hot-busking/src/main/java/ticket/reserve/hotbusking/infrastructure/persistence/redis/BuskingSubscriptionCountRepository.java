@@ -25,6 +25,10 @@ public class BuskingSubscriptionCountRepository {
         return result == null ? 0L : Long.valueOf(result);
     }
 
+    public void remove(Long buskingId) {
+        redisTemplate.delete(generateKey(buskingId));
+    }
+
     private String generateKey(Long buskingId) {
         return subscriptionCountKey.formatted(buskingId);
     }
