@@ -76,4 +76,9 @@ public class HotBuskingService {
                 })
                 .toList();
     }
+
+    public void removeHotBuskingData(Long buskingId) {
+        hotBuskingListPort.remove(buskingId);
+        buskingSubscriptionCountPort.remove(buskingId);
+    }
 }

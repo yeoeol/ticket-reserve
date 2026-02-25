@@ -5,8 +5,7 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingDeletedEventPayload;
-import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
-import ticket.reserve.hotbusking.application.port.out.HotBuskingListPort;
+import ticket.reserve.hotbusking.application.HotBuskingService;
 
 import java.time.LocalDateTime;
 
@@ -14,15 +13,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class BuskingDeletedEventHandler implements EventHandler<BuskingDeletedEventPayload> {
 
-    private final HotBuskingListPort hotBuskingListPort;
-    private final BuskingSubscriptionCountPort buskingSubscriptionCountPort;
+    private final HotBuskingService hotBuskingService;
 
     @Override
     public void handle(Event<BuskingDeletedEventPayload> event) {
         BuskingDeletedEventPayload payload = event.getPayload();
-
-        hotBuskingListPort.remove(payload.getBuskingId());
-        buskingSubscriptionCountPort.remove(payload.getBuskingId());
+        hotBuskingService.removeHotBuskingData(payload.getBuskingId());
     }
 
     @Override
