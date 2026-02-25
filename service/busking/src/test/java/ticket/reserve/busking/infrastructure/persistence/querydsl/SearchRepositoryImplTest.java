@@ -51,19 +51,22 @@ class SearchRepositoryImplTest {
         Busking busking1 = createBusking("title1", "desc1", "loc1",
                 LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         busking1.addEventImage(
-                idGenerator, "image1", "stored1",
+                idGenerator, idGenerator.nextId(),
+                "image1", "stored1",
                 ImageType.THUMBNAIL, 1
         );
         Busking busking2 = createBusking("title2", "desc2", "loc2",
                 LocalDateTime.now(), LocalDateTime.now().plusDays(2));
         busking2.addEventImage(
-                idGenerator, "image2", "stored2",
+                idGenerator, idGenerator.nextId(),
+                "image2", "stored2",
                 ImageType.THUMBNAIL, 1
         );
         Busking busking3 = createBusking("title3", "desc3", "loc3",
                 LocalDateTime.now(), LocalDateTime.now().plusDays(3));
         busking3.addEventImage(
-                idGenerator, "image3", "stored3",
+                idGenerator, idGenerator.nextId(),
+                "image3", "stored3",
                 ImageType.THUMBNAIL, 1
         );
         buskingRepository.saveAll(List.of(busking1, busking2, busking3));
