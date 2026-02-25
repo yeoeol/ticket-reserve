@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.SubscriptionCancelledEventPayload;
+import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
 import ticket.reserve.hotbusking.global.util.TimeCalculatorUtils;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.BuskingSubscriptionCountRepository;
 
 import java.time.LocalDateTime;
 
@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class SubscriptionCancelledEventHandler implements EventHandler<SubscriptionCancelledEventPayload> {
 
-    private final BuskingSubscriptionCountRepository buskingSubscriptionCountRepository;
+    private final BuskingSubscriptionCountPort buskingSubscriptionCountPort;
 
     @Override
     public void handle(Event<SubscriptionCancelledEventPayload> event) {
         SubscriptionCancelledEventPayload payload = event.getPayload();
-        buskingSubscriptionCountRepository.createOrUpdate(
+        buskingSubscriptionCountPort.createOrUpdate(
                 payload.getBuskingId(),
                 payload.getBuskingSubscriptionCount(),
                 TimeCalculatorUtils.calculateDurationToStartTime(payload.getStartTime())

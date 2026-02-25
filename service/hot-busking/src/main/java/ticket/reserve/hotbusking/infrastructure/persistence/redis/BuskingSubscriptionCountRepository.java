@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
 
 import java.time.Duration;
 
 @Repository
 @RequiredArgsConstructor
-public class BuskingSubscriptionCountRepository {
+public class BuskingSubscriptionCountRepository implements BuskingSubscriptionCountPort {
 
     private final RedisTemplate<String, String> redisTemplate;
 

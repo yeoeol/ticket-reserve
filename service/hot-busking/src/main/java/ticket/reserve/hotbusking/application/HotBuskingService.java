@@ -13,7 +13,7 @@ import ticket.reserve.core.tsid.IdGenerator;
 import ticket.reserve.hotbusking.application.dto.response.HotBuskingResponseDto;
 import ticket.reserve.hotbusking.application.eventhandler.EventHandler;
 import ticket.reserve.hotbusking.application.port.out.BuskingPort;
-import ticket.reserve.hotbusking.infrastructure.persistence.redis.BuskingSubscriptionCountRepository;
+import ticket.reserve.hotbusking.application.port.out.BuskingSubscriptionCountPort;
 import ticket.reserve.hotbusking.infrastructure.persistence.redis.HotBuskingListRepository;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class HotBuskingService {
     private final InboxRepository inboxRepository;
     private final HotBuskingScoreUpdater hotBuskingScoreUpdater;
     private final HotBuskingListRepository hotBuskingListRepository;
-    private final BuskingSubscriptionCountRepository buskingSubscriptionCountRepository;
+    private final BuskingSubscriptionCountPort buskingSubscriptionCountPort;
     private final BuskingPort buskingPort;
 
     public void handleEvent(Event<EventPayload> event) {
@@ -71,7 +71,7 @@ public class HotBuskingService {
                 .map(buskingPort::get)
                 .filter(Objects::nonNull)
                 .map(buskingResponseDto -> {
-                    Long subscriptionCount = buskingSubscriptionCountRepository.read(buskingResponseDto.id());
+                    Long subscriptionCount = buskingSubscriptionCountPort.read(buskingResponseDto.id());
                     return HotBuskingResponseDto.from(buskingResponseDto, subscriptionCount);
                 })
                 .toList();
