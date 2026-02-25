@@ -3,6 +3,7 @@ package ticket.reserve.subscription.domain.repository;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ticket.reserve.subscription.domain.Subscription;
@@ -52,5 +53,9 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
             @Param("status") SubscriptionStatus status
     );
 
-    void deleteAllByBuskingId(Long buskingId);
+    @Modifying
+    @Query(value =
+            "DELETE FROM Subscription s " +
+            "WHERE s.buskingId = :buskingId")
+    void deleteAllByBuskingId(@Param("buskingId") Long buskingId);
 }
