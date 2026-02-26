@@ -17,6 +17,7 @@ import ticket.reserve.busking.application.BuskingService;
 import ticket.reserve.busking.application.SearchService;
 import ticket.reserve.busking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.busking.domain.busking.Busking;
+import ticket.reserve.busking.infrastructure.persistence.querydsl.BuskingSearchCondition;
 import ticket.reserve.core.global.exception.GlobalExceptionRestHandler;
 
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ class BuskingApiControllerTest {
     @Test
     @DisplayName("이벤트 조회 컨트롤러 성공 - GET /api/events 호출 시 이벤트 리스트를 조회한다")
     void getEventsSuccess() throws Exception {
-        given(searchService.search(null, null, null, null))
+        given(searchService.search(new BuskingSearchCondition(null, null, null, null)))
                 .willReturn(List.of(
                         BuskingResponseDto.from(createBusking(123L), false),
                         BuskingResponseDto.from(createBusking(234L), false)

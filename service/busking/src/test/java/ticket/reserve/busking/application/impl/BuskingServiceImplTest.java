@@ -49,8 +49,6 @@ class BuskingServiceImplTest {
     @Mock
     private BuskingQueryService buskingQueryService;
     @Mock
-    private BuskingRepository buskingRepository;
-    @Mock
     private NotificationSchedulePort notificationSchedulePort;
     @Mock
     private ImagePort imagePort;
