@@ -19,6 +19,7 @@ public class Outbox {
     @Id
     private Long outboxId;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(50)")
     private EventType eventType;
     private Long partitionKey;
 
