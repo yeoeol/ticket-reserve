@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 import ticket.reserve.core.event.Event;
 import ticket.reserve.core.event.EventPayload;
 import ticket.reserve.core.event.EventType;
-import ticket.reserve.hotbusking.application.HotBuskingService;
+import ticket.reserve.hotbusking.application.eventhandler.EventHandlerService;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class HotBuskingEventConsumer {
 
-    private final HotBuskingService hotBuskingService;
+    private final EventHandlerService eventHandlerService;
 
     @KafkaListener(topics = {
             EventType.Topic.TICKET_RESERVE_BUSKING,
@@ -26,7 +26,7 @@ public class HotBuskingEventConsumer {
 
         Event<EventPayload> event = Event.fromJson(message);
         if (event != null) {
-            hotBuskingService.handleEvent(event);
+            eventHandlerService.handleEvent(event);
         }
         ack.acknowledge();
     }
