@@ -105,5 +105,8 @@ public class BuskingServiceImpl implements BuskingService {
                 request.title(), request.description(), request.location(),
                 request.startTime(), request.endTime()
         );
+
+        buskingPublishService.publishBuskingUpdatedEvent(busking);
+        notificationSchedulePort.addToNotificationSchedule(busking.getId(), request.startTime(), request.endTime());
     }
 }

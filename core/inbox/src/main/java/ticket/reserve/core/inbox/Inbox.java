@@ -24,6 +24,7 @@ public class Inbox {
     private Long eventId;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(50)")
     private EventType eventType;
 
     private LocalDateTime consumedAt;
