@@ -8,6 +8,7 @@ import ticket.reserve.busking.domain.busking.repository.BuskingRepository;
 import ticket.reserve.core.event.EventType;
 import ticket.reserve.core.event.payload.BuskingCreatedEventPayload;
 import ticket.reserve.core.event.payload.BuskingDeletedEventPayload;
+import ticket.reserve.core.event.payload.BuskingUpdatedEventPayload;
 import ticket.reserve.core.outboxmessagerelay.OutboxEventPublisher;
 
 @Service
@@ -43,6 +44,24 @@ public class BuskingPublishService {
         outboxEventPublisher.publish(
                 EventType.BUSKING_DELETED,
                 BuskingDeletedEventPayload.builder()
+                        .buskingId(busking.getId())
+                        .title(busking.getTitle())
+                        .description(busking.getDescription())
+                        .location(busking.getLocation())
+                        .startTime(busking.getStartTime())
+                        .endTime(busking.getEndTime())
+                        .latitude(busking.getCoordinate().getY())
+                        .longitude(busking.getCoordinate().getX())
+                        .build(),
+                busking.getId()
+        );
+    }
+
+    @Transactional
+    public void publishBuskingUpdatedEvent(Busking busking) {
+        outboxEventPublisher.publish(
+                EventType.BUSKING_UPDATED,
+                BuskingUpdatedEventPayload.builder()
                         .buskingId(busking.getId())
                         .title(busking.getTitle())
                         .description(busking.getDescription())
