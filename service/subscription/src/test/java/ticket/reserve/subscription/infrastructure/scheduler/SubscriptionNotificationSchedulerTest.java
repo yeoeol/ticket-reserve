@@ -46,9 +46,9 @@ class SubscriptionNotificationSchedulerTest {
         Set<Long> userIds3 = Set.of(50L, 60L);
 
         Set<BuskingNotificationTarget> targets = Set.of(
-                new BuskingNotificationTarget(buskingId1, startTime),
-                new BuskingNotificationTarget(buskingId2, startTime),
-                new BuskingNotificationTarget(buskingId3, startTime)
+                new BuskingNotificationTarget(buskingId1, "title1", "location1", startTime),
+                new BuskingNotificationTarget(buskingId2, "title2", "location2", startTime),
+                new BuskingNotificationTarget(buskingId3, "title3", "location3", startTime)
         );
 
         given(notificationSchedulePort.findTargetsToNotify(any(LocalDateTime.class)))
@@ -63,7 +63,7 @@ class SubscriptionNotificationSchedulerTest {
 
         //then
         verify(notificationPublishService, times(3))
-                .publishNotificationEvent(anyLong(), anySet(), anyLong());
+                .publishNotificationEvent(anyLong(), anyString(), anyString(), anySet(), anyLong());
         verify(notificationSchedulePort, times(3))
                 .removeFromNotificationSchedule(anyLong());
     }
