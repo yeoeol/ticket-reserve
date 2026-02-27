@@ -81,7 +81,7 @@ class SearchRepositoryImplTest {
 
         return Busking.create(
                 idGenerator, title, description, location,
-                startTime, endTime, coordinate
+                startTime, endTime, coordinate, 9999L
         );
     }
 

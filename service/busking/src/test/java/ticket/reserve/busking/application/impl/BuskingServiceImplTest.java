@@ -69,7 +69,8 @@ class BuskingServiceImplTest {
                 "장소",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
-                coordinate
+                coordinate,
+                1234L
         );
     }
 
@@ -87,7 +88,7 @@ class BuskingServiceImplTest {
                 .willReturn(busking);
 
         //when
-        BuskingResponseDto response = buskingService.create(request, null);
+        BuskingResponseDto response = buskingService.create(request, null, 9999L);
 
         //then
         Busking savedBusking = buskingCaptor.getValue();
@@ -131,7 +132,7 @@ class BuskingServiceImplTest {
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
 
         //when
-        BuskingResponseDto response = buskingService.create(request, file);
+        BuskingResponseDto response = buskingService.create(request, file, 1234L);
 
         //then
         Busking savedBusking = buskingCaptor.getValue();
@@ -147,6 +148,7 @@ class BuskingServiceImplTest {
         assertThat(savedBusking.getLocation()).isEqualTo(request.location());
         assertThat(savedBusking.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedBusking.getEndTime()).isEqualTo(request.endTime());
+        assertThat(savedBusking.getUserId()).isEqualTo(1234L);
 
         assertThat(savedBusking.getBuskingImages()).hasSize(1);
         verify(imagePort, times(1)).uploadImage(any());
@@ -175,7 +177,7 @@ class BuskingServiceImplTest {
                 .willThrow(RuntimeException.class);
 
         //when & then
-        assertThatThrownBy(() -> buskingService.create(request, file)).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> buskingService.create(request, file, 9999L)).isInstanceOf(RuntimeException.class);
 
         verify(imagePort, times(1)).uploadImage(any());
         verify(imagePort, times(1)).deleteImage(any());

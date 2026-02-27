@@ -47,8 +47,8 @@ class BuskingApiControllerTest {
     void getEventsSuccess() throws Exception {
         given(searchService.search(new BuskingSearchCondition(null, null, null, null)))
                 .willReturn(List.of(
-                        BuskingResponseDto.from(createBusking(123L), false),
-                        BuskingResponseDto.from(createBusking(234L), false)
+                        BuskingResponseDto.from(createBusking(123L, 1234L), false),
+                        BuskingResponseDto.from(createBusking(234L, 2345L), false)
                 ));
 
         assertThat(mvc.get().uri("/api/buskings"))
@@ -57,11 +57,13 @@ class BuskingApiControllerTest {
                 .hasPathSatisfying("$.size()", v -> v.assertThat().isEqualTo(2))
                 .hasPathSatisfying("$[0].id", v -> v.assertThat().isEqualTo(123))
                 .hasPathSatisfying("$[0].title", v -> v.assertThat().isEqualTo("testTitle123"))
+                .hasPathSatisfying("$[0].userId", v -> v.assertThat().isEqualTo(1234))
                 .hasPathSatisfying("$[1].id", v -> v.assertThat().isEqualTo(234))
-                .hasPathSatisfying("$[1].title", v -> v.assertThat().isEqualTo("testTitle234"));
+                .hasPathSatisfying("$[1].title", v -> v.assertThat().isEqualTo("testTitle234"))
+                .hasPathSatisfying("$[1].userId", v -> v.assertThat().isEqualTo(2345));
     }
 
-    private Busking createBusking(Long id) {
+    private Busking createBusking(Long id, Long userId) {
         String eventTitle = "testTitle"+id;
         String description = "testDescription"+id;
         LocalDateTime start = LocalDateTime.of(2030, 1, 1, 0, 0);
@@ -76,7 +78,8 @@ class BuskingApiControllerTest {
                 "test",
                 start,
                 start.plusDays(1),
-                coordinate
+                coordinate,
+                userId
         );
     }
 }

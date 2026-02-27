@@ -58,9 +58,10 @@ public class BuskingApiController {
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BuskingResponseDto> create(
             @Valid @RequestPart(value = "request") BuskingRequestDto request,
-            @RequestPart(value = "file", required = false) MultipartFile file
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal String userId
     ) {
-        return ResponseEntity.ok(buskingService.create(request, file));
+        return ResponseEntity.ok(buskingService.create(request, file, Long.valueOf(userId)));
     }
 
     @PutMapping("/{id}")

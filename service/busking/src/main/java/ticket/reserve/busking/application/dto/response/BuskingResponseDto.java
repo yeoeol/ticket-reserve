@@ -18,6 +18,7 @@ public record BuskingResponseDto(
         LocalDateTime startTime,
         LocalDateTime endTime,
         List<String> imageUrls,
+        Long userId,
         Double latitude,
         Double longitude,
         boolean isSubscribed
@@ -36,6 +37,7 @@ public record BuskingResponseDto(
                         .map(BuskingImage::getStoredPath)
                         .toList()
                 )
+                .userId(busking.getUserId())
                 .latitude(point.getY())
                 .longitude(point.getX())
                 .isSubscribed(isSubscribed)
@@ -44,21 +46,6 @@ public record BuskingResponseDto(
 
     public static BuskingResponseDto from(Busking busking) {
         return from(busking, false);
-    }
-
-    public BuskingResponseDto withSubscribed(boolean isSubscribed) {
-        return BuskingResponseDto.builder()
-                .id(this.id)
-                .title(this.title)
-                .description(this.description)
-                .location(this.location)
-                .startTime(this.startTime)
-                .endTime(this.endTime)
-                .imageUrls(this.imageUrls)
-                .latitude(this.latitude)
-                .longitude(this.longitude)
-                .isSubscribed(isSubscribed)
-                .build();
     }
 
     @QueryProjection
