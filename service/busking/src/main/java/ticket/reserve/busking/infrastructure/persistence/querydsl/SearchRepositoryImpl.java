@@ -51,6 +51,7 @@ public class SearchRepositoryImpl implements SearchService {
                                         busking.startTime,
                                         busking.endTime,
                                         list(buskingImage.storedPath),
+                                        busking.userId,
                                         lat,
                                         lng,
                                         isSubscribed

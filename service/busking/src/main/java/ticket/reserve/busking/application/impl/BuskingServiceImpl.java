@@ -34,8 +34,8 @@ public class BuskingServiceImpl implements BuskingService {
     private final SubscriptionPort subscriptionPort;
 
     @Override
-    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file) {
-        Busking busking = request.toEntity(idGenerator);
+    public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file, Long userId) {
+        Busking busking = request.toEntity(idGenerator, userId);
 
         // 이미지가 있다면 저장
         ImageResponseDto imageResponse = null;

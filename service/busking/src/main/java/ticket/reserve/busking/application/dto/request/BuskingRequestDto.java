@@ -33,13 +33,13 @@ public record BuskingRequestDto(
         @DecimalMax(value = "180.0", message = "{location.longitude.range}")
         Double longitude
 ) {
-    public Busking toEntity(IdGenerator idGenerator) {
+    public Busking toEntity(IdGenerator idGenerator, Long userId) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Point coordinate = geometryFactory.createPoint(new Coordinate(longitude, latitude));
 
         return Busking.create(
                 idGenerator, this.title, this.description, this.location,
-                this.startTime, this.endTime, coordinate
+                this.startTime, this.endTime, coordinate, userId
         );
     }
 }
