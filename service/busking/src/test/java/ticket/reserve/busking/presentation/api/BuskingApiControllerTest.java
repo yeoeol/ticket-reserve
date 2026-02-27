@@ -76,7 +76,8 @@ class BuskingApiControllerTest {
                 "test",
                 start,
                 start.plusDays(1),
-                coordinate
+                coordinate,
+                9999L
         );
     }
 }
