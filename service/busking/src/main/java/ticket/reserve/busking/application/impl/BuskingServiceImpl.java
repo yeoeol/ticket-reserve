@@ -35,6 +35,10 @@ public class BuskingServiceImpl implements BuskingService {
 
     @Override
     public BuskingResponseDto create(BuskingRequestDto request, MultipartFile file, Long userId) {
+        if (userId == null || userId <= 0) {
+            throw new CustomException(ErrorCode.INVALID_CLIENT_REQUEST);
+        }
+
         Busking busking = request.toEntity(idGenerator, userId);
 
         // 이미지가 있다면 저장

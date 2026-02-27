@@ -70,7 +70,7 @@ class BuskingServiceImplTest {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1),
                 coordinate,
-                9999L
+                1234L
         );
     }
 
@@ -132,7 +132,7 @@ class BuskingServiceImplTest {
         given(imagePort.uploadImage(file)).willReturn(imageResponse);
 
         //when
-        BuskingResponseDto response = buskingService.create(request, file, 9999L);
+        BuskingResponseDto response = buskingService.create(request, file, 1234L);
 
         //then
         Busking savedBusking = buskingCaptor.getValue();
@@ -148,6 +148,7 @@ class BuskingServiceImplTest {
         assertThat(savedBusking.getLocation()).isEqualTo(request.location());
         assertThat(savedBusking.getStartTime()).isEqualTo(request.startTime());
         assertThat(savedBusking.getEndTime()).isEqualTo(request.endTime());
+        assertThat(savedBusking.getUserId()).isEqualTo(1234L);
 
         assertThat(savedBusking.getBuskingImages()).hasSize(1);
         verify(imagePort, times(1)).uploadImage(any());
