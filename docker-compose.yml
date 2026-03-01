@@ -1,63 +1,11 @@
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: tr-zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - tr-network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: tr-kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    healthcheck:
-      test: [ "CMD-SHELL", "nc -z localhost 9092 || exit 1" ]
-      interval: 20s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    networks:
-      - tr-network
-
-  # 토픽 자동 생성을 위한 설정 컨테이너
-  kafka-setup:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: tr-kafka-setup
-    depends_on:
-      kafka:
-        condition: service_started
-    networks:
-      - tr-network
-    entrypoint: [ "sh", "-c", "
-      echo 'Waiting for Kafka to be ready...';
-      cub kafka-ready -b kafka:29092 1 30;
-      echo 'Creating topics...';
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-busking;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-payment;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-user;
-      kafka-topics --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic ticket-reserve-subscription;
-      echo 'Successfully created topics';
-      " ]
-
   registry:
     image: ${DOCKERHUB_USERNAME}/tr-registry:latest
     container_name: tr-registry
     ports:
       - "8761:8761"
     environment:
-      - JAVA_OPTS=-Xms128m -Xmx256m # 레지스트리도 메모리 제한 추가
+      - JAVA_OPTS=-Xms128m -Xmx256m
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
       interval: 15s
@@ -124,27 +72,6 @@ services:
     networks:
       - tr-network
 
-  payment-service:
-    image: ${DOCKERHUB_USERNAME}/tr-payment:latest
-    container_name: tr-payment-service
-    env_file:
-      - ./.env
-    environment:
-      - JAVA_OPTS=-Xms128m -Xmx256m
-    ports:
-      - "30004:30004"
-    depends_on:
-      busking-service:
-        condition: service_started
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:30004/actuator/health" ]
-      interval: 30s
-      timeout: 15s
-      retries: 5
-      start_period: 120s
-    networks:
-      - tr-network
-
   image-service:
     image: ${DOCKERHUB_USERNAME}/tr-image:latest
     container_name: tr-image-service
@@ -154,9 +81,6 @@ services:
       - JAVA_OPTS=-Xms128m -Xmx256m
     ports:
       - "33333:33333"
-    depends_on:
-      payment-service:
-        condition: service_started
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:33333/actuator/health" ]
       interval: 30s

@@ -24,7 +24,7 @@ spring:
       port: 6379
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: localhost:9092
 
   servlet:
     multipart:
@@ -38,10 +38,10 @@ app:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+      defaultZone: http://localhost:8761/eureka/
 
 endpoints:
   ticket-reserve-image-service:
-    url: ${IMAGE_SERVICE_URL:http://127.0.0.1:33333}
+    url: http://127.0.0.1:33333
   ticket-reserve-subscription-service:
-    url: ${SUBSCRIPTION_SERVICE_URL:http://127.0.0.1:35555}
+    url: http://127.0.0.1:35555
