@@ -25,21 +25,10 @@
 
 # 🔄 전체 플로우 예시 (사용자 입장)
 
-1. 전체 이벤트 목록 조회
-2. 특정 이벤트 세부 사항 조회
-3. 예매하기 클릭 (로그인된 사용자만 이후 접근 가능)
-4. 전체 좌석 조회
-5. 특정 좌석 선택 후 완료 버튼 클릭 시 결제 페이지 이동
-6. 결제 플로우 실행
-7. 예매 완료
-
----
-
-# 📊 요청 플로우 예시 (티켓 예매)
-
-1. 클라이언트 → API Gateway → **inventory-service** 호출
-2. inventory-service → **reservation-service** 대기열 시스템 적용
-3. 재고 확인 & Lock 성공 → **payment-service** 좌석 별 분산락 적용
+1. 전체 버스킹 목록 조회
+2. 특정 버스킹 세부 사항 조회
+3. 구독하기 클릭 -> 구독 완료 상태 변경
+4. 버스킹 시작 1시간 전, 구독자에게 알림 발송
 
 ---
 
@@ -50,7 +39,7 @@
 
 - **service-registry (Eureka)**
 - **api-gateway (Spring Cloud Gateway)**  
-- **config-server (Spring Cloud Config Server)**
+- **config-server (Spring Cloud Config Server)** (보류)
 
 ---
 
@@ -62,39 +51,27 @@
 - JWT 인증 발급
 - Gateway와 연동하여 인증 흐름 검증
 
-### 2-2. event-service
+### 2-2. busking-service
 - 공연 / 이벤트 목록 CRUD
-- DB 연동 (서비스별 독립 DB 구조 경험)  
+- DB 연동
 
 ---
 
-## 3. 핵심 동시성 포인트
-➡️ 목표: **트래픽/동시성 문제 실습 -> 좌석(재고) 10개인데 100명 동시에 예매 시 어떻게 처리되는지 테스트**
-
-### 3-1. inventory-service(좌석/재고 관리)
-- 동시성 이슈 발생 포인트
-  - 좌석 목록 화면 입장 
-  - 좌석 선점
-- 처음엔 단순 CRUD -> 이후 Redis/분산락으로 개선
-  - 분산락(redisson) + AOP 적용
-
----
-
-## 4. 부가 서비스
+## 3. 부가 서비스
 ➡️ 목표: **비동기 이벤트 기반 학습**
 
-### 4-1. payment-service (모의 결제 API와 연결)
-- 성공/실패 이벤트 발행 (Kafka)
-
-### 4-2. event-service (공연 생성 시 좌석 생성)
-- 공연 생성 이벤트 발행 (inventory-service는 consumer로, 좌석 생성)
+### 3-1. busking-service (공연 생성 시 좌석 생성)
+- 버스킹 생성 이벤트 발행 (hot-busking-service는 consumer로, 인기글 데이터 생성)
+  - consumer: 인기 버스킹 서비스는 인기글 데이터를 위해 버스킹 생성 이벤트를 구독
+  - consumer: 알림 서비스는 주변 사용자에게 새로운 버스킹 생성 알림을 위해 버스킹 생성 이벤트를 구독
+  - consumer: 구독 서비스는 알림 발송을 위한 버스킹 정보를 위해 버스킹 생성 이벤트를 구독
 
 ---
 
-## 5. 최종 확장/테스트
+## 4. 최종 확장/테스트
 - Redis 캐시 적용 (조회 성능 개선)
 - 부하 테스트 (Jmeter, Locust)
-- 장애 상황 (동시성 충돌, 좌석 초과 예약) 실험
+- 장애 상황 (동시성 충돌) 실험
 
 ---
 # ⬜ TODO
@@ -106,9 +83,8 @@
 ## 아키텍처
 <img width="895" height="498" alt="busking-draw_1" src="https://github.com/user-attachments/assets/11960ae7-2ae2-4c81-aa37-68319f83748e" />
 
-## ERD
-<img width="540" height="736" alt="busking-draw_2" src="https://github.com/user-attachments/assets/e9516510-a5ef-4b8b-a078-2d7c3f48f22c" />
+아키텍처 추후 수정 예정.
 
-## 공연 생성, 좌석 선점 및 예매 시퀀스
-<img width="504" height="492" alt="busking-draw_3" src="https://github.com/user-attachments/assets/740e24cf-ec30-4afa-8e2e-1dc841943e57" />
+## ERD
+추후 추가 예정.
 
