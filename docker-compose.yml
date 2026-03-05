@@ -150,6 +150,40 @@ services:
     networks:
       - tr-network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false # 로컬/테스트용이면 편의상 끔
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # 백엔드 개발 서버용 메모리 제한
+    ports:
+      - "9200:9200"
+    networks:
+      - tr-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - tr-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - tr-network
+
 networks:
   tr-network:
     driver: bridge
