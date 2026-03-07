@@ -20,7 +20,7 @@ public class RequestLoggingFilter implements Filter {
         String traceId = httpServletRequest.getHeader("X-Trace-Id");
 
         if (traceId == null || traceId.isEmpty()) {
-            traceId = UUID.randomUUID().toString();
+            traceId = UUID.randomUUID().toString().substring(0, 8);
         }
 
         MDC.put("traceId", traceId);
