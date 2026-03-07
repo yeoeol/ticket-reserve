@@ -3,9 +3,11 @@ package ticket.reserve.core.log.aop;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 @Slf4j
 @Aspect
@@ -44,5 +46,18 @@ public class LoggingAspect {
         log.error("[Method Exception] {}.{} | Message: {}",
                 className, methodName, ex.getMessage()
         );
+    }
+
+    @Before("@annotation(org.springframework.scheduling.annotation.Scheduled)")
+    public void setScheduleTraceId() {
+        if (MDC.get("traceId") == null) {
+            String scheduleId = "SCHED-" + UUID.randomUUID().toString().substring(0, 8);
+            MDC.put("traceId", scheduleId);
+        }
+    }
+
+    @After("@annotation(org.springframework.scheduling.annotation.Scheduled)")
+    public void clearScheduleTraceId() {
+        MDC.remove("traceId");
     }
 }
