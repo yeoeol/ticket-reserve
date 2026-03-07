@@ -3,6 +3,7 @@ package ticket.reserve.core.log.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ticket.reserve.core.log.interceptor.RequestLoggingInterceptor;
@@ -16,6 +17,8 @@ public class LogConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(requestLoggingInterceptor);
+        registry.addInterceptor(requestLoggingInterceptor)
+                .addPathPatterns("/**")
+                .order(Ordered.HIGHEST_PRECEDENCE);
     }
 }
