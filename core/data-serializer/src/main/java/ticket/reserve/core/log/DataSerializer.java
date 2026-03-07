@@ -1,4 +1,4 @@
-package ticket.reserve.core.dataserializer;
+package ticket.reserve.core.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

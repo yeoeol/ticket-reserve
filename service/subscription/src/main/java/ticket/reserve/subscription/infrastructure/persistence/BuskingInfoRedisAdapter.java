@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import ticket.reserve.core.dataserializer.DataSerializer;
+import ticket.reserve.core.log.DataSerializer;
 import ticket.reserve.subscription.application.dto.response.BuskingNotificationTarget;
 import ticket.reserve.subscription.application.port.out.BuskingInfoPort;
 

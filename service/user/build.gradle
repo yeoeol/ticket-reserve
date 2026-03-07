@@ -23,4 +23,5 @@ dependencies {
 
     implementation project(':core:global')
     implementation project(':core:tsid')
+    implementation project(':core:log')
 }

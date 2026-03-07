@@ -14,6 +14,7 @@ include 'core:data-serializer'
 include 'core:outbox-message-relay'
 include 'core:inbox'
 include 'core:tsid'
+include 'core:log'
 
 include 'service:user'
 include 'service:busking'

@@ -9,8 +9,12 @@ import ticket.reserve.inventory.infrastructure.client.interceptor.Authentication
 public class RestClientConfig {
 
     @Bean
-    public RestClient.Builder restClientBuilder(AuthenticationInterceptor interceptor) {
+    public RestClient.Builder restClientBuilder(
+            AuthenticationInterceptor authenticationInterceptor,
+            RestClientTraceInterceptor restClientTraceInterceptor
+    ) {
         return RestClient.builder()
-                .requestInterceptor(interceptor);
+                .requestInterceptor(authenticationInterceptor)
+                .requestInterceptor(restClientTraceInterceptor);
     }
 }
