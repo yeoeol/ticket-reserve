@@ -1,9 +1,21 @@
 package ticket.reserve.core.log.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import ticket.reserve.core.log.interceptor.RequestLoggingInterceptor;
 
 @Configuration
 @ComponentScan(basePackages = "ticket.reserve.core.log")
-public class LogConfig {
+@RequiredArgsConstructor
+public class LogConfig implements WebMvcConfigurer {
+
+    private final RequestLoggingInterceptor requestLoggingInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestLoggingInterceptor);
+    }
 }

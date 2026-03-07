@@ -31,6 +31,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
         log.info("Response Status: {} | Duration: {} ms", response.getStatus(), duration);
 
-        MDC.clear();
+        MDC.remove("requestStartTime");
+        MDC.remove("requestUri");
     }
 }

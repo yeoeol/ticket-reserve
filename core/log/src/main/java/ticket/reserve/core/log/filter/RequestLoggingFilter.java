@@ -3,11 +3,14 @@ package ticket.reserve.core.log.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.MDC;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.UUID;
 
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class RequestLoggingFilter implements Filter {
 
@@ -28,7 +31,7 @@ public class RequestLoggingFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            MDC.clear();
+            MDC.remove("traceId");
         }
     }
 }

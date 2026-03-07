@@ -2,7 +2,7 @@
 <included>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <springProperty scope="context" name="spring.application.name" source="spring.application.name"/>
+    <springProperty scope="context" name="spring.application.name" source="spring.application.name" defaultValue="unknown-service"/>
     <springProperty scope="context" name="LOGSTASH_HOST" source="logstash.host" defaultValue="localhost"/>
     <springProperty scope="context" name="LOGSTASH_PORT" source="logstash.port" defaultValue="5044"/>
 
@@ -25,7 +25,15 @@
         <encoder><pattern>${CONSOLE_LOG_PATTERN}</pattern></encoder>
     </appender>
 
-    <springProfile name="local, dev">
+    <springProfile name="local">
+        <logger name="ticket.reserve" level="DEBUG"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
         <logger name="ticket.reserve" level="DEBUG"/>
 
         <root level="INFO">
@@ -36,6 +44,7 @@
 
     <springProfile name="prod">
         <logger name="ticket.reserve" level="INFO"/>
+
         <root level="WARN">
             <appender-ref ref="LOGSTASH" />
             <appender-ref ref="CONSOLE" />
