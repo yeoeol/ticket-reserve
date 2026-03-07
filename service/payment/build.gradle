@@ -17,4 +17,5 @@ dependencies {
     implementation project(':core:global')
     implementation project(':core:outbox-message-relay')
     implementation project(':core:tsid')
+    implementation project(':core:log')
 }

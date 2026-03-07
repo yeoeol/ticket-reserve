@@ -1,7 +1,7 @@
 package ticket.reserve.core.event;
 
 import lombok.Getter;
-import ticket.reserve.core.dataserializer.DataSerializer;
+import ticket.reserve.core.log.DataSerializer;
 
 @Getter
 public class Event<T extends EventPayload> {
