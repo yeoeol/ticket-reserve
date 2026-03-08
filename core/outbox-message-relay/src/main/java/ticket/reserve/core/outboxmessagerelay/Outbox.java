@@ -27,6 +27,8 @@ public class Outbox {
     private String payload;
     private LocalDateTime createdAt;
 
+    private String traceContext;
+
     public static Outbox create(Long outboxId, EventType eventType, String payload, Long partitionKey) {
         Outbox outbox = new Outbox();
         outbox.outboxId = outboxId;
@@ -35,5 +37,9 @@ public class Outbox {
         outbox.payload = payload;
         outbox.createdAt = LocalDateTime.now();
         return outbox;
+    }
+
+    public void setTraceContext(String traceContext) {
+        this.traceContext = traceContext;
     }
 }
