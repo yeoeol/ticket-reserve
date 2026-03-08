@@ -6,7 +6,7 @@
     <springProperty scope="context" name="LOGSTASH_HOST" source="logstash.host" defaultValue="localhost"/>
     <springProperty scope="context" name="LOGSTASH_PORT" source="logstash.port" defaultValue="5044"/>
 
-    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %clr([%-5level]) [%X{traceId}] %logger{5} - %msg %n" />
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %clr([%-5level]) [%X{traceId:-}] [%X{spanId:-}] %logger{5} - %msg%n" />
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
