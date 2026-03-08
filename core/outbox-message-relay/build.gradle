@@ -5,4 +5,5 @@ dependencies {
     implementation project(':core:event')
     implementation project(':core:data-serializer')
     implementation project(':core:tsid')
+    implementation project(':core:log')
 }

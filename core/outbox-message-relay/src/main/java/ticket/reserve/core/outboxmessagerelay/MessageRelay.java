@@ -9,9 +9,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import ticket.reserve.core.log.DataSerializer;
+import ticket.reserve.core.log.context.TraceContextManager;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -22,9 +26,16 @@ public class MessageRelay {
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, String> messageRelayKafkaTemplate;
 
+    private final TraceContextManager traceContextManager;
+
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void createOutbox(OutboxEvent outboxEvent) {
-        log.info("[MessageRelay.createOutbox outboxEvent={}", outboxEvent);
+        log.info("[MessageRelay.createOutbox] outboxEvent={}", outboxEvent);
+
+        Map<String, String> carrier = traceContextManager.captureCurrentContext();
+
+        Outbox outbox = outboxEvent.getOutbox();
+        outbox.setTraceContext(DataSerializer.serialize(carrier));
         outboxRepository.save(outboxEvent.getOutbox());
     }
 
@@ -35,16 +46,28 @@ public class MessageRelay {
     }
 
     private void publishEvent(Outbox outbox) {
+        Map<String, String> carrier = Collections.emptyMap();
         try {
-            messageRelayKafkaTemplate.send(
-                outbox.getEventType().getTopic(),
-                String.valueOf(outbox.getPartitionKey()),
-                outbox.getPayload()
-            ).get(1, TimeUnit.SECONDS);
-            outboxRepository.delete(outbox);
+            String serializedTraceContext = outbox.getTraceContext();
+            if (serializedTraceContext != null && !serializedTraceContext.isBlank()) {
+                carrier = DataSerializer.deserialize(serializedTraceContext, Map.class);
+            }
         } catch (Exception e) {
-            log.error("[MessageRelay.publishEvent] outbox={}", outbox, e);
+            log.warn("[MessageRelay.publishEvent] traceContext restore failed. outboxId={}", outbox.getOutboxId(), e);
         }
+
+        traceContextManager.runWithContext(carrier, "message-relay-publish", () -> {
+            try {
+                messageRelayKafkaTemplate.send(
+                        outbox.getEventType().getTopic(),
+                        String.valueOf(outbox.getPartitionKey()),
+                        outbox.getPayload()
+                ).get(1, TimeUnit.SECONDS);
+                outboxRepository.delete(outbox);
+            } catch (Exception e) {
+                log.error("[MessageRelay.publishEvent] outbox={}", outbox, e);
+            }
+        });
     }
 
     @Scheduled(

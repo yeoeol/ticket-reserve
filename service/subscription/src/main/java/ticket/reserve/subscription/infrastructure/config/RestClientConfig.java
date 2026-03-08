@@ -1,21 +1,27 @@
 package ticket.reserve.subscription.infrastructure.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
-import ticket.reserve.core.log.interceptor.RestClientTraceInterceptor;
 import ticket.reserve.subscription.infrastructure.client.interceptor.AuthenticationInterceptor;
 
 @Configuration
+@RequiredArgsConstructor
 public class RestClientConfig {
 
+    private final RestClient.Builder restClientBuilder;
+    private final AuthenticationInterceptor authenticationInterceptor;
+
+    @Value("${endpoints.ticket-reserve-busking-service.url}")
+    private String buskingServiceUrl;
+
     @Bean
-    public RestClient.Builder restClientBuilder(
-            AuthenticationInterceptor authenticationInterceptor,
-            RestClientTraceInterceptor restClientTraceInterceptor
-    ) {
-        return RestClient.builder()
+    public RestClient buskingRestClient() {
+        return restClientBuilder
+                .baseUrl(buskingServiceUrl)
                 .requestInterceptor(authenticationInterceptor)
-                .requestInterceptor(restClientTraceInterceptor);
+                .build();
     }
 }

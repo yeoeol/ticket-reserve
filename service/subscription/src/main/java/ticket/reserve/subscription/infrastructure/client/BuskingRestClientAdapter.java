@@ -1,6 +1,6 @@
 package ticket.reserve.subscription.infrastructure.client;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -11,24 +11,16 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class BuskingRestClientAdapter implements BuskingPort {
 
-    private final RestClient restClient;
-
-    public BuskingRestClientAdapter(
-            RestClient.Builder restClientBuilder,
-            @Value("${endpoints.ticket-reserve-busking-service.url}") String buskingServiceUrl
-    ) {
-        this.restClient = restClientBuilder
-                .baseUrl(buskingServiceUrl)
-                .build();
-    }
+    private final RestClient buskingRestClient;
 
     @Override
     public List<BuskingResponseDto> getAllByBuskingIds(List<Long> buskingIds) {
         if (buskingIds == null || buskingIds.isEmpty()) return Collections.emptyList();
 
-        return restClient.get()
+        return buskingRestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/api/buskings/bulk")
                         .queryParam("ids", buskingIds)
