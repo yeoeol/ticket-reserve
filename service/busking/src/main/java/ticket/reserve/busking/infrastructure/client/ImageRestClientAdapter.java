@@ -1,6 +1,6 @@
 package ticket.reserve.busking.infrastructure.client;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -16,18 +16,10 @@ import ticket.reserve.core.global.exception.ErrorCode;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class ImageRestClientAdapter implements ImagePort {
 
-    private final RestClient restClient;
-
-    public ImageRestClientAdapter(
-            RestClient.Builder restClientBuilder,
-            @Value("${endpoints.ticket-reserve-image-service.url}") String imageServiceUrl
-    ) {
-        this.restClient = restClientBuilder
-                .baseUrl(imageServiceUrl)
-                .build();
-    }
+    private final RestClient imageRestClient;
 
     @Override
     public ImageResponseDto uploadImage(MultipartFile file) {
@@ -44,7 +36,7 @@ public class ImageRestClientAdapter implements ImagePort {
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_FAIL);
         }
 
-        return restClient.post()
+        return imageRestClient.post()
                 .uri("/api/images/upload")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(body)
@@ -54,7 +46,7 @@ public class ImageRestClientAdapter implements ImagePort {
 
     @Override
     public void deleteImage(Long id) {
-        restClient.delete()
+        imageRestClient.delete()
                 .uri("/api/images/{id}", id)
                 .retrieve()
                 .toBodilessEntity();

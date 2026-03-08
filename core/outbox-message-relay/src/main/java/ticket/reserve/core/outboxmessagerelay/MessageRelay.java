@@ -13,6 +13,7 @@ import ticket.reserve.core.log.DataSerializer;
 import ticket.reserve.core.log.context.TraceContextManager;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,7 @@ public class MessageRelay {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void createOutbox(OutboxEvent outboxEvent) {
-        log.info("[MessageRelay.createOutbox outboxEvent={}", outboxEvent);
+        log.info("[MessageRelay.createOutbox] outboxEvent={}", outboxEvent);
 
         Map<String, String> carrier = traceContextManager.captureCurrentContext();
 
@@ -45,7 +46,15 @@ public class MessageRelay {
     }
 
     private void publishEvent(Outbox outbox) {
-        Map<String, String> carrier = DataSerializer.deserialize(outbox.getTraceContext(), Map.class);
+        Map<String, String> carrier = Collections.emptyMap();
+        try {
+            String serializedTraceContext = outbox.getTraceContext();
+            if (serializedTraceContext != null && !serializedTraceContext.isBlank()) {
+                carrier = DataSerializer.deserialize(serializedTraceContext, Map.class);
+            }
+        } catch (Exception e) {
+            log.warn("[MessageRelay.publishEvent] traceContext restore failed. outboxId={}", outbox.getOutboxId(), e);
+        }
 
         traceContextManager.runWithContext(carrier, "message-relay-publish", () -> {
             try {

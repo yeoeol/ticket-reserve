@@ -1,28 +1,20 @@
 package ticket.reserve.hotbusking.infrastructure.client;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import ticket.reserve.hotbusking.application.dto.response.BuskingResponseDto;
 import ticket.reserve.hotbusking.application.port.out.BuskingPort;
 
 @Component
+@RequiredArgsConstructor
 public class BuskingRestClientAdapter implements BuskingPort {
 
-    private final RestClient restClient;
-
-    public BuskingRestClientAdapter(
-            RestClient.Builder restClientBuilder,
-            @Value("${endpoints.ticket-reserve-busking-service.url}") String buskingServiceUrl
-    ) {
-        this.restClient = restClientBuilder
-                .baseUrl(buskingServiceUrl)
-                .build();
-    }
+    private final RestClient buskingRestClient;
 
     @Override
     public BuskingResponseDto get(Long buskingId) {
-        return restClient.get()
+        return buskingRestClient.get()
                 .uri("/api/buskings/{id}", buskingId)
                 .retrieve()
                 .body(BuskingResponseDto.class);
